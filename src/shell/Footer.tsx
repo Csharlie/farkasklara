@@ -18,15 +18,26 @@ export function AppFooter({ siteData }: LayoutShellProps) {
       <div className="mx-auto grid w-full max-w-content gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="font-display text-xl font-extrabold tracking-heading">{contact.companyName}</p>
-          <address className="mt-4 not-italic text-muted-foreground">{contact.address}</address>
+          <p className="mt-4 text-muted-foreground">{shell.tagline}</p>
         </div>
 
         <div>
           <h2 className="text-lg">{copy.contactTitle}</h2>
-          <div className="mt-3 flex flex-col">
-            <ContactAnchor link={contact.phone} action="call" id="footer-phone" label="Telefon" className="tabular-nums" />
-            <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" />
-          </div>
+          <address className="mt-3 not-italic text-muted-foreground">
+            {contact.addressLines.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </address>
+          {(contact.phone || contact.email) && (
+            <div className="mt-3 flex flex-col">
+              {contact.phone && (
+                <ContactAnchor link={contact.phone} action="call" id="footer-phone" label="Telefon" className="tabular-nums" />
+              )}
+              {contact.email && <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" />}
+            </div>
+          )}
           {contact.hours.length > 0 && (
             <>
               <h3 className="mt-6 text-base">{copy.hoursTitle}</h3>

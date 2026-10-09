@@ -12,7 +12,7 @@ export function FkPageHeader({ id, eyebrow, title, lead, body, primary, secondar
       data-ui-component="fk-page-header"
       data-ui-role="region"
       aria-labelledby={`${id}-title`}
-      className="border-b border-border bg-muted pb-14 pt-14 md:pb-20 md:pt-24"
+      className="border-b border-border bg-muted pb-14 pt-32 md:pb-20 md:pt-44"
     >
       <div className={contentWidth}>
         <div className="max-w-4xl">

@@ -11,7 +11,7 @@ import { basePreset } from '@spektra/themes'
  * The numeric font-size keys used by platform blocks (text-4xl … text-7xl)
  * are remapped to the client scale, so platform HeroBlock / FeaturesBlock
  * headings follow the client typography without component changes:
- *   H1  text-5xl / md:text-6xl / lg:text-7xl  → 52 / 68 / 88 px
+ *   H1  text-5xl / md:text-6xl / lg:text-7xl  → ~40–52 (fluid) / 68 / 88 px
  *   H2  text-4xl / md:text-5xl                → 36 / 52 px
  *   H3  text-2xl / md:text-3xl                → 24 / 30 px
  *   Body text-base                            → 17 px
@@ -56,7 +56,8 @@ export const fkPreset = {
         '2xl': ['1.5rem', { lineHeight: '1.25' }],
         '3xl': ['1.875rem', { lineHeight: '1.2' }],
         '4xl': ['2.25rem', { lineHeight: '1.1' }],
-        '5xl': ['3.25rem', { lineHeight: '1.05' }],
+        // Fluid: ~40px on phones (fewer H1 line breaks), 52px from tablet up.
+        '5xl': ['clamp(2.5rem, 1.5rem + 4vw, 3.25rem)', { lineHeight: '1.05' }],
         '6xl': ['4.25rem', { lineHeight: '1.02' }],
         '7xl': ['5.5rem', { lineHeight: '1' }],
       },
@@ -83,11 +84,6 @@ export const fkPreset = {
       maxWidth: {
         content: '1240px',
         prose: '44rem',
-      },
-      // Numeric key on purpose: tailwind-merge only resolves conflicts with
-      // platform `py-20` for numeric spacing keys (see src/theme/layout.ts).
-      spacing: {
-        '26': '6.5rem', // desktop section spacing (104px)
       },
     },
   },

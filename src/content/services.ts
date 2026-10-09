@@ -23,11 +23,11 @@ export const services: Service[] = [
       'Éves beszámoló előkészítése',
       'Kapcsolattartás a NAV-val az Ön meghatalmazása alapján',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv', 'konyvelovaltas'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
     process: [
       {
         title: 'Bizonylatok',
-        description: 'Minden hónap [NAP]. napjáig elküldi a bizonylatokat, papíron vagy elektronikusan.',
+        description: 'Az egyeztetett határnapig elküldi a bizonylatokat.',
       },
       {
         title: 'Feldolgozás',
@@ -53,14 +53,11 @@ export const services: Service[] = [
       {
         question: 'Válthatok könyvelőt év közben?',
         answer:
-          'Igen. Az előző könyvelőtől kérendő iratok listáját mi állítjuk össze, és az átvételt is mi egyeztetjük.',
-      },
-      {
-        question: 'Elektronikusan is küldhetem a bizonylatokat?',
-        answer: '[VÁLASZ: a bizonylatküldés elfogadott módjai]',
+          'Igen. Az átállás menetét és a szükséges iratokat a Könyvelőváltás oldalon foglaltuk össze.',
       },
     ],
-    cta: { label: 'Könyvelés indítása', intent: 'quote', prefillService: 'konyveles' },
+    cta: { label: 'Ajánlatot kérek könyvelésre', intent: 'quote', prefillService: 'konyveles' },
+    headerLink: { label: 'Könyvelőt váltana?', href: '/konyvelovaltas' },
     related: ['adobevallas', 'berszamfejtes'],
     seo: {
       description:
@@ -79,7 +76,7 @@ export const services: Service[] = [
       'Munkabér, osztalék, tagi kölcsön: melyik mivel jár',
       'Felkészülés NAV-ellenőrzésre',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv', 'osszetett'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
     process: [
       { title: 'Kérdés', description: 'Leírja, milyen döntés előtt áll.' },
       { title: 'Számítás', description: 'A vállalkozás adataiból kiszámoljuk a lehetőségeket.' },
@@ -90,7 +87,7 @@ export const services: Service[] = [
       'Az utolsó lezárt év adatai vagy bevallása',
     ],
     price: { type: 'perUnit', amount: '[ÁR]', unit: 'óra' },
-    cta: { label: 'Adótanácsadás kérése', intent: 'consult', prefillService: 'adotanacsadas' },
+    cta: { label: 'Tanácsadást kérek', intent: 'consult', prefillService: 'adotanacsadas' },
     related: ['konyveles', 'adobevallas'],
     seo: {
       description:
@@ -121,7 +118,7 @@ export const services: Service[] = [
       'Meghatalmazás az elektronikus beküldéshez',
     ],
     price: { type: 'from', amount: '[ÁR]', unit: 'alkalom' },
-    cta: { label: 'Bevallás kérése', intent: 'quote', prefillService: 'adobevallas' },
+    cta: { label: 'Ajánlatot kérek bevallásra', intent: 'quote', prefillService: 'adobevallas' },
     related: ['konyveles', 'adotanacsadas'],
     seo: {
       description:
@@ -141,11 +138,11 @@ export const services: Service[] = [
       'Kilépéskor kiadandó igazolások',
       'Éves igazolások a munkavállalóknak',
     ],
-    audiences: ['kkv'],
+    audiences: ['kkv', 'nagyobb-vallalatok'],
     process: [
       {
         title: 'Jelenléti adatok',
-        description: 'Minden hónap [NAP]. napjáig elküldi a jelenléti és távolléti adatokat.',
+        description: 'Az egyeztetett határnapig elküldi a jelenléti és távolléti adatokat.',
       },
       { title: 'Számfejtés', description: 'Kiszámoljuk a béreket és a járulékokat.' },
       { title: 'Utalási lista', description: 'Megkapja a bérjegyzékeket és az utalandó összegeket.' },
@@ -157,7 +154,7 @@ export const services: Service[] = [
       'Munkavállalói adatlapok: adóazonosító jel, TAJ-szám, bankszámlaszám',
     ],
     price: { type: 'perUnit', amount: '[ÁR]', unit: 'fő/hó' },
-    cta: { label: 'Bérszámfejtés indítása', intent: 'quote', prefillService: 'berszamfejtes' },
+    cta: { label: 'Ajánlatot kérek bérszámfejtésre', intent: 'quote', prefillService: 'berszamfejtes' },
     related: ['konyveles'],
     seo: {
       description:
@@ -198,7 +195,7 @@ export const services: Service[] = [
         answer: 'A nyitott tételek számától függ. Az ütemtervet az első egyeztetés után megkapja.',
       },
     ],
-    cta: { label: 'Végelszámolás indítása', intent: 'quote', prefillService: 'vegelszamolas' },
+    cta: { label: 'Egyeztetést kérek végelszámolásról', intent: 'quote', prefillService: 'vegelszamolas' },
     related: ['konyveles', 'adotanacsadas'],
     seo: {
       description:
@@ -228,7 +225,7 @@ export const services: Service[] = [
       'A lezárt üzleti évek beszámolói',
     ],
     price: { type: 'onRequest' },
-    cta: { label: 'Pályázati egyeztetés kérése', intent: 'consult', prefillService: 'palyazatok' },
+    cta: { label: 'Egyeztetést kérek pályázatról', intent: 'consult', prefillService: 'palyazatok' },
     related: ['konyveles', 'adotanacsadas'],
     seo: {
       description:

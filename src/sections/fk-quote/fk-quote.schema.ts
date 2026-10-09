@@ -40,12 +40,13 @@ export interface FkQuoteData {
   privacyHref: string
   labels: FkQuoteLabels
   success: { title: string; message: string; reset: string }
+  /** Receives the enquiry. name/phone/email are absent while unknown. */
   primaryContact: {
     label: string
-    name: string
+    name?: string
     role: string
-    phone: ContactLink
-    email: ContactLink
+    phone?: ContactLink
+    email?: ContactLink
   }
   tone?: 'plain' | 'warm'
 }

@@ -148,12 +148,20 @@ export function FkQuote({
           <SectionIntro id={id} title={title} intro={intro} />
           <div className="mt-10 border-l-2 border-border pl-5">
             <p className="text-sm text-muted-foreground">{primaryContact.label}</p>
-            <p className="mt-1 font-display text-2xl font-bold tracking-heading">{primaryContact.name}</p>
-            <p className="text-muted-foreground">{primaryContact.role}</p>
-            <div className="mt-3 flex flex-col font-semibold">
-              <ContactAnchor link={primaryContact.phone} action="call" id={`${id}-phone`} label="Telefon" />
-              <ContactAnchor link={primaryContact.email} action="email" id={`${id}-email`} label="E-mail" />
-            </div>
+            <p className="mt-1 font-display text-2xl font-bold tracking-heading">
+              {primaryContact.name ?? primaryContact.role}
+            </p>
+            {primaryContact.name && <p className="text-muted-foreground">{primaryContact.role}</p>}
+            {(primaryContact.phone || primaryContact.email) && (
+              <div className="mt-3 flex flex-col font-semibold">
+                {primaryContact.phone && (
+                  <ContactAnchor link={primaryContact.phone} action="call" id={`${id}-phone`} label="Telefon" />
+                )}
+                {primaryContact.email && (
+                  <ContactAnchor link={primaryContact.email} action="email" id={`${id}-email`} label="E-mail" />
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -175,7 +183,7 @@ export function FkQuote({
                 {success.title}
               </h3>
               <p data-ui-role="feedback-description" className="mt-4 text-lg text-muted-foreground">
-                {fillTemplate(success.message, { primaryContact: primaryContact.name })}
+                {fillTemplate(success.message, { primaryContact: primaryContact.name ?? primaryContact.role })}
               </p>
               <button
                 type="button"

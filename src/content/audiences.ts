@@ -1,32 +1,30 @@
 import type { Audience } from './types'
 
-/** Order = display order. Visibility: enabled && (segment ? settings.segments[segment].enabled : true). */
+/**
+ * Primary client groups. Order = display order.
+ * Visibility: enabled && (segment ? settings.segments[segment].enabled : true).
+ * Switching accountants is not an audience — it has its own page (/konyvelovaltas).
+ */
 export const audiences: Audience[] = [
   {
     id: 'egyeni-vallalkozok',
     label: 'Egyéni vállalkozók',
     description:
-      'Átalányadó vagy vállalkozói szja: kiszámoljuk, melyik a kedvezőbb Önnek, és beadjuk a bevallásokat.',
+      'Kevesebb adminisztráció, kiszámítható határidők. A bevallásokat és a havi teendőket mi követjük, Ön előre tudja, mikor mi a dolga.',
     enabled: true,
   },
   {
     id: 'kkv',
     label: 'Kis- és középvállalkozások',
     description:
-      'Kft. és bt. könyvelése, bérszámfejtése és éves beszámolója egy helyen, egy kapcsolattartóval.',
+      'Könyvelés, bérszámfejtés és beszámoló egy helyen. Döntések előtt szakmai háttér, hogy a cég működése rendben maradjon.',
     enabled: true,
   },
   {
-    id: 'konyvelovaltas',
-    label: 'Könyvelőt váltana',
+    id: 'nagyobb-vallalatok',
+    label: 'Nagyobb vállalatok',
     description:
-      'Átvesszük az iratokat az előző könyvelőtől, és megnézzük, mi maradt rendezetlenül.',
-    enabled: true,
-  },
-  {
-    id: 'osszetett',
-    label: 'Összetettebb vállalkozások',
-    description: '[LEÍRÁS: milyen összetettebb vállalkozásokat vállal az iroda]',
+      'Könyvelés, bérszámfejtés és adótanácsadás előzetes egyeztetés alapján, a cég működési rendjéhez igazítva.',
     enabled: true,
     segment: 'complex',
   },

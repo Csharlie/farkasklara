@@ -6,8 +6,8 @@ export const settings: Settings = {
   showPrices: false,
 
   segments: {
-    // "Összetettebb vállalkozások" audience — off by default.
-    complex: { enabled: false },
+    // "Nagyobb vállalatok" audience — one of the three primary groups.
+    complex: { enabled: true },
   },
 
   // Prepared, not implemented. Enabling throws at build time (no silent page).

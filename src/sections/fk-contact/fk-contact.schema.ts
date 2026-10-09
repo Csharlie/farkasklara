@@ -1,19 +1,22 @@
 import type { ContactLink } from '../shared/types'
 
+interface PersonBlock {
+  label: string
+  /** Absent while the name is not known — the role is shown instead. */
+  name?: string
+  role: string
+  description?: string
+}
+
 export interface FkContactData {
   id: string
   title: string
   companyName: string
   address: string
-  phone: ContactLink
-  email: ContactLink
+  phone?: ContactLink
+  email?: ContactLink
   hoursTitle: string
   hours: { days: string; hours: string }[]
-  primaryContact: {
-    label: string
-    name: string
-    role: string
-    phone: ContactLink
-    email: ContactLink
-  }
+  primaryContact: PersonBlock & { phone?: ContactLink; email?: ContactLink }
+  lead?: PersonBlock
 }

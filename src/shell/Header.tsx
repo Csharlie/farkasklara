@@ -21,7 +21,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
       data-ui-id="site-header"
       data-ui-component="app-header"
       data-ui-role="banner"
-      className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur"
+      className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-md"
     >
       <div className="mx-auto flex min-h-16 w-full max-w-content items-center justify-between gap-6 px-6 md:min-h-20">
         <a
@@ -55,13 +55,15 @@ export function AppHeader({ siteData }: LayoutShellProps) {
         </nav>
 
         <div className="flex items-center gap-2 md:gap-4">
-          <ContactAnchor
-            link={shell.contact.phone}
-            action="call"
-            id="header-phone"
-            label="Telefon"
-            className="hidden font-semibold tabular-nums sm:inline-flex"
-          />
+          {shell.contact.phone && (
+            <ContactAnchor
+              link={shell.contact.phone}
+              action="call"
+              id="header-phone"
+              label="Telefon"
+              className="hidden font-semibold tabular-nums sm:inline-flex"
+            />
+          )}
           <a
             href={shell.quote.href}
             data-ui-id="header-quote"
@@ -95,18 +97,20 @@ export function AppHeader({ siteData }: LayoutShellProps) {
         id="mobile-nav"
         aria-label="Fő navigáció (mobil)"
         hidden={!open}
-        className={cn('border-t border-border bg-background lg:hidden')}
+        className={cn('border-t border-border/60 lg:hidden')}
       >
         <ul className="mx-auto flex w-full max-w-content flex-col px-6 py-4">
-          <li className="border-b border-border pb-2 sm:hidden">
-            <ContactAnchor
-              link={shell.contact.phone}
-              action="call"
-              id="nav-mobile-phone"
-              label="Telefon"
-              className="min-h-12 text-lg font-semibold tabular-nums"
-            />
-          </li>
+          {shell.contact.phone && (
+            <li className="border-b border-border pb-2 sm:hidden">
+              <ContactAnchor
+                link={shell.contact.phone}
+                action="call"
+                id="nav-mobile-phone"
+                label="Telefon"
+                className="min-h-12 text-lg font-semibold tabular-nums"
+              />
+            </li>
+          )}
           {links.map((link) => (
             <li key={link.href}>
               <a

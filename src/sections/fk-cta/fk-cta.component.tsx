@@ -1,5 +1,5 @@
 import { cn } from '@spektra/components'
-import { contentWidth, sectionSpacing } from '../../theme/layout'
+import { bandSpacing, contentWidth } from '../../theme/layout'
 import { CtaLink } from '../shared/CtaLink'
 import type { FkCtaData } from './fk-cta.schema'
 
@@ -12,7 +12,7 @@ export function FkCta({ id, title, text, primary, secondary }: FkCtaData) {
       data-ui-component="fk-cta"
       data-ui-role="cta"
       aria-labelledby={`${id}-title`}
-      className={cn(sectionSpacing, 'bg-background')}
+      className={cn(bandSpacing, 'bg-background')}
     >
       <div className={contentWidth}>
         <div

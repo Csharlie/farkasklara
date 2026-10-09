@@ -53,7 +53,7 @@ describe('rendering', () => {
     }
     const page = buildSiteData(c).pages.find((p) => p.slug === 'szolgaltatasok/minimal')!
     const html = render(page)
-    expect(html.match(/<section/g)).toHaveLength(2)
+    expect(html.match(/<section/g)).toHaveLength(3) // header, closing CTA, map
     expect(html).not.toMatch(/<(ul|ol|dl)[^>]*><\/\1>/)
     for (const label of Object.values(content.copy.servicePage.blocks)) {
       expect(html).not.toContain(`>${label}<`)
@@ -72,6 +72,24 @@ describe('rendering', () => {
     expect(html).toMatch(/href="tel:\+36760000000"[^>]*data-ui-action="call"/)
     expect(html).toMatch(/href="mailto:iroda@example.hu"[^>]*data-ui-action="email"/)
     expect(html).toContain('data-ui-action="submit-form"')
+  })
+
+  it('renders no [PLACEHOLDER] text on any page', () => {
+    for (const page of site.pages) {
+      const text = render(page).replace(/<[^>]+>/g, ' ')
+      expect(text, page.slug).not.toMatch(/\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]/)
+    }
+  })
+
+  it('offers an in-place preview while the full-page link stays visible', () => {
+    const html = render(site.pages.find((p) => p.slug === 'home')!)
+    const card = html.slice(html.indexOf('data-ui-id="service-card-konyveles"'))
+    const details = card.slice(card.indexOf('<details'), card.indexOf('</details>'))
+    expect(details).toContain('<summary')
+    expect(details).toContain('Mit tartalmaz?')
+    expect(details).not.toContain('href="/szolgaltatasok/konyveles"')
+    const afterDetails = card.slice(card.indexOf('</details>'))
+    expect(afterDetails).toMatch(/href="\/szolgaltatasok\/konyveles"[^>]*>Teljes leírás/)
   })
 
   it('never puts white text on the accent color', () => {

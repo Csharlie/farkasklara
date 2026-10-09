@@ -1,6 +1,21 @@
 import { createFormHandler, type FormHandler } from '@spektra/data'
 
 /**
+ * Honest fallback when no production form driver is configured: every
+ * submission returns an error result (platform FormSubmitResult contract),
+ * so the form shows an error instead of a fake success.
+ */
+const unavailableFormHandler: FormHandler = {
+  id: 'unavailable',
+  async submit() {
+    return {
+      status: 'error',
+      message: 'Az online ajánlatkérés jelenleg nem érhető el. Kérjük, próbálja újra később.',
+    }
+  },
+}
+
+/**
  * Picks the platform FormHandler driver from VITE_FORM_HANDLER
  * (same contract as sp-benettcar / sp-luxcover).
  *
@@ -32,6 +47,12 @@ export function createFkFormHandler(): FormHandler {
     }
 
     case 'noop':
+      // noop fakes success — acceptable in development only. A production
+      // build without a real driver must not show a false success message.
+      if (import.meta.env.PROD) {
+        console.error('VITE_FORM_HANDLER=noop in a production build: quote form submissions are disabled')
+        return unavailableFormHandler
+      }
       return createFormHandler({ driver: 'noop' })
 
     default:

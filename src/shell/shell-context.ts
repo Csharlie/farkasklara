@@ -11,6 +11,7 @@ const ctx = createBuildContext(content)
 
 export const shell = {
   companyName: content.company.name,
+  tagline: content.copy.home.hero.eyebrow,
   contact: ctx.contact,
   services: ctx.services.map((s) => ({ slug: s.slug, title: s.title, href: routes.service(s.slug) })),
   quote: { label: content.copy.nav.quote, href: quoteHref(content.settings.quote.prefillParam) },

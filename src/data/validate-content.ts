@@ -1,5 +1,5 @@
 import type { ClientContent } from '../content'
-import { resolvePrimaryContact } from './contact'
+import { resolveLead, resolvePrimaryContact } from './contact'
 import { SLUG_PATTERN } from './routes'
 
 /**
@@ -45,10 +45,12 @@ export function validateContent(content: ClientContent): string[] {
     if (!service.seo.description.trim()) errors.push(`service "${service.slug}": seo.description is required`)
   }
 
-  try {
-    resolvePrimaryContact(people)
-  } catch (error) {
-    errors.push((error as Error).message)
+  for (const resolve of [resolvePrimaryContact, resolveLead]) {
+    try {
+      resolve(people)
+    } catch (error) {
+      errors.push((error as Error).message)
+    }
   }
 
   if (settings.modules.audiencePages) {

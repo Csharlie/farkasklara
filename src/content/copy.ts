@@ -1,11 +1,13 @@
-import type { Step } from './types'
+import type { FaqItem, Step } from './types'
 
 /**
  * Page copy — wording only. Structure (which sections, in which order) lives
- * in src/data/build-pages.ts; contact data lives in company.ts.
+ * in src/data/build-pages.ts; contact data and roles live in company.ts.
+ * Tokens in {braces} are filled by the builders. Placeholder values in
+ * [BRACKETS] are never rendered.
  */
 
-export type TrustFactInput =
+export type FactInput =
   | { value: string; label: string }
   /** Derived from content: team size (people.length) or company.city. */
   | { source: 'teamSize' | 'city'; label: string }
@@ -32,54 +34,34 @@ export const copy = {
       eyebrow: 'Könyvelőiroda Kecskeméten',
       title: 'Rendben tartjuk a számait. Szólunk, mielőtt baj lenne.',
       description:
-        'Könyvelés, adó és bér egyéni vállalkozóknak és kis cégeknek. Határidő előtt jelzünk, ha teendője van.',
+        'Könyvelés, adó és bér egyéni vállalkozóknak és cégeknek. Határidő előtt jelzünk, ha teendője van.',
       primaryCta: 'Ajánlatot kérek',
       secondaryCta: 'Szolgáltatások',
-      // Office / documents / desk imagery, no faces. Set to an image URL
-      // (e.g. '/images/hero.jpg' in public/) when the photo is chosen.
-      image: undefined as string | undefined,
-      imageAlt: '[HERO KÉP LEÍRÁSA]',
+      // Office / documents / desk imagery, no faces (public/images/hero.jpg).
+      image: '/images/hero.jpg' as string | undefined,
+      imageAlt: 'Napfényes irodai íróasztal táblázatos dokumentumokkal, számológéppel, laptoppal és jegyzetfüzettel',
     },
-    trust: [
-      { value: '[ÉV]', label: 'óta dolgozunk' },
-      { value: '[ÜGYFELEK SZÁMA]', label: 'ügyfél' },
-      { source: 'teamSize', label: 'fős csapat' },
-      { source: 'city', label: 'irodánk helye' },
-    ] satisfies TrustFactInput[],
     services: {
       title: 'Szolgáltatások',
-      intro: 'Hat terület. Mindegyiknél ugyanaz a kapcsolattartó.',
+      intro: 'Hat terület, egy kapcsolattartó. Nyissa le a kártyát a rövid összefoglalóért.',
     },
     audiences: { title: 'Kinek dolgozunk' },
-    process: {
-      title: 'Hogyan dolgozunk',
-      steps: [
-        {
-          title: 'Első beszélgetés',
-          description: 'Átbeszéljük, milyen vállalkozása van, és mit vár a könyvelőjétől.',
-        },
-        {
-          title: 'Ajánlat',
-          description: 'Írásban megkapja, mit vállalunk, mennyiért, és mi kell hozzá Öntől.',
-        },
-        {
-          title: 'Átvétel',
-          description: 'Átvesszük az iratokat, és megbeszéljük, hogyan küldi a bizonylatokat.',
-        },
-        {
-          title: 'Folyamatos munka',
-          description: 'Havonta könyvelünk, és határidő előtt jelzünk, ha teendője van.',
-        },
-      ] satisfies Step[],
-    },
-    team: {
+    about: {
       title: 'Rólunk',
       intro:
-        'Háromfős iroda Kecskeméten. Minden megkeresés egy emberhez fut be, így nem kell mindent kétszer elmondania.',
+        'Kecskeméti könyvelőiroda. A szakmai munkát {lead} irányítja, az érdeklődéseket és az ajánlatkéréseket az iroda ügyintézője fogadja.',
+      // Facts shown with the professional lead. Placeholder values are hidden.
+      facts: [
+        { value: '[ÉV]', label: 'óta dolgozunk' },
+        { value: '[ÜGYFELEK SZÁMA]', label: 'ügyfél' },
+        { source: 'teamSize', label: 'fős csapat' },
+        { source: 'city', label: 'irodánk helye' },
+      ] satisfies FactInput[],
+      more: 'Bővebben az irodáról',
     },
     quote: {
       title: 'Ajánlatkérés',
-      intro: 'Írja meg, miben segíthetünk. Az ajánlatot írásban küldjük.',
+      intro: 'Írja meg, miben segíthetünk. Az ajánlatkéréseket az iroda ügyintézője fogadja.',
     },
   },
 
@@ -91,7 +73,13 @@ export const copy = {
     },
     eyebrow: 'Szolgáltatások',
     title: 'Mivel foglalkozunk',
-    lead: 'Válassza ki a területet. Minden oldalon megtalálja, mit tartalmaz a munka, és mit kérünk Öntől.',
+    lead: 'Válassza ki a területet. Minden szolgáltatás oldalán megtalálja, mit tartalmaz a munka, és mit kérünk Öntől.',
+    listTitle: 'Hat terület, egy kapcsolattartó',
+  },
+
+  serviceCard: {
+    details: 'Mit tartalmaz?',
+    fullPage: 'Teljes leírás',
   },
 
   servicePage: {
@@ -107,8 +95,8 @@ export const copy = {
       relatedArticles: 'Kapcsolódó cikkek',
     },
     closing: {
-      title: 'Kezdjük el',
-      text: 'Írja meg, mire van szüksége. A szolgáltatást előre kiválasztottuk az űrlapon.',
+      title: 'Kérjen ajánlatot',
+      text: 'Írja meg, mire van szüksége. A szolgáltatást előre kiválasztottuk az űrlapon; az ajánlatkérést az iroda ügyintézője fogadja.',
     },
   },
 
@@ -116,11 +104,11 @@ export const copy = {
     meta: {
       title: 'Könyvelőváltás | {company}',
       description:
-        'Könyvelőt váltana? Átvesszük az iratokat az előző könyvelőtől, és megnézzük, mi maradt rendezetlenül.',
+        'Könyvelőt váltana? Az átállás menete, a szükséges iratok és a gyakori kérdések egy helyen.',
     },
     eyebrow: 'Könyvelőváltás',
     title: 'Könyvelőt váltana?',
-    lead: 'A váltás nem az Ön dolga. Az iratok átvételét mi egyeztetjük az előző könyvelővel.',
+    lead: 'Az iratok átvételét mi egyeztetjük az előző könyvelővel. Önnek a szerződés felmondása és a meghatalmazás marad.',
     steps: {
       title: 'Hogyan zajlik a váltás',
       items: [
@@ -138,10 +126,24 @@ export const copy = {
         'Az utolsó lezárt év beszámolója vagy bevallása',
       ],
     },
+    faq: {
+      title: 'Gyakori kérdések',
+      items: [
+        {
+          question: 'Év közben is lehet könyvelőt váltani?',
+          answer:
+            'Igen. Az átállás időpontját az előző könyvelővel kötött szerződés felmondási ideje is befolyásolja; ezt az első egyeztetésen átnézzük.',
+        },
+        {
+          question: 'Mit kell nekem intéznem az előző könyvelővel?',
+          answer: 'A szerződés felmondását. Az átadandó iratok listáját mi állítjuk össze.',
+        },
+      ] satisfies FaqItem[],
+    },
     cta: {
       title: 'Beszéljük meg a váltást',
-      text: 'Írja meg, mikor váltana. Az iratlistát elküldjük.',
-      label: 'Könyvelőváltás egyeztetése',
+      text: 'Írja meg, mikor váltana. Az ügyintéző egyezteti Önnel a következő lépést.',
+      label: 'Egyeztetést kérek a váltásról',
       prefillService: 'konyveles',
     },
   },
@@ -149,13 +151,36 @@ export const copy = {
   about: {
     meta: {
       title: 'Rólunk | {company}',
-      description: 'Háromfős könyvelőiroda Kecskeméten. Minden megkeresés egy kapcsolattartóhoz fut be.',
+      description:
+        'Kecskeméti könyvelőiroda: szakmai vezető, ügyintéző és könyvelő. Hogyan dolgozunk, és kihez fordulhat.',
     },
     eyebrow: 'Rólunk',
     title: 'Stabil háttér a vállalkozása mögött',
     lead: 'Nem csak adminisztrálunk. Figyeljük a számokat, és szólunk, mielőtt probléma lenne belőlük.',
     body: ['[BEMUTATKOZÁS: az iroda története és munkamódja]'],
+    process: {
+      title: 'Hogyan dolgozunk',
+      steps: [
+        {
+          title: 'Első beszélgetés',
+          description: 'Átbeszéljük, milyen vállalkozása van, és mit vár a könyvelőjétől.',
+        },
+        {
+          title: 'Ajánlat',
+          description: 'Megkapja, mit vállalunk, és mi kell hozzá Öntől.',
+        },
+        {
+          title: 'Átvétel',
+          description: 'Átvesszük az iratokat, és megbeszéljük, hogyan küldi a bizonylatokat.',
+        },
+        {
+          title: 'Folyamatos munka',
+          description: 'Könyvelünk, és határidő előtt jelzünk, ha teendője van.',
+        },
+      ] satisfies Step[],
+    },
     teamTitle: 'A csapat',
+    teamIntro: 'A szakmai munkát {lead} irányítja. Az érdeklődéseket az iroda ügyintézője fogadja.',
   },
 
   knowledge: {
@@ -173,24 +198,30 @@ export const copy = {
   contact: {
     meta: {
       title: 'Kapcsolat | {company}',
-      description: 'Ajánlatkérés és elérhetőségek: telefon, e-mail, cím és nyitvatartás. Kecskemét.',
+      description: 'Ajánlatkérés és elérhetőségek: cím, telefon, e-mail és nyitvatartás. Kecskemét.',
     },
     eyebrow: 'Kapcsolat',
     title: 'Kapcsolat',
-    lead: 'Minden megkeresés egy kapcsolattartóhoz fut be.',
+    lead: 'Az érdeklődéseket és az ajánlatkéréseket az iroda ügyintézője fogadja.',
     detailsTitle: 'Elérhetőségek',
+    mapTitle: 'Az iroda helye a térképen',
     primaryContactLabel: 'Kapcsolattartó',
+    leadLabel: 'Szakmai vezető',
   },
 
   privacy: {
     meta: { title: 'Adatvédelem | {company}', description: 'Adatkezelési tájékoztató.' },
     title: 'Adatkezelési tájékoztató',
+    // Shown only while the legal text below is still a placeholder.
+    pending: 'Az adatkezelési tájékoztató szövege előkészítés alatt áll.',
     body: ['[ADATKEZELÉSI TÁJÉKOZTATÓ SZÖVEGE: jogi szöveg szükséges]'],
   },
 
   imprint: {
     meta: { title: 'Impresszum | {company}', description: 'A weboldal üzemeltetőjének adatai.' },
     title: 'Impresszum',
+    // Shown only while every field below is still a placeholder.
+    pending: 'Az üzemeltető adatai előkészítés alatt állnak.',
     fields: [
       { label: 'Cégnév', value: '{legalName}' },
       { label: 'Székhely', value: '{address}' },
@@ -214,29 +245,29 @@ export const copy = {
     name: 'Név',
     email: 'E-mail-cím',
     phone: 'Telefonszám',
-    contactHint: 'E-mail-címet vagy telefonszámot adjon meg.',
+    contactHint: 'Elég az egyiket megadnia: e-mail-cím vagy telefonszám.',
     businessForm: 'Vállalkozási forma',
     businessFormPlaceholder: 'Válasszon',
     services: 'Melyik szolgáltatás érdekli?',
     message: 'Üzenet (nem kötelező)',
-    consentBefore: 'Elolvastam az ',
+    consentBefore: 'Megismertem az ',
     consentLink: 'adatkezelési tájékoztatót',
-    consentAfter: ', és hozzájárulok az adataim kezeléséhez.',
+    consentAfter: '.',
     submit: 'Ajánlatkérés elküldése',
     sending: 'Küldés…',
     errors: {
       name: 'Adja meg a nevét.',
       contact: 'Adjon meg e-mail-címet vagy telefonszámot.',
-      email: 'Az e-mail-cím formátuma nem megfelelő.',
+      email: 'Az e-mail-cím formátuma nem megfelelő (például: nev@example.hu).',
       businessForm: 'Válassza ki a vállalkozási formát.',
       services: 'Válasszon legalább egy szolgáltatást.',
-      consent: 'A küldéshez fogadja el az adatkezelési tájékoztatót.',
-      general: 'Az üzenetet nem sikerült elküldeni. Próbálja újra, vagy hívjon minket.',
-      rateLimited: 'Túl sok próbálkozás. Próbálja újra néhány perc múlva, vagy hívjon minket.',
+      consent: 'A küldéshez jelölje be, hogy megismerte az adatkezelési tájékoztatót.',
+      general: 'Az üzenetet nem sikerült elküldeni. Próbálja újra később.',
+      rateLimited: 'Túl sok próbálkozás. Próbálja újra néhány perc múlva.',
     },
     success: {
       title: 'Köszönjük, megkaptuk.',
-      message: 'Az ajánlatot írásban küldjük. Kapcsolattartója: {primaryContact}.',
+      message: 'Az ajánlatkérést az iroda ügyintézője kapja meg, és felveszi Önnel a kapcsolatot.',
       reset: 'Új ajánlatkérés',
     },
   },
@@ -250,6 +281,7 @@ export const copy = {
 
   team: {
     primaryContactBadge: 'Kapcsolattartó',
+    leadBadge: 'Szakmai vezető',
   },
 }
 

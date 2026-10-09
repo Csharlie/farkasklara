@@ -90,6 +90,8 @@ export interface Service {
   faq?: FaqItem[]
   /** Contextual closing CTA. Defaults to a quote CTA prefilled with this service. */
   cta?: Cta
+  /** Optional secondary link in the page header, e.g. to /konyvelovaltas. */
+  headerLink?: { label: string; href: string }
   /** Related service slugs. */
   related?: string[]
   /** Related article slugs. */
@@ -104,14 +106,19 @@ export interface Service {
 export interface Person {
   /** ASCII id, used for stable data-ui-id values. */
   id: string
+  /** May be a placeholder ('[MUNKATÁRS NEVE]') — then the name is not shown. */
   name: string
   role: string
-  /** Image URL. When absent, a monogram is rendered. */
+  /** Image URL. When absent, a monogram is rendered (only for known names). */
   photo?: string
+  /** Short description of the person's actual responsibility. */
   bio?: string
   credentials?: string[]
   phone?: string
   email?: string
+  /** Professional lead of the office — shown with emphasis. At most one. */
+  isLead?: boolean
+  /** Receives general enquiries and quote requests. Exactly one. */
   isPrimaryContact: boolean
 }
 

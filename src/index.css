@@ -53,6 +53,8 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    /* The translucent header is fixed: keep anchor targets below it. */
+    scroll-padding-top: 5.5rem;
   }
 
   body {

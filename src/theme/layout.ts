@@ -5,8 +5,11 @@ import { buttonVariants, cn } from '@spektra/components'
  * (fk-theme.ts). Single place for section rhythm and CTA appearance.
  */
 
-/** Vertical section rhythm: 64px mobile, 104px desktop. */
-export const sectionSpacing = 'py-16 md:py-26'
+/** Vertical section rhythm: 64px mobile, 96px desktop. */
+export const sectionSpacing = 'py-16 md:py-24'
+
+/** Compact rhythm for bands placed between sections (closing CTA). */
+export const bandSpacing = 'py-8 md:py-12'
 
 /** Content column: max 1240px, 24px side margin. */
 export const contentWidth = 'mx-auto w-full max-w-content px-6'

@@ -1,4 +1,5 @@
-import type { NavItem, SiteData } from '@spektra/types'
+import type { NavItem, Page, SiteData } from '@spektra/types'
+import type { FkMapData } from '../sections/fk-map'
 import type { ClientContent } from '../content'
 import {
   buildAboutPage,
@@ -42,6 +43,20 @@ export function buildSiteData(content: ClientContent): SiteData {
     { label: copy.nav.imprint, href: routes.imprint },
   ]
 
+  // Full-width map closing every page (bc-map / lc-map pattern) — only for
+  // a complete, real office address.
+  const query = ctx.contact.mapQuery
+  const withMap = (page: Page): Page =>
+    query
+      ? {
+          ...page,
+          sections: [
+            ...page.sections,
+            { id: `${page.slug}-terkep`, type: 'fk-map', data: { title: copy.contact.mapTitle, query, height: 360 } satisfies FkMapData },
+          ],
+        }
+      : page
+
   return {
     site: {
       name: company.name,
@@ -62,6 +77,6 @@ export function buildSiteData(content: ClientContent): SiteData {
       buildPrivacyPage(ctx),
       buildImprintPage(ctx),
       buildNotFoundPage(ctx),
-    ],
+    ].map(withMap),
   }
 }

@@ -1,3 +1,5 @@
 export type { FkFeaturesData } from './features.component'
 export { FkFeaturesBlock } from './features.component'
 export { fkFeaturesDefinition } from './features.definition'
+export { FkHeroBlock } from './hero.component'
+export { fkHeroDefinition } from './hero.definition'

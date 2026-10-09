@@ -3,7 +3,7 @@ import { validateSiteData } from '@spektra/data'
 import type { Page } from '@spektra/types'
 import { content, type ClientContent, type Service } from '../content'
 import { buildSiteData } from './build-site'
-import { phoneLink, emailLink } from './contact'
+import { emailLink, phoneLink } from './contact'
 import { readPrefillService, resolvePageSlug, SLUG_PATTERN } from './routes'
 
 /** Content variant without mutating the shared module objects. */
@@ -29,6 +29,11 @@ const minimalService: Service = {
   visible: true,
 }
 
+const unknownStreet = (c: ClientContent): ClientContent => ({
+  ...c,
+  company: { ...c.company, address: { ...c.company.address, street: '[UTCA, HÁZSZÁM]' } },
+})
+
 describe('SiteData', () => {
   const site = buildSiteData(content)
 
@@ -37,7 +42,7 @@ describe('SiteData', () => {
     expect(result.valid ? [] : result.errors).toEqual([])
   })
 
-  it('generates every required route', () => {
+  it('keeps every existing route', () => {
     const slugs = site.pages.map((p) => p.slug)
     expect(slugs).toEqual(
       expect.arrayContaining([
@@ -97,37 +102,63 @@ describe('SiteData', () => {
 describe('homepage', () => {
   const home = pageBy(buildSiteData(content).pages, 'home')
 
-  it('keeps the fixed section order', () => {
-    expect(types(home)).toEqual(['hero', 'fk-trust', 'fk-services', 'features', 'features', 'fk-team', 'fk-quote'])
+  it('has the focused section order: no stats strip under the hero, no generic process', () => {
+    expect(types(home)).toEqual(['hero', 'fk-services', 'features', 'fk-team', 'fk-quote', 'fk-map'])
   })
 
-  it('numbers the services and highlights the first one', () => {
-    const data = sectionData<{ items: { number: string; href: string }[]; highlightFirst: boolean }>(home, 'fk-services')
+  it('keeps the hero message', () => {
+    expect(sectionData<{ title: string }>(home, 'hero').title).toBe('Rendben tartjuk a számait. Szólunk, mielőtt baj lenne.')
+  })
+
+  it('numbers the six services, highlights the first and offers a short preview', () => {
+    const data = sectionData<{ items: { number: string; href: string; highlights?: string[] }[]; highlightFirst: boolean }>(home, 'fk-services')
     expect(data.highlightFirst).toBe(true)
     expect(data.items.map((i) => i.number)).toEqual(['01', '02', '03', '04', '05', '06'])
     expect(data.items[0]!.href).toBe('/szolgaltatasok/konyveles')
+    for (const item of data.items) {
+      expect(item.highlights!.length).toBeGreaterThan(0)
+      expect(item.highlights!.length).toBeLessThanOrEqual(4)
+    }
   })
 
-  it('derives trust facts from content and keeps unknown facts as placeholders', () => {
-    const data = sectionData<{ facts: { value: string }[] }>(home, 'fk-trust')
-    expect(data.facts.map((f) => f.value)).toEqual(['[ÉV]', '[ÜGYFELEK SZÁMA]', '3', 'Kecskemét'])
+  it('shows the professional lead emphasized, with verified facts only', () => {
+    const team = sectionData<{ lead: { name: string; badge: string }; facts: { value: string }[]; members: { role: string }[] }>(home, 'fk-team')
+    expect(team.lead.name).toBe('Farkas Klára')
+    expect(team.lead.badge).toBe('Szakmai vezető')
+    expect(team.facts.map((f) => f.value)).toEqual(['3', 'Kecskemét'])
+    expect(team.members.map((m) => m.role)).toEqual(['Ügyintéző, kapcsolattartó', 'Könyvelő'])
+  })
+
+  it('shows a fact once it is known', () => {
+    const c = withContent((x) => ({
+      ...x,
+      copy: {
+        ...x.copy,
+        home: {
+          ...x.copy.home,
+          about: { ...x.copy.home.about, facts: [{ value: '2010', label: 'óta dolgozunk' }, ...x.copy.home.about.facts.slice(1)] },
+        },
+      },
+    }))
+    const team = sectionData<{ facts: { value: string }[] }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-team')
+    expect(team.facts.map((f) => f.value)).toEqual(['2010', '3', 'Kecskemét'])
   })
 })
 
-describe('audiences — segments.complex.enabled', () => {
+describe('audiences', () => {
   const audienceTitles = (c: ClientContent) => {
     const home = pageBy(buildSiteData(c).pages, 'home')
     const features = home.sections.find((s) => s.id === 'kinek')!.data as { features: { title: string }[] }
     return features.features.map((f) => f.title)
   }
 
-  it('hides the complex audience by default', () => {
-    expect(audienceTitles(content)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások', 'Könyvelőt váltana'])
+  it('shows the three primary client groups; switching is not an audience', () => {
+    expect(audienceTitles(content)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások', 'Nagyobb vállalatok'])
   })
 
-  it('shows it when the segment is enabled — configuration only', () => {
-    const enabled = withContent((c) => ({ ...c, settings: { ...c.settings, segments: { complex: { enabled: true } } } }))
-    expect(audienceTitles(enabled)).toContain('Összetettebb vállalkozások')
+  it('can switch off the larger-company group through configuration only', () => {
+    const off = withContent((c) => ({ ...c, settings: { ...c.settings, segments: { complex: { enabled: false } } } }))
+    expect(audienceTitles(off)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások'])
   })
 })
 
@@ -146,10 +177,9 @@ describe('service page template', () => {
   })
 
   it('keeps the fixed block order', () => {
-    const order = ['fk-page-header', 'fk-list', 'features', 'features', 'fk-list', 'fk-price', 'fk-faq', 'fk-cta', 'fk-services', 'fk-articles']
+    const order = ['fk-page-header', 'fk-list', 'features', 'features', 'fk-list', 'fk-price', 'fk-faq', 'fk-cta', 'fk-services', 'fk-articles', 'fk-map']
     for (const page of servicePages) {
       const ids = types(page)
-      // Each page's block types must be a subsequence of the fixed order.
       let cursor = 0
       for (const type of ids) {
         cursor = order.indexOf(type, cursor)
@@ -159,23 +189,34 @@ describe('service page template', () => {
     }
   })
 
-  it('renders a contextual, prefilled CTA', () => {
+  it('uses a request CTA (not "start now"), prefilled with the service', () => {
     const page = pageBy(site.pages, 'szolgaltatasok/vegelszamolas')
     const cta = sectionData<{ primary: { text: string; href: string } }>(page, 'fk-cta')
-    expect(cta.primary.text).toBe('Végelszámolás indítása')
+    expect(cta.primary.text).toBe('Egyeztetést kérek végelszámolásról')
     expect(cta.primary.href).toBe('/kapcsolat?szolgaltatas=vegelszamolas#ajanlatkeres')
+  })
+
+  it('links the accounting page to the switching page without copying it', () => {
+    const page = pageBy(site.pages, 'szolgaltatasok/konyveles')
+    const headerData = sectionData<{ secondary?: { href: string } }>(page, 'fk-page-header')
+    expect(headerData.secondary?.href).toBe('/konyvelovaltas')
+  })
+
+  it('keeps related-service cards compact (no preview panel)', () => {
+    const page = pageBy(site.pages, 'szolgaltatasok/konyveles')
+    const related = page.sections.find((s) => s.id === 'konyveles-kapcsolodo')!.data as { items: { highlights?: string[] }[] }
+    expect(related.items.every((i) => i.highlights === undefined)).toBe(true)
   })
 
   it('omits every empty optional block', () => {
     const c = withContent((x) => ({ ...x, services: [...x.services, minimalService] }))
     const page = pageBy(buildSiteData(c).pages, 'szolgaltatasok/konyvvizsgalat-elokeszites')
-    expect(types(page)).toEqual(['fk-page-header', 'fk-cta'])
+    expect(types(page)).toEqual(['fk-page-header', 'fk-cta', 'fk-map'])
   })
 
   it('adds a service through content only', () => {
     const c = withContent((x) => ({ ...x, services: [...x.services, minimalService] }))
-    const site7 = buildSiteData(c)
-    const home = pageBy(site7.pages, 'home')
+    const home = pageBy(buildSiteData(c).pages, 'home')
     const cards = sectionData<{ items: { slug: string; number: string }[] }>(home, 'fk-services').items
     expect(cards[cards.length - 1]).toMatchObject({ slug: 'konyvvizsgalat-elokeszites', number: '07' })
     const quote = sectionData<{ services: { value: string }[] }>(home, 'fk-quote')
@@ -184,8 +225,21 @@ describe('service page template', () => {
 
   it('hides hidden services everywhere', () => {
     const c = withContent((x) => ({ ...x, services: x.services.map((s) => (s.slug === 'palyazatok' ? { ...s, visible: false } : s)) }))
-    const site5 = buildSiteData(c)
-    expect(site5.pages.map((p) => p.slug)).not.toContain('szolgaltatasok/palyazatok')
+    expect(buildSiteData(c).pages.map((p) => p.slug)).not.toContain('szolgaltatasok/palyazatok')
+  })
+})
+
+describe('switching page', () => {
+  it('covers process, documents, FAQ and next step', () => {
+    const page = pageBy(buildSiteData(content).pages, 'konyvelovaltas')
+    expect(types(page)).toEqual(['fk-page-header', 'features', 'fk-list', 'fk-faq', 'fk-cta', 'fk-map'])
+  })
+})
+
+describe('about page', () => {
+  it('complements the homepage with how we work and the team', () => {
+    const page = pageBy(buildSiteData(content).pages, 'rolunk')
+    expect(types(page)).toEqual(['fk-page-header', 'features', 'fk-team', 'fk-cta', 'fk-map'])
   })
 })
 
@@ -207,50 +261,67 @@ describe('prices — settings.showPrices', () => {
     const on = withContent((c) => ({ ...c, settings: { ...c.settings, showPrices: true } }))
     expect(priceSections(on)).toHaveLength(6)
     expect(cardPrices(on)).toHaveLength(6)
-    const berszam = pageBy(buildSiteData(on).pages, 'szolgaltatasok/berszamfejtes')
-    expect(sectionData<{ price: { amount: string; unit: string } }>(berszam, 'fk-price').price).toMatchObject({
-      amount: '[ÁR] Ft',
-      unit: '/ fő/hó',
-    })
   })
 })
 
-describe('contact — single source and primary contact', () => {
-  it('resolves the primary contact from isPrimaryContact', () => {
-    const contactPage = pageBy(buildSiteData(content).pages, 'kapcsolat')
-    const data = sectionData<{ primaryContact: { name: string } }>(contactPage, 'fk-contact')
-    expect(data.primaryContact.name).toBe('Farkas Klára')
+describe('contact — roles and single source', () => {
+  it('routes enquiries to the designated administrator, not to the lead', () => {
+    const site = buildSiteData(content)
+    const contact = sectionData<{ primaryContact: { name?: string; role: string }; lead: { name?: string } }>(
+      pageBy(site.pages, 'kapcsolat'),
+      'fk-contact',
+    )
+    expect(contact.primaryContact.role).toBe('Ügyintéző, kapcsolattartó')
+    expect(contact.primaryContact.name).toBe('Posszert Ervin')
+    expect(contact.lead.name).toBe('Farkas Klára')
+    const quote = sectionData<{ primaryContact: { role: string } }>(pageBy(site.pages, 'home'), 'fk-quote')
+    expect(quote.primaryContact.role).toBe('Ügyintéző, kapcsolattartó')
   })
 
-  it('follows the data, not a hard-coded name', () => {
-    const c = withContent((x) => ({
-      ...x,
-      people: x.people.map((p) => ({ ...p, isPrimaryContact: p.id === 'munkatars-1' })),
-    }))
-    const quote = sectionData<{ primaryContact: { name: string } }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-quote')
-    expect(quote.primaryContact.name).toBe('[MUNKATÁRS NEVE]')
+  it('hides a name that is still a placeholder', () => {
+    const c = withContent((x) => ({ ...x, people: x.people.map((p) => (p.id === 'ugyintezo' ? { ...p, name: '[ÜGYINTÉZŐ NEVE]' } : p)) }))
+    const quote = sectionData<{ primaryContact: { name?: string; role: string } }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-quote')
+    expect(quote.primaryContact.name).toBeUndefined()
+    expect(quote.primaryContact.role).toBe('Ügyintéző, kapcsolattartó')
   })
 
-  it('rejects zero or several primary contacts', () => {
-    const none = withContent((x) => ({ ...x, people: x.people.map((p) => ({ ...p, isPrimaryContact: false })) }))
-    const two = withContent((x) => ({ ...x, people: x.people.map((p) => ({ ...p, isPrimaryContact: true })) }))
-    expect(() => buildSiteData(none)).toThrow(/isPrimaryContact/)
-    expect(() => buildSiteData(two)).toThrow(/isPrimaryContact/)
+  it('rejects zero or several primary contacts / leads', () => {
+    const noContact = withContent((x) => ({ ...x, people: x.people.map((p) => ({ ...p, isPrimaryContact: false })) }))
+    const twoLeads = withContent((x) => ({ ...x, people: x.people.map((p) => ({ ...p, isLead: true })) }))
+    expect(() => buildSiteData(noContact)).toThrow(/isPrimaryContact/)
+    expect(() => buildSiteData(twoLeads)).toThrow(/isLead/)
   })
 
   it('propagates one company value to every contact area', () => {
     const c = withContent((x) => ({ ...x, company: { ...x.company, phone: '+36 76 000 0000' } }))
     const site = buildSiteData(c)
-    const contact = sectionData<{ phone: { href?: string } }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
-    const quote = sectionData<{ primaryContact: { phone: { href?: string } } }>(pageBy(site.pages, 'home'), 'fk-quote')
-    expect(contact.phone.href).toBe('tel:+36760000000')
-    expect(quote.primaryContact.phone.href).toBe('tel:+36760000000')
+    const contact = sectionData<{ phone?: { href?: string } }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
+    const quote = sectionData<{ primaryContact: { phone?: { href?: string } } }>(pageBy(site.pages, 'home'), 'fk-quote')
+    expect(contact.phone?.href).toBe('tel:+36760000000')
+    expect(quote.primaryContact.phone?.href).toBe('tel:+36760000000')
   })
 
-  it('never builds tel:/mailto: links from placeholders', () => {
-    expect(phoneLink('[TELEFONSZÁM]').href).toBeUndefined()
-    expect(emailLink('[E-MAIL]').href).toBeUndefined()
-    expect(emailLink('iroda@example.hu').href).toBe('mailto:iroda@example.hu')
+  it('never builds contact values from placeholders', () => {
+    expect(phoneLink('[TELEFONSZÁM]')).toBeUndefined()
+    expect(emailLink('[E-MAIL]')).toBeUndefined()
+    expect(emailLink('iroda@example.hu')?.href).toBe('mailto:iroda@example.hu')
+  })
+
+  it('closes every page with the full-width map of the real address', () => {
+    const site = buildSiteData(content)
+    for (const page of site.pages) {
+      const last = page.sections[page.sections.length - 1]!
+      expect(last.type, page.slug).toBe('fk-map')
+      expect((last.data as { query: string }).query).toBe('6000 Kecskemét, Berzsenyi utca 19.')
+    }
+    const contact = sectionData<{ address: string }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
+    expect(contact.address).toBe('6000 Kecskemét, Berzsenyi utca 19.')
+  })
+
+  it('shows no map for an incomplete address', () => {
+    const site = buildSiteData(withContent(unknownStreet))
+    expect(site.pages.flatMap((p) => p.sections).some((s) => s.type === 'fk-map')).toBe(false)
+    expect(sectionData<{ address: string }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact').address).toBe('6000 Kecskemét')
   })
 })
 
