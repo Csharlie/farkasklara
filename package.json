@@ -1,0 +1,54 @@
+{
+  "name": "sp-farkasklara",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Farkas Klára Könyvelőiroda — Spektra platform client",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@spektra/components": "link:../../sp-platform/packages/components",
+    "@spektra/data": "link:../../sp-platform/packages/data",
+    "@spektra/runtime": "link:../../sp-platform/packages/runtime",
+    "@spektra/sections": "link:../../sp-platform/packages/sections",
+    "@spektra/layouts": "link:../../sp-platform/packages/layouts",
+    "@spektra/themes": "link:../../sp-platform/packages/themes",
+    "@spektra/types": "link:../../sp-platform/packages/types",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.2",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^10.2.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.58.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.9"
+  },
+  "pnpm": {
+    "overrides": {
+      "@spektra/types": "link:../../sp-platform/packages/types",
+      "@spektra/data": "link:../../sp-platform/packages/data",
+      "@spektra/runtime": "link:../../sp-platform/packages/runtime",
+      "@spektra/components": "link:../../sp-platform/packages/components",
+      "@spektra/sections": "link:../../sp-platform/packages/sections",
+      "@spektra/layouts": "link:../../sp-platform/packages/layouts"
+    }
+  }
+}

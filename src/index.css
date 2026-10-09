@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Client palette (HSL channels) ───────────────────────────
+       ink            #1F2A37   surface        #FFFFFF
+       surface-strong #262F3C   surface-warm   #F4F1EC
+       slate          #5C6670   line           #ECE8E1
+       muted-on-dark  #B8C0CA   accent         #C99A2E
+       accent-text    #8A6516
+       To make dark blocks lighter, change --fk-surface-strong (and, if
+       needed for contrast, --fk-on-strong / --fk-muted-on-dark) here only. */
+    --fk-ink: 213 28% 17%;
+    --fk-surface: 0 0% 100%;
+    --fk-surface-warm: 38 27% 94%;
+    --fk-surface-strong: 215 22% 19%;
+    --fk-surface-strong-raised: 215 19% 24%;
+    --fk-on-strong: 0 0% 100%;
+    --fk-muted-on-dark: 213 15% 76%;
+    --fk-slate: 210 10% 40%;
+    --fk-line: 38 22% 90%;
+    --fk-accent: 42 63% 48%;
+    --fk-accent-text: 41 72% 31%;
+
+    /* ── Platform semantic tokens (light) ─────────────────────── */
+    --background: var(--fk-surface);
+    --foreground: var(--fk-ink);
+    --muted: var(--fk-surface-warm);
+    --muted-foreground: var(--fk-slate);
+    --surface: var(--fk-surface);
+    --border: var(--fk-line);
+    --accent: var(--fk-accent);
+    /* Never white text on accent */
+    --accent-foreground: var(--fk-ink);
+    --destructive: 4 76% 40%;
+    --destructive-foreground: 0 0% 100%;
+  }
+
+  /* Dark surface — every block rendered with colorScheme: 'dark'
+     (platform data-color-scheme convention) derives from surface-strong. */
+  [data-color-scheme='dark'] {
+    --background: var(--fk-surface-strong);
+    --foreground: var(--fk-on-strong);
+    --muted: var(--fk-surface-strong);
+    --muted-foreground: var(--fk-muted-on-dark);
+    --surface: var(--fk-surface-strong-raised);
+    --border: 215 15% 32%;
+    --accent: var(--fk-accent);
+    --accent-foreground: var(--fk-ink);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background font-sans text-base text-foreground antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold tracking-heading;
+    text-wrap: balance;
+    /* Long Hungarian compounds (e.g. "Végelszámolás") at display sizes must
+       not overflow narrow screens: hyphenate (lang="hu"), break as last resort. */
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  dd,
+  dt {
+    overflow-wrap: break-word;
+  }
+
+  h1 {
+    @apply font-extrabold tracking-display;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--fk-accent-text));
+    outline-offset: 2px;
+  }
+
+  [data-color-scheme='dark'] :focus-visible {
+    outline-color: hsl(var(--fk-accent));
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}

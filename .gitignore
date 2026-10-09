@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tsbuildinfo
+
+# === Environment ===
+# .env committed (public defaults, no secrets), local overrides gitignored
+.env.local
+.env.*.local
