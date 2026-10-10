@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { cn } from '@spektra/components'
 import type { LayoutShellProps } from '@spektra/layouts'
 import { ctaClassName } from '../theme/layout'
-import { ContactAnchor } from '../sections/shared/ContactAnchor'
-import { ariaCurrent, contextualQuoteHref, currentPath, shell } from './shell-context'
+import { Icon } from '../sections/shared/icons'
+import { ariaCurrent, currentPath, shell } from './shell-context'
 
 /**
  * Header — maps SiteData navigation to a route-based header.
@@ -15,7 +15,6 @@ export function AppHeader({ siteData }: LayoutShellProps) {
   const [open, setOpen] = useState(false)
   const path = currentPath()
   const links = siteData.navigation.primary
-  const quoteHref = contextualQuoteHref(path, siteData.pages)
 
   return (
     <header
@@ -63,25 +62,22 @@ export function AppHeader({ siteData }: LayoutShellProps) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:gap-4 lg:ml-2">
-          {shell.contact.phone && (
-            <ContactAnchor
-              link={shell.contact.phone}
-              action="call"
-              id="header-phone"
-              label="Telefon"
-              className="hidden font-semibold tabular-nums sm:inline-flex"
-            />
+          {/* Phone in place of the header CTA (the quote CTA stays in the mobile menu). */}
+          {shell.contact.phone?.href && (
+            <a
+              href={shell.contact.phone.href}
+              aria-label={`Telefon: ${shell.contact.phone.text}`}
+              data-ui-id="header-phone"
+              data-ui-type="link"
+              data-ui-role="cta"
+              data-ui-action="call"
+              data-ui-trigger="click"
+              className={ctaClassName('secondary', 'hidden min-h-11 gap-2 px-5 py-2 tabular-nums sm:inline-flex')}
+            >
+              <Icon name="phone" className="size-[1.125rem] text-accent" />
+              {shell.contact.phone.text}
+            </a>
           )}
-          <a
-            href={quoteHref}
-            data-ui-id="header-quote"
-            data-ui-type="link"
-            data-ui-role="cta"
-            data-ui-action="navigate"
-            className={ctaClassName('primary', 'hidden min-h-11 px-5 py-2 sm:inline-flex')}
-          >
-            {shell.quote.label}
-          </a>
           <button
             type="button"
             aria-expanded={open}
@@ -108,17 +104,6 @@ export function AppHeader({ siteData }: LayoutShellProps) {
         className={cn('border-t border-border/60 lg:hidden')}
       >
         <ul className="mx-auto flex w-full max-w-content flex-col px-6 py-4">
-          {shell.contact.phone && (
-            <li className="border-b border-border pb-2 sm:hidden">
-              <ContactAnchor
-                link={shell.contact.phone}
-                action="call"
-                id="nav-mobile-phone"
-                label="Telefon"
-                className="min-h-12 text-lg font-semibold tabular-nums"
-              />
-            </li>
-          )}
           {links.map((link) => (
             <li key={link.href}>
               <a
@@ -133,20 +118,24 @@ export function AppHeader({ siteData }: LayoutShellProps) {
               </a>
             </li>
           ))}
-          <li className="pt-5">
-            <a
-              href={quoteHref}
-              onClick={() => setOpen(false)}
-              data-ui-id="nav-mobile-quote"
-              data-ui-type="link"
-              data-ui-role="cta"
-              data-ui-action="navigate"
-              data-ui-trigger="click"
-              className={ctaClassName('primary', 'w-full')}
-            >
-              {shell.quote.label}
-            </a>
-          </li>
+          {shell.contact.phone?.href && (
+            <li className="pt-5">
+              <a
+                href={shell.contact.phone.href}
+                aria-label={`Hívás: ${shell.contact.phone.text}`}
+                onClick={() => setOpen(false)}
+                data-ui-id="nav-mobile-call"
+                data-ui-type="link"
+                data-ui-role="cta"
+                data-ui-action="call"
+                data-ui-trigger="click"
+                className={ctaClassName('secondary', 'w-full gap-2 tabular-nums')}
+              >
+                <Icon name="phone" className="size-[1.125rem] text-accent" />
+                {shell.contact.phone.text}
+              </a>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

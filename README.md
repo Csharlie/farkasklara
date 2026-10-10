@@ -63,6 +63,8 @@ Nyitott: `[TELEFONSZÁM]`, `[E-MAIL]`, `[NAPOK]`/`[NYITVATARTÁS]`, `[CÉGNÉV]`
 `[ADATKEZELÉSI TÁJÉKOZTATÓ SZÖVEGE: …]`, `url` (`[WEBCÍM]`).
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
+**FIKTÍV irodai elérhetőségek (élesítés előtt cserélendők):** telefonszám, e-mail-cím és nyitvatartás a `src/content/company.ts`-ben (`FIKTÍV` megjegyzéssel); a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
+
 **Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Halász Réka neve a projekt során megadott (korábban fiktívként bevezetett) adat — élesítés előtt ellenőrizendő. Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe.
 
 **Tény-sáv (Rólunk alatt):** csak tartalomból levezetett értékek (csapatlétszám, szolgáltatási területek, ügyfélcsoportok, Kecskemét). Ellenőrzött üzleti mutató (pl. alapítás éve, ügyfélszám) a `copy.home.facts.items` listában cserélhető be.

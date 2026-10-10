@@ -59,16 +59,10 @@ export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, 
             <CornerName name={lead.name} size="lg" />
             <header className="relative">
               <div>
-                <p
-                  data-ui-type="badge"
-                  className="w-fit rounded-full bg-muted px-3 py-1 text-sm font-semibold text-accent-text"
-                >
-                  {lead.badge}
-                </p>
-                <h3 data-ui-role="item-title" className="mt-3 text-3xl md:text-4xl">
+                <h3 data-ui-role="item-title" className="text-3xl md:text-4xl">
                   {lead.name ?? lead.role}
                 </h3>
-                {lead.name && lead.role !== lead.badge && <p className="mt-1 text-muted-foreground">{lead.role}</p>}
+                {lead.name && <p className="mt-1 font-semibold text-accent-text">{lead.role}</p>}
                 {lead.credentials && lead.credentials.length > 0 && (
                   <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
                     {lead.credentials.map((credential) => (

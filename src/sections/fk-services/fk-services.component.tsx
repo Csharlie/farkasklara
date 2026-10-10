@@ -1,6 +1,7 @@
 import { cn } from '@spektra/components'
 import { contentWidth, sectionSpacing, toneClassName } from '../../theme/layout'
-import { Icon, isIconName } from '../shared/icons'
+import { isIconName } from '../shared/icon-paths'
+import { Icon } from '../shared/icons'
 import { SectionIntro } from '../shared/SectionIntro'
 import type { FkServicesData } from './fk-services.schema'
 

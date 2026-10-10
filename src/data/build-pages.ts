@@ -1,4 +1,3 @@
-import type { HeroBlockProps } from '@spektra/components'
 import type { Page, PageMeta, Section } from '@spektra/types'
 import type { ClientContent } from '../content'
 import type { FactInput } from '../content/copy'
@@ -15,7 +14,7 @@ import type { FkQuoteData } from '../sections/fk-quote'
 import type { FkServicesData } from '../sections/fk-services'
 import type { FkTeamData, FkTeamMember } from '../sections/fk-team'
 import type { FkTrustData } from '../sections/fk-trust'
-import type { FkFeaturesData } from '../sections/platform'
+import type { FkFeaturesData, FkHeroData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
 import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, type ContactView } from './contact'
 import { visiblePrice } from './price'
@@ -102,7 +101,7 @@ function audiencesFeatures(id: string, title: string, audiences: readonly Audien
   if (audiences.length === 0) return undefined
   return section<FkFeaturesData>(id, 'features', {
     title,
-    features: audiences.map((a) => ({ title: a.label, description: a.description })),
+    features: audiences.map((a) => ({ title: a.label, description: a.description, iconName: a.icon })),
     columns: audiences.length >= 4 ? 4 : audiences.length === 2 ? 2 : 3,
     tone,
   })
@@ -184,7 +183,7 @@ function servicesSection(
   })
 }
 
-function teamMember(ctx: BuildContext, person: Person): FkTeamMember {
+function teamMember(person: Person): FkTeamMember {
   return {
     id: person.id,
     name: known(person.name),
@@ -193,10 +192,10 @@ function teamMember(ctx: BuildContext, person: Person): FkTeamMember {
     bio: known(person.bio),
     credentials: knownItems(person.credentials),
     isPrimaryContact: person.isPrimaryContact,
-    // Enquiries go to the primary contact (own or office channel); others
-    // show a channel only when it is their own and known.
-    phone: person.isPrimaryContact ? ctx.contact.primaryContact.phone : phoneLink(person.phone),
-    email: person.isPrimaryContact ? ctx.contact.primaryContact.email : emailLink(person.email),
+    // Team cards show no office channels (the firm's contact details live in
+    // the contact cards/footer); only a person's own, known channel appears.
+    phone: phoneLink(person.phone),
+    email: emailLink(person.email),
   }
 }
 
@@ -232,7 +231,7 @@ function teamSection(
   // Members without a known name AND without a role description would be empty cards.
   const others = people
     .filter((p) => !p.isLead)
-    .map((p) => teamMember(ctx, p))
+    .map((p) => teamMember(p))
     .filter((m) => m.name || m.bio)
   if (!leadPerson && others.length === 0) return undefined
   return section<FkTeamData>(id, 'fk-team', {
@@ -241,7 +240,7 @@ function teamSection(
     intro: options.intro,
     lead: leadPerson
       ? {
-          ...teamMember(ctx, leadPerson),
+          ...teamMember(leadPerson),
           badge: copy.team.leadBadge,
           // Lead block: introduction paragraphs (fallback: the short bio).
           paragraphs: (knownItems(leadPerson.intro).length > 0 ? knownItems(leadPerson.intro) : knownItems([leadPerson.bio ?? ''])).slice(
@@ -273,7 +272,6 @@ function quoteSection(
     intro,
     formId: 'quote',
     services: ctx.services.map((s) => ({ value: s.slug, label: s.title })),
-    businessForms: settings.quote.businessForms,
     prefillParam: settings.quote.prefillParam,
     privacyHref: routes.privacy,
     labels,
@@ -282,10 +280,20 @@ function quoteSection(
     panel: options.panel
       ? {
           title: copy.quotePanel.title,
-          labels: { address: copy.quotePanel.address, phone: copy.quotePanel.phone, email: copy.quotePanel.email },
+          labels: {
+            address: copy.quotePanel.address,
+            phone: copy.quotePanel.phone,
+            email: copy.quotePanel.email,
+            hours: copy.quotePanel.hours,
+          },
+          notes: copy.quotePanel.notes,
           addressLines: ctx.contact.addressLines,
+          directions: ctx.contact.directionsHref
+            ? { href: ctx.contact.directionsHref, label: copy.quotePanel.directions }
+            : undefined,
           phone: ctx.contact.phone,
           email: ctx.contact.email,
+          hours: ctx.contact.hours,
         }
       : undefined,
     primaryContact: {
@@ -328,9 +336,10 @@ export function buildHomePage(ctx: BuildContext): Page {
     company.name,
     pageMeta(ctx, routes.home, pageTitle(ctx, home.meta.title), home.meta.description),
     compact([
-      section<HeroBlockProps>('home-hero', 'hero', {
+      section<FkHeroData>('home-hero', 'hero', {
         subtitle: home.hero.eyebrow,
         title: home.hero.title,
+        titleHighlight: home.hero.titleHighlight,
         description: home.hero.description,
         primaryCTA: { text: home.hero.primaryCta, href: `#${QUOTE_ANCHOR}` },
         // Services follow right below the hero — scroll instead of a page load.
@@ -375,10 +384,12 @@ export function buildServicesIndexPage(ctx: BuildContext): Page {
     pageMeta(ctx, routes.services, pageTitle(ctx, c.meta.title), c.meta.description),
     compact([
       header('szolgaltatasok-fejlec', { eyebrow: c.eyebrow, title: c.title, lead: c.lead }),
+      // Same card design as the homepage (icon cards).
       servicesSection(ctx, 'szolgaltatasok-lista', ctx.services, {
         title: c.listTitle,
-        numbered: true,
-        highlightFirst: true,
+        numbered: false,
+        highlightFirst: false,
+        iconCards: true,
       }),
       generalQuoteCta(ctx, 'szolgaltatasok-cta'),
     ]),
@@ -550,7 +561,6 @@ export function buildContactPage(ctx: BuildContext): Page {
         email: contact.email,
         hoursTitle: ctx.content.copy.footer.hoursTitle,
         hours: contact.hours,
-        primaryContact: { label: c.primaryContactLabel, ...contact.primaryContact },
         lead: { label: c.leadLabel, name: contact.lead.name, role: contact.lead.role },
       }),
       // The contact details are shown right above — no duplicate panel here.

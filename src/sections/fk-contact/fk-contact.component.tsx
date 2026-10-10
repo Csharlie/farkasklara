@@ -77,6 +77,7 @@ export function FkContact({
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
+          {primaryContact && (
           <div className="rounded-xl border border-border bg-muted p-6 md:p-8">
             <p className="text-sm font-semibold text-accent-text">{primaryContact.label}</p>
             <p className="mt-2 font-display text-2xl font-bold tracking-heading">
@@ -95,6 +96,7 @@ export function FkContact({
               </div>
             )}
           </div>
+          )}
 
           {lead && (
             <div className="rounded-xl border border-border bg-surface p-6 md:p-8">

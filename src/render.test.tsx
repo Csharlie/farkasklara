@@ -63,7 +63,7 @@ describe('rendering', () => {
   it('shows roles and a decorative corner name instead of a photo', () => {
     const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
     expect(html).toMatch(/aria-hidden="true"[^>]*>Farkas Klára</)
-    expect(html).toContain('Ügyintéző, kapcsolattartó')
+    expect(html).toContain('Könyvelő, ügyintéző')
   })
 
   it('tracks call/email/form via the platform data-ui standard', () => {

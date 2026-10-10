@@ -48,6 +48,8 @@ export interface Audience {
   id: string
   label: string
   description: string
+  /** Icon key for the features card (see src/sections/shared/icons.tsx). */
+  icon?: string
   enabled: boolean
   /** When set, the audience is visible only if settings.segments[segment].enabled. */
   segment?: SegmentKey
@@ -175,7 +177,6 @@ export interface Settings {
   quote: {
     /** Query parameter that preselects a service: ?szolgaltatas=<slug> */
     prefillParam: string
-    businessForms: string[]
   }
   seo: {
     /** Tokens: {service}, {city}, {company} */

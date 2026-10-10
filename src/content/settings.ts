@@ -18,7 +18,6 @@ export const settings: Settings = {
 
   quote: {
     prefillParam: 'szolgaltatas',
-    businessForms: ['Egyéni vállalkozó', 'Kft.', 'Bt.', 'Egyéb / még nincs vállalkozásom'],
   },
 
   seo: {

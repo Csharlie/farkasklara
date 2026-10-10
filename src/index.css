@@ -135,6 +135,24 @@
   color: hsl(var(--fk-ink));
 }
 
+/* Platform HeroBlock content: left-aligned (the platform centers the text,
+   description and CTA row with fixed classes). Side padding matches the
+   header (24px) so the text lines up with the logo. */
+[data-ui-component='hero-block'] > div {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  text-align: left;
+}
+
+[data-ui-component='hero-block'] > div > p {
+  margin-left: 0;
+}
+
+[data-ui-component='hero-block'] > div > div {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -145,4 +163,18 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Platform FeatureCard icon slot (stable data-ui-component hook): plain,
+   large line icon at the top-left — no tinted 48px box. */
+[data-ui-component='feature-card'] > div:first-child:has(> svg) {
+  width: auto;
+  height: auto;
+  margin-bottom: 1.75rem;
+  justify-content: flex-start;
+  background: transparent;
+}
+
+[data-ui-component='feature-card']:hover > div:first-child:has(> svg) {
+  background: transparent;
 }

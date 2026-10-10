@@ -9,7 +9,7 @@ import { Icon, type IconName } from '../shared/icons'
 import { SectionIntro } from '../shared/SectionIntro'
 import type { FkQuoteData } from './fk-quote.schema'
 
-type FieldName = 'name' | 'contact' | 'email' | 'businessForm' | 'services' | 'consent'
+type FieldName = 'name' | 'contact' | 'email' | 'service' | 'consent'
 type FieldErrors = Partial<Record<FieldName, string>>
 
 type SubmitState =
@@ -33,17 +33,37 @@ const inputClassName = cn(
   'aria-[invalid=true]:border-destructive disabled:opacity-60',
 )
 
-/** One contact row of the panel: icon tile + small label + value. */
-function PanelRow({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
+/**
+ * Contact info card — same visual language as the service cards: large pale
+ * corner icon (bc-services pattern), small label, value, optional note.
+ */
+function InfoCard({
+  icon,
+  label,
+  note,
+  wide,
+  children,
+}: {
+  icon: IconName
+  label: string
+  note?: string
+  wide?: boolean
+  children: ReactNode
+}) {
   return (
-    <li className="flex items-start gap-4">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-muted text-accent-text">
-        <Icon name={icon} className="size-5" />
-      </span>
-      <div className="min-w-0">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <div className="mt-0.5 font-semibold">{children}</div>
-      </div>
+    <li
+      className={cn(
+        'relative isolate min-w-0 overflow-hidden rounded-xl border border-border bg-surface p-5 pt-12',
+        wide && 'sm:col-span-2',
+      )}
+    >
+      <Icon
+        name={icon}
+        className="pointer-events-none absolute -left-3 -top-3 -z-10 size-20 text-accent-text opacity-[0.14]"
+      />
+      <p className="text-sm font-semibold uppercase tracking-[0.06em] text-accent-text">{label}</p>
+      <div className="mt-1.5 font-semibold">{children}</div>
+      {note && <p className="mt-1 text-sm text-muted-foreground">{note}</p>}
     </li>
   )
 }
@@ -54,7 +74,6 @@ export function FkQuote({
   intro,
   formId,
   services,
-  businessForms,
   prefillParam,
   privacyHref,
   labels,
@@ -67,8 +86,8 @@ export function FkQuote({
   const uid = useId()
   const fieldId = (name: string) => `${uid}-${name}`
 
-  const [selected, setSelected] = useState<string[]>(() =>
-    readPrefill(prefillParam, services.map((s) => s.value)),
+  const [service, setService] = useState<string>(
+    () => readPrefill(prefillParam, services.map((s) => s.value))[0] ?? '',
   )
   const [errors, setErrors] = useState<FieldErrors>({})
   const [state, setState] = useState<SubmitState>({ kind: 'idle' })
@@ -88,8 +107,7 @@ export function FkQuote({
     const phone = value('phone')
     if (!email && !phone) next.contact = labels.errors.contact
     else if (email && !EMAIL_PATTERN.test(email)) next.email = labels.errors.email
-    if (!value('businessForm')) next.businessForm = labels.errors.businessForm
-    if (selected.length === 0) next.services = labels.errors.services
+    if (!service) next.service = labels.errors.services
     if (data.get('consent') !== 'on') next.consent = labels.errors.consent
     return next
   }
@@ -111,7 +129,7 @@ export function FkQuote({
 
     const data = new FormData(form)
     const text = (key: string) => String(data.get(key) ?? '').trim()
-    const selectedLabels = services.filter((s) => selected.includes(s.value)).map((s) => s.label)
+    const serviceLabel = services.find((s) => s.value === service)?.label ?? service
 
     setState({ kind: 'loading' })
     try {
@@ -119,8 +137,7 @@ export function FkQuote({
         name: text('name'),
         email: text('email'),
         phone: text('phone'),
-        businessForm: text('businessForm'),
-        services: selectedLabels,
+        services: [serviceLabel],
         message: text('message'),
         consent: 'yes',
       })
@@ -128,7 +145,7 @@ export function FkQuote({
         case 'ok':
           setState({ kind: 'ok' })
           form.reset()
-          setSelected([])
+          setService('')
           break
         case 'error':
           setState({ kind: 'error', message: result.message || labels.errors.general })
@@ -140,11 +157,6 @@ export function FkQuote({
     } catch {
       setState({ kind: 'error', message: labels.errors.general })
     }
-  }
-
-  function toggleService(value: string, checked: boolean) {
-    setSelected((current) => (checked ? [...current, value] : current.filter((v) => v !== value)))
-    if (errors.services) setErrors((current) => ({ ...current, services: undefined }))
   }
 
   const disabled = state.kind === 'loading'
@@ -167,54 +179,65 @@ export function FkQuote({
       <div
         className={cn(
           contentWidth,
-          'mt-10 grid gap-5',
-          panel && 'lg:grid-cols-5',
+          'mt-10 grid items-start gap-5',
+          panel && 'lg:grid-cols-2',
         )}
       >
         {panel && (
-          <aside
-            aria-labelledby={`${id}-panel-title`}
-            className="flex flex-col rounded-2xl border border-border bg-surface p-6 md:p-8 lg:col-span-2 lg:self-start"
-          >
-            <h3
-              id={`${id}-panel-title`}
-              className="text-sm font-semibold uppercase tracking-[0.08em] text-accent-text"
-            >
+          <aside aria-labelledby={`${id}-panel-title`}>
+            <h3 id={`${id}-panel-title`} className="sr-only">
               {panel.title}
             </h3>
-            <ul className="mt-6 space-y-5">
-              {panel.addressLines.length > 0 && (
-                <PanelRow icon="mapPin" label={panel.labels.address}>
-                  {panel.addressLines.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </PanelRow>
-              )}
-              <PanelRow icon="user" label={primaryContact.label}>
-                {primaryContact.name ?? primaryContact.role}
-                {primaryContact.name && (
-                  <span className="block text-sm font-normal text-muted-foreground">{primaryContact.role}</span>
-                )}
-              </PanelRow>
+            <ul className="grid gap-4">
               {panel.phone && (
-                <PanelRow icon="phone" label={panel.labels.phone}>
-                  <ContactAnchor link={panel.phone} action="call" id={`${id}-phone`} label={panel.labels.phone} className="min-h-0" />
-                </PanelRow>
+                <InfoCard icon="phone" label={panel.labels.phone} note={panel.notes.phone}>
+                  <ContactAnchor link={panel.phone} action="call" id={`${id}-phone`} label={panel.labels.phone} className="min-h-0 tabular-nums" />
+                </InfoCard>
               )}
               {panel.email && (
-                <PanelRow icon="mail" label={panel.labels.email}>
+                <InfoCard icon="mail" label={panel.labels.email} note={panel.notes.email}>
                   <span className="break-all">
                     <ContactAnchor link={panel.email} action="email" id={`${id}-email`} label={panel.labels.email} className="min-h-0" />
                   </span>
-                </PanelRow>
+                </InfoCard>
+              )}
+              {panel.addressLines.length > 0 && (
+                <InfoCard icon="mapPin" label={panel.labels.address}>
+                  <span>{panel.addressLines.join(', ')}</span>
+                  {panel.directions && (
+                    <a
+                      href={panel.directions.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-ui-id={`${id}-directions`}
+                      data-ui-type="link"
+                      data-ui-action="navigate"
+                      data-ui-trigger="click"
+                      className="mt-1 inline-flex min-h-11 items-center text-sm underline underline-offset-4 hover:text-accent-text"
+                    >
+                      {panel.directions.label}
+                      <span className="sr-only"> (új lapon nyílik)</span>
+                    </a>
+                  )}
+                </InfoCard>
+              )}
+              {panel.hours.length > 0 && (
+                <InfoCard icon="clock" label={panel.labels.hours} note={panel.notes.hours}>
+                  <dl className="space-y-0.5">
+                    {panel.hours.map((entry) => (
+                      <div key={entry.days} className="flex flex-wrap justify-between gap-x-4">
+                        <dt className="font-normal text-muted-foreground">{entry.days}</dt>
+                        <dd className="tabular-nums">{entry.hours}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </InfoCard>
               )}
             </ul>
           </aside>
         )}
 
-        <div className={cn('rounded-2xl border border-border bg-surface p-6 md:p-8', panel ? 'lg:col-span-3' : 'w-full max-w-3xl')}>
+        <div className={cn('rounded-2xl border border-border bg-surface p-6 md:p-8', !panel && 'w-full max-w-3xl')}>
           {state.kind === 'ok' ? (
             <div
               role="status"
@@ -292,7 +315,7 @@ export function FkQuote({
                 <p id={fieldId('contact-hint')} className="mb-3 text-sm text-muted-foreground">
                   {labels.contactHint}
                 </p>
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor={fieldId('email')} className="mb-2 block font-semibold">
                       {labels.email}
@@ -338,73 +361,42 @@ export function FkQuote({
               </div>
 
               <div>
-                <label htmlFor={fieldId('businessForm')} className="mb-2 block font-semibold">
-                  {labels.businessForm} <span aria-hidden="true">*</span>
+                <label htmlFor={fieldId('service')} className="mb-2 block font-semibold">
+                  {labels.services} <span aria-hidden="true">*</span>
                 </label>
                 <select
-                  id={fieldId('businessForm')}
-                  name="businessForm"
+                  id={fieldId('service')}
+                  name="service"
                   required
-                  defaultValue=""
+                  value={service}
+                  onChange={(e) => {
+                    setService(e.target.value)
+                    if (errors.service) setErrors((current) => ({ ...current, service: undefined }))
+                  }}
                   disabled={disabled}
-                  aria-invalid={errors.businessForm ? true : undefined}
-                  aria-describedby={describedBy(errors.businessForm && fieldId('businessForm-error'))}
-                  data-ui-id={`${id}-business-form`}
+                  aria-invalid={errors.service ? true : undefined}
+                  aria-describedby={describedBy(errors.service && fieldId('service-error'))}
+                  data-ui-id={`${id}-service`}
                   data-ui-type="select"
+                  data-ui-action="select"
+                  data-ui-trigger="change"
                   className={inputClassName}
                 >
                   <option value="" disabled>
-                    {labels.businessFormPlaceholder}
+                    {labels.servicePlaceholder}
                   </option>
-                  {businessForms.map((form) => (
-                    <option key={form} value={form}>
-                      {form}
+                  {services.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
-                {errors.businessForm && (
-                  <p id={fieldId('businessForm-error')} className="mt-2 text-sm text-destructive">
-                    {errors.businessForm}
+                {errors.service && (
+                  <p id={fieldId('service-error')} className="mt-2 text-sm text-destructive">
+                    {errors.service}
                   </p>
                 )}
               </div>
-
-              <fieldset
-                aria-describedby={describedBy(errors.services && fieldId('services-error'))}
-                aria-invalid={errors.services ? true : undefined}
-              >
-                <legend className="mb-3 font-semibold">
-                  {labels.services} <span aria-hidden="true">*</span>
-                </legend>
-                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                  {services.map((service) => (
-                    <label
-                      key={service.value}
-                      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2 has-[:checked]:border-foreground"
-                    >
-                      <input
-                        type="checkbox"
-                        name="services"
-                        value={service.value}
-                        checked={selected.includes(service.value)}
-                        onChange={(e) => toggleService(service.value, e.target.checked)}
-                        disabled={disabled}
-                        data-ui-id={`${id}-service-${service.value}`}
-                        data-ui-type="checkbox"
-                        data-ui-action="select"
-                        data-ui-trigger="change"
-                        className="size-5 accent-[hsl(var(--fk-ink))]"
-                      />
-                      {service.label}
-                    </label>
-                  ))}
-                </div>
-                {errors.services && (
-                  <p id={fieldId('services-error')} className="mt-2 text-sm text-destructive">
-                    {errors.services}
-                  </p>
-                )}
-              </fieldset>
 
               <div>
                 <label htmlFor={fieldId('message')} className="mb-2 block font-semibold">

@@ -1,5 +1,6 @@
 import type { LayoutShellProps } from '@spektra/layouts'
 import { ContactAnchor } from '../sections/shared/ContactAnchor'
+import { Icon } from '../sections/shared/icons'
 import { shell } from './shell-context'
 
 /** Footer — every contact value comes from the single company source. */
@@ -23,34 +24,50 @@ export function AppFooter({ siteData }: LayoutShellProps) {
 
         <div>
           <h2 className="text-lg">{copy.contactTitle}</h2>
-          <address className="mt-3 not-italic text-muted-foreground">
-            {contact.addressLines.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </address>
-          {(contact.phone || contact.email) && (
-            <div className="mt-3 flex flex-col">
-              {contact.phone && (
-                <ContactAnchor link={contact.phone} action="call" id="footer-phone" label="Telefon" className="tabular-nums" />
-              )}
-              {contact.email && <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" />}
-            </div>
-          )}
-          {contact.hours.length > 0 && (
-            <>
-              <h3 className="mt-6 text-base">{copy.hoursTitle}</h3>
-              <dl className="mt-2 text-muted-foreground">
-                {contact.hours.map((entry) => (
-                  <div key={entry.days} className="flex flex-wrap gap-x-3">
-                    <dt>{entry.days}</dt>
-                    <dd className="tabular-nums">{entry.hours}</dd>
-                  </div>
-                ))}
-              </dl>
-            </>
-          )}
+          <ul className="mt-4 space-y-3 text-muted-foreground">
+            {contact.addressLines.length > 0 && (
+              <li className="flex items-start gap-3">
+                <Icon name="mapPin" className="mt-0.5 size-5 shrink-0 text-accent" />
+                <address className="not-italic">
+                  {contact.addressLines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </address>
+              </li>
+            )}
+            {contact.phone && (
+              <li className="flex items-center gap-3">
+                <Icon name="phone" className="size-5 shrink-0 text-accent" />
+                <ContactAnchor link={contact.phone} action="call" id="footer-phone" label="Telefon" className="font-semibold text-foreground underline decoration-muted-on-dark/60 decoration-1 underline-offset-4 transition-colors hover:text-accent hover:decoration-accent tabular-nums" />
+              </li>
+            )}
+            {contact.email && (
+              <li className="flex items-center gap-3">
+                <Icon name="mail" className="size-5 shrink-0 text-accent" />
+                <span className="min-w-0 break-all">
+                  <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" className="font-semibold text-foreground underline decoration-muted-on-dark/60 decoration-1 underline-offset-4 transition-colors hover:text-accent hover:decoration-accent" />
+                </span>
+              </li>
+            )}
+            {contact.hours.length > 0 && (
+              <li className="flex items-start gap-3">
+                <Icon name="clock" className="mt-0.5 size-5 shrink-0 text-accent" />
+                <div>
+                  <span className="sr-only">{copy.hoursTitle}: </span>
+                  <dl>
+                    {contact.hours.map((entry) => (
+                      <div key={entry.days} className="flex flex-wrap gap-x-3">
+                        <dt>{entry.days}</dt>
+                        <dd className="tabular-nums">{entry.hours}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </li>
+            )}
+          </ul>
         </div>
 
         {shell.services.length > 0 && (

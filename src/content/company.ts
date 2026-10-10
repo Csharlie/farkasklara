@@ -16,9 +16,13 @@ export const company: Company = {
     city: 'Kecskemét',
     street: 'Berzsenyi utca 19.',
   },
-  phone: '[TELEFONSZÁM]',
-  email: '[E-MAIL]',
-  openingHours: [{ days: '[NAPOK]', hours: '[NYITVATARTÁS]' }],
+  // FIKTÍV — telefon, e-mail és nyitvatartás élesítés előtt valós adatra cserélendő.
+  phone: '+36 76 000 1234',
+  email: 'iroda@farkasklara-konyveles.hu',
+  openingHours: [
+    { days: 'Hétfő–csütörtök', hours: '8:00–16:30' },
+    { days: 'Péntek', hours: '8:00–13:00' },
+  ],
   // url: '[WEBCÍM]' — set the public URL to enable canonical links.
 }
 
@@ -32,7 +36,7 @@ export const people: Person[] = [
   {
     id: 'farkas-klara',
     name: 'Farkas Klára',
-    role: 'Szakmai vezető',
+    role: 'Irodavezető, szakmai vezető',
     // Firm-focused introduction — no unverified biography, qualifications or
     // years of experience. Add verified credentials to `credentials` later.
     intro: [
@@ -47,8 +51,8 @@ export const people: Person[] = [
   {
     id: 'ugyintezo',
     name: 'Posszert Ervin',
-    role: 'Ügyintéző, kapcsolattartó',
-    bio: 'Fogadja az érdeklődéseket és az ajánlatkéréseket, egyezteti az időpontokat, és összefogja az ügyfelekkel folytatott kommunikációt és az ügyintézést.',
+    role: 'Könyvelő, ügyintéző',
+    bio: 'Könyvelőként az ügyfelek napi feladatain dolgozik, emellett fogadja az érdeklődéseket és az ajánlatkéréseket, egyezteti az időpontokat és az ügyintézést.',
     isPrimaryContact: true,
   },
   {

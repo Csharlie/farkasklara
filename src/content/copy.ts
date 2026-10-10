@@ -32,7 +32,10 @@ export const copy = {
     },
     hero: {
       eyebrow: 'Könyvelőiroda Kecskeméten',
-      title: 'Rendben tartjuk a számait. Szólunk, mielőtt baj lenne.',
+      // '\n' = line break; titleHighlight is rendered in gold.
+      title: 'Biztos alapok.\nÁtlátható pénzügyek.',
+      // Part of the title rendered in gold.
+      titleHighlight: 'Átlátható pénzügyek.' as string | undefined,
       description:
         'Könyvelés, adó és bér egyéni vállalkozóknak és cégeknek. Határidő előtt jelzünk, ha teendője van.',
       primaryCta: 'Ajánlatot kérek',
@@ -251,9 +254,8 @@ export const copy = {
     email: 'E-mail-cím',
     phone: 'Telefonszám',
     contactHint: 'Elég az egyiket megadnia: e-mail-cím vagy telefonszám.',
-    businessForm: 'Vállalkozási forma',
-    businessFormPlaceholder: 'Válasszon',
     services: 'Melyik szolgáltatás érdekli?',
+    servicePlaceholder: 'Válasszon szolgáltatást',
     message: 'Üzenet (nem kötelező)',
     consentBefore: 'Megismertem az ',
     consentLink: 'adatkezelési tájékoztatót',
@@ -264,8 +266,7 @@ export const copy = {
       name: 'Adja meg a nevét.',
       contact: 'Adjon meg e-mail-címet vagy telefonszámot.',
       email: 'Az e-mail-cím formátuma nem megfelelő (például: nev@example.hu).',
-      businessForm: 'Válassza ki a vállalkozási formát.',
-      services: 'Válasszon legalább egy szolgáltatást.',
+      services: 'Válassza ki, melyik szolgáltatás érdekli.',
       consent: 'A küldéshez jelölje be, hogy megismerte az adatkezelési tájékoztatót.',
       general: 'Az üzenetet nem sikerült elküldeni. Próbálja újra később.',
       rateLimited: 'Túl sok próbálkozás. Próbálja újra néhány perc múlva.',
@@ -279,9 +280,17 @@ export const copy = {
 
   quotePanel: {
     title: 'Elérhetőségeink',
-    address: 'Cím',
+    address: 'Iroda',
     phone: 'Telefon',
     email: 'E-mail',
+    hours: 'Nyitvatartás',
+    directions: 'Útvonaltervezés',
+    notes: {
+      phone: 'Munkanapokon, nyitvatartási időben',
+      email: 'Írásos kérdésekhez és ajánlatkéréshez',
+      hours: 'Személyes egyeztetés előre megbeszélt időpontban',
+      contact: 'Az ajánlatkéréseket és az általános kérdéseket kezeli',
+    },
   },
 
   footer: {

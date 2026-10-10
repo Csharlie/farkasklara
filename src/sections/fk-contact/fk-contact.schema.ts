@@ -19,6 +19,6 @@ export interface FkContactData {
   email?: ContactLink
   hoursTitle: string
   hours: { days: string; hours: string }[]
-  primaryContact: PersonBlock & { phone?: ContactLink; email?: ContactLink }
+  primaryContact?: PersonBlock & { phone?: ContactLink; email?: ContactLink }
   lead?: PersonBlock
 }

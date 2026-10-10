@@ -5,9 +5,8 @@ export interface FkQuoteLabels {
   email: string
   phone: string
   contactHint: string
-  businessForm: string
-  businessFormPlaceholder: string
   services: string
+  servicePlaceholder: string
   message: string
   consentBefore: string
   consentLink: string
@@ -18,7 +17,6 @@ export interface FkQuoteLabels {
     name: string
     contact: string
     email: string
-    businessForm: string
     services: string
     consent: string
     general: string
@@ -34,7 +32,6 @@ export interface FkQuoteData {
   /** Logical FormHandler form id. */
   formId: string
   services: { value: string; label: string }[]
-  businessForms: string[]
   /** Query parameter that preselects a service, e.g. 'szolgaltatas'. */
   prefillParam: string
   privacyHref: string
@@ -46,10 +43,13 @@ export interface FkQuoteData {
    */
   panel?: {
     title: string
-    labels: { address: string; phone: string; email: string }
+    labels: { address: string; phone: string; email: string; hours: string }
+    notes: { phone?: string; email?: string; hours?: string; contact?: string }
     addressLines: string[]
+    directions?: { href: string; label: string }
     phone?: ContactLink
     email?: ContactLink
+    hours: { days: string; hours: string }[]
   }
   /** Receives the enquiry. name/phone/email are absent while unknown. */
   primaryContact: {
