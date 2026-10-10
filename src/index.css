@@ -112,14 +112,7 @@
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: 0.01em;
-  transition: background-color 200ms, border-color 200ms, transform 200ms;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  [data-ui-component='hero-block'] [data-ui-id='hero-primary-cta']:hover,
-  [data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta']:hover {
-    transform: translateY(-1px);
-  }
+  transition: background-color 200ms, border-color 200ms;
 }
 
 [data-ui-component='hero-block'] [data-ui-id='hero-primary-cta']:focus,

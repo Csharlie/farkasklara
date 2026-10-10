@@ -86,6 +86,8 @@ export interface ContactView {
   hours: { days: string; hours: string }[]
   /** Map query — only for a complete, real address. */
   mapQuery?: string
+  /** Google Maps directions to the office — only for a complete, real address. */
+  directionsHref?: string
   primaryContact: PersonView & { phone?: ContactLink; email?: ContactLink }
   lead: PersonView
 }
@@ -105,6 +107,9 @@ export function buildContactView(company: Company, people: readonly Person[]): C
       .filter((h) => known(h.days) && known(h.hours))
       .map((h) => ({ days: h.days, hours: h.hours })),
     mapQuery: mapQuery(company.address),
+    directionsHref: isCompleteAddress(company.address)
+      ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(formatAddress(company.address))}`
+      : undefined,
     primaryContact: {
       name: known(primary.name),
       role: primary.role,

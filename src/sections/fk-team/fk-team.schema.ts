@@ -18,13 +18,12 @@ export interface FkTeamData {
   id: string
   title: string
   intro?: string
-  /** Professional lead — rendered as the larger, emphasized block. */
-  lead?: FkTeamMember & { badge: string }
-  /** Verified facts shown with the lead (placeholders already removed). */
-  facts?: { value: string; label: string }[]
-  /** Other team members — smaller blocks. */
+  /** Professional lead — the larger, emphasized block with introduction paragraphs. */
+  lead?: FkTeamMember & { badge: string; paragraphs: string[] }
+  /** Other team members — smaller, compact blocks. */
   members: FkTeamMember[]
-  primaryBadge: string
   more?: LinkCta
+  /** Followed directly by the facts strip — tighter bottom spacing. */
+  joinedWithNext?: boolean
   tone?: 'plain' | 'warm'
 }

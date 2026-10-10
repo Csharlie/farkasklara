@@ -22,7 +22,7 @@ export const audiences: Audience[] = [
   },
   {
     id: 'nagyobb-vallalatok',
-    label: 'Nagyobb vállalatok',
+    label: 'Vállalatok',
     description:
       'Könyvelés, bérszámfejtés és adótanácsadás előzetes egyeztetés alapján, a cég működési rendjéhez igazítva.',
     enabled: true,

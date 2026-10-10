@@ -24,7 +24,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
       data-ui-role="banner"
       className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-md"
     >
-      <div className="mx-auto flex min-h-16 w-full max-w-content items-center justify-between gap-6 px-6 md:min-h-20">
+      <div className="mx-auto flex min-h-16 w-full max-w-content items-center gap-6 px-6 md:min-h-20">
         <a
           href="/"
           data-ui-id="header-logo"
@@ -36,7 +36,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
           {siteData.site.name}
         </a>
 
-        <nav aria-label="Fő navigáció" data-ui-id="header-nav" data-ui-role="navigation" className="hidden lg:block">
+        <nav aria-label="Fő navigáció" data-ui-id="header-nav" data-ui-role="navigation" className="ml-auto hidden lg:block">
           <ul className="flex items-center gap-7">
             {links.map((link) => (
               <li key={link.href}>
@@ -46,7 +46,14 @@ export function AppHeader({ siteData }: LayoutShellProps) {
                   data-ui-id={`nav-link-${link.href.slice(1) || 'home'}`}
                   data-ui-type="link"
                   data-ui-action="navigate"
-                  className="inline-flex min-h-11 items-center font-medium text-foreground underline-offset-8 hover:underline aria-[current]:underline aria-[current]:decoration-2"
+                  className={cn(
+                    'relative inline-flex min-h-11 items-center font-medium text-foreground',
+                    // Dark blue-grey underline draws in from the left. Width is animated (not a
+                    // scale transform), so the 2px line stays crisp at constant thickness.
+                    "after:absolute after:bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-surface-strong after:content-['']",
+                    'after:transition-[width] after:duration-300 after:ease-out hover:after:w-full aria-[current]:after:w-full',
+                    'motion-reduce:after:transition-none',
+                  )}
                 >
                   {link.label}
                 </a>
@@ -55,7 +62,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="ml-auto flex items-center gap-2 md:gap-4 lg:ml-2">
           {shell.contact.phone && (
             <ContactAnchor
               link={shell.contact.phone}

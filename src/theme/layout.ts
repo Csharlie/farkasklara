@@ -35,7 +35,7 @@ export type CtaKind = 'primary' | 'secondary'
 export function ctaClassName(kind: CtaKind, className?: string): string {
   return cn(
     buttonVariants({ variant: kind === 'primary' ? 'primary' : 'outline', size: 'lg' }),
-    'min-h-12 rounded-full border px-7 py-3 text-base font-semibold leading-tight tracking-[0.01em] transition duration-200 motion-safe:hover:-translate-y-px',
+    'min-h-12 rounded-full border px-7 py-3 text-base font-semibold leading-tight tracking-[0.01em] transition-colors duration-200',
     'focus:ring-0 focus:ring-offset-0',
     kind === 'primary'
       ? 'border-transparent bg-accent text-accent-foreground hover:bg-accent-hover'

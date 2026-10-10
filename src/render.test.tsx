@@ -60,10 +60,10 @@ describe('rendering', () => {
     }
   })
 
-  it('marks the primary contact and renders a monogram without photo', () => {
+  it('shows roles and a decorative corner name instead of a photo', () => {
     const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
-    expect(html).toContain('>FK<')
-    expect(html).toContain('Kapcsolattartó')
+    expect(html).toMatch(/aria-hidden="true"[^>]*>Farkas Klára</)
+    expect(html).toContain('Ügyintéző, kapcsolattartó')
   })
 
   it('tracks call/email/form via the platform data-ui standard', () => {
@@ -81,15 +81,19 @@ describe('rendering', () => {
     }
   })
 
-  it('offers an in-place preview while the full-page link stays visible', () => {
+  it('renders static service cards with a working detail link', () => {
     const html = render(site.pages.find((p) => p.slug === 'home')!)
-    const card = html.slice(html.indexOf('data-ui-id="service-card-konyveles"'))
-    const details = card.slice(card.indexOf('<details'), card.indexOf('</details>'))
-    expect(details).toContain('<summary')
-    expect(details).toContain('Mit tartalmaz?')
-    expect(details).not.toContain('href="/szolgaltatasok/konyveles"')
-    const afterDetails = card.slice(card.indexOf('</details>'))
-    expect(afterDetails).toMatch(/href="\/szolgaltatasok\/konyveles"[^>]*>Teljes leírás/)
+    const services = html.slice(html.indexOf('data-ui-component="fk-services"'), html.indexOf('data-ui-component="features-block"'))
+    expect(services).not.toContain('<details')
+    // The whole card is one link (stretched title link).
+    expect(services).toMatch(/href="\/szolgaltatasok\/konyveles"[^>]*>Könyvelés</)
+  })
+
+  it('renders the team without portraits', () => {
+    const html = render(site.pages.find((p) => p.slug === 'home')!)
+    const team = html.slice(html.indexOf('data-ui-component="fk-team"'), html.indexOf('data-ui-component="fk-trust"'))
+    expect(team).not.toContain('<img')
+    expect(team).toContain('Posszert Ervin')
   })
 
   it('never puts white text on the accent color', () => {

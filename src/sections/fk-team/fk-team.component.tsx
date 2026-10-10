@@ -2,26 +2,25 @@ import { cn } from '@spektra/components'
 import { contentWidth, sectionSpacing, toneClassName } from '../../theme/layout'
 import { ContactAnchor } from '../shared/ContactAnchor'
 import { CtaLink } from '../shared/CtaLink'
-import { monogramOf } from '../shared/monogram'
 import { SectionIntro } from '../shared/SectionIntro'
 import type { FkTeamData, FkTeamMember } from './fk-team.schema'
 
-function Avatar({ member, size }: { member: FkTeamMember; size: 'lg' | 'md' }) {
-  const sizeClass = size === 'lg' ? 'size-24 text-3xl' : 'size-14 text-xl'
-  if (member.photo) {
-    return <img src={member.photo} alt="" data-ui-type="image" className={cn(sizeClass, 'rounded-full object-cover')} />
-  }
-  // No portrait, no invented face: monogram for a known name, nothing otherwise.
-  if (!member.name) return null
+/**
+ * Decorative name in the top-left corner — large, pale gold, partly cropped
+ * (same placement as the service-card icons). Hidden from assistive tech:
+ * the real name is the card heading.
+ */
+function CornerName({ name, size }: { name?: string; size: 'lg' | 'md' }) {
+  if (!name) return null
   return (
     <span
       aria-hidden="true"
       className={cn(
-        sizeClass,
-        'flex shrink-0 items-center justify-center rounded-full bg-muted font-display font-bold tracking-heading text-foreground',
+        'pointer-events-none absolute -left-1 -top-3 select-none whitespace-nowrap font-display font-extrabold leading-none tracking-display text-accent opacity-[0.16]',
+        size === 'lg' ? 'text-6xl md:text-7xl' : 'text-5xl md:text-6xl',
       )}
     >
-      {monogramOf(member.name)}
+      {name}
     </span>
   )
 }
@@ -29,14 +28,14 @@ function Avatar({ member, size }: { member: FkTeamMember; size: 'lg' | 'md' }) {
 function Channels({ member }: { member: FkTeamMember }) {
   if (!member.phone && !member.email) return null
   return (
-    <div className="mt-4 flex flex-col font-semibold">
+    <div className="mt-3 flex flex-col font-semibold">
       {member.phone && <ContactAnchor link={member.phone} action="call" id={`team-phone-${member.id}`} label="Telefon" />}
       {member.email && <ContactAnchor link={member.email} action="email" id={`team-email-${member.id}`} label="E-mail" />}
     </div>
   )
 }
 
-export function FkTeam({ id, title, intro, lead, facts, members, primaryBadge, more, tone }: FkTeamData) {
+export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, tone }: FkTeamData) {
   if (!lead && members.length === 0) return null
 
   return (
@@ -46,7 +45,7 @@ export function FkTeam({ id, title, intro, lead, facts, members, primaryBadge, m
       data-ui-component="fk-team"
       data-ui-role="team"
       aria-labelledby={`${id}-title`}
-      className={cn(sectionSpacing, toneClassName(tone))}
+      className={cn(sectionSpacing, toneClassName(tone), joinedWithNext && 'pb-6 md:pb-8')}
     >
       <div className={contentWidth}>
         <SectionIntro id={id} title={title} intro={intro} />
@@ -55,10 +54,10 @@ export function FkTeam({ id, title, intro, lead, facts, members, primaryBadge, m
           <article
             data-ui-id={`team-lead-${lead.id}`}
             data-ui-type="card"
-            className="mt-12 grid gap-8 rounded-2xl border border-border bg-surface p-7 md:p-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-12"
+            className="relative mt-10 grid gap-8 overflow-hidden rounded-2xl border border-border bg-surface p-7 pt-20 md:p-10 md:pt-24 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14"
           >
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-              <Avatar member={lead} size="lg" />
+            <CornerName name={lead.name} size="lg" />
+            <header className="relative">
               <div>
                 <p
                   data-ui-type="badge"
@@ -66,17 +65,12 @@ export function FkTeam({ id, title, intro, lead, facts, members, primaryBadge, m
                 >
                   {lead.badge}
                 </p>
-                <h3 data-ui-role="item-title" className="mt-4 text-3xl md:text-4xl">
+                <h3 data-ui-role="item-title" className="mt-3 text-3xl md:text-4xl">
                   {lead.name ?? lead.role}
                 </h3>
                 {lead.name && lead.role !== lead.badge && <p className="mt-1 text-muted-foreground">{lead.role}</p>}
-                {lead.bio && (
-                  <p data-ui-role="item-description" className="mt-4 max-w-prose text-lg">
-                    {lead.bio}
-                  </p>
-                )}
                 {lead.credentials && lead.credentials.length > 0 && (
-                  <ul className="mt-4 space-y-1 text-muted-foreground">
+                  <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
                     {lead.credentials.map((credential) => (
                       <li key={credential}>{credential}</li>
                     ))}
@@ -84,53 +78,51 @@ export function FkTeam({ id, title, intro, lead, facts, members, primaryBadge, m
                 )}
                 <Channels member={lead} />
               </div>
-            </div>
+            </header>
 
-            {facts && facts.length > 0 && (
-              <dl className="grid grid-cols-2 content-start gap-x-6 gap-y-6 border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
-                {facts.map((fact) => (
-                  <div key={fact.label} className="flex flex-col-reverse gap-1">
-                    <dt className="text-sm text-muted-foreground">{fact.label}</dt>
-                    <dd className="font-display text-3xl font-bold tracking-heading tabular-nums">{fact.value}</dd>
-                  </div>
+            {lead.paragraphs.length > 0 && (
+              <div data-ui-role="item-description" className="relative max-w-prose space-y-4 text-lg leading-relaxed">
+                {lead.paragraphs.map((paragraph, index) => (
+                  <p
+                    key={paragraph}
+                    className={cn(lead.paragraphs.length > 2 && index === lead.paragraphs.length - 1 && 'font-semibold')}
+                  >
+                    {paragraph}
+                  </p>
                 ))}
-              </dl>
+              </div>
             )}
           </article>
         )}
 
         {members.length > 0 && (
-          <ul className={cn('grid gap-5 md:grid-cols-2', lead ? 'mt-5' : 'mt-12')}>
+          <ul className={cn('grid gap-5 md:grid-cols-2', lead ? 'mt-5' : 'mt-10')}>
             {members.map((member) => (
               <li
                 key={member.id}
                 data-ui-id={`team-member-${member.id}`}
                 data-ui-type="card"
-                className="flex gap-5 rounded-xl border border-border bg-surface p-6"
+                className="relative overflow-hidden rounded-xl border border-border bg-surface p-6 pt-16"
               >
-                <Avatar member={member} size="md" />
-                <div className="min-w-0">
+                <CornerName name={member.name} size="md" />
+                <div className="relative min-w-0">
                   <h3 data-ui-role="item-title" className="text-xl">
                     {member.name ?? member.role}
                   </h3>
-                  {member.name && <p className="text-muted-foreground">{member.role}</p>}
-                  {member.isPrimaryContact && (
-                    <p
-                      data-ui-type="badge"
-                      className="mt-3 w-fit rounded-full bg-muted px-3 py-1 text-sm font-semibold text-accent-text"
-                    >
-                      {primaryBadge}
+                  {member.name && (
+                    <p className="text-sm font-semibold text-accent-text">
+                      {member.role}
                     </p>
                   )}
                   {member.credentials && member.credentials.length > 0 && (
-                    <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+                    <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                       {member.credentials.map((credential) => (
                         <li key={credential}>{credential}</li>
                       ))}
                     </ul>
                   )}
                   {member.bio && (
-                    <p data-ui-role="item-description" className="mt-3 text-muted-foreground">
+                    <p data-ui-role="item-description" className="mt-2 text-muted-foreground">
                       {member.bio}
                     </p>
                   )}

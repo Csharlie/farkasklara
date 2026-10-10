@@ -13,6 +13,8 @@ export interface FkContactData {
   title: string
   companyName: string
   address: string
+  /** Directions to the real office address (absent while the address is incomplete). */
+  directions?: { href: string; label: string }
   phone?: ContactLink
   email?: ContactLink
   hoursTitle: string

@@ -12,6 +12,7 @@ export function FkContact({
   title,
   companyName,
   address,
+  directions,
   phone,
   email,
   hoursTitle,
@@ -28,7 +29,7 @@ export function FkContact({
       aria-labelledby={`${id}-title`}
       className={cn(sectionSpacing, 'bg-background')}
     >
-      <div className={cn(contentWidth, 'grid gap-5 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]')}>
+      <div className={cn(contentWidth, 'grid items-start gap-5 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]')}>
         <div className="min-w-0 rounded-xl border border-border bg-surface p-6 md:p-8">
           <h2 id={`${id}-title`} data-ui-role="section-title" className="text-3xl">
             {title}
@@ -36,6 +37,21 @@ export function FkContact({
           <address className="mt-6 not-italic">
             <p className="font-semibold">{companyName}</p>
             {address && <p className="text-muted-foreground">{address}</p>}
+            {directions && (
+              <a
+                href={directions.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-ui-id={`${id}-directions`}
+                data-ui-type="link"
+                data-ui-action="navigate"
+                data-ui-trigger="click"
+                className="mt-1 inline-flex min-h-11 items-center font-semibold underline underline-offset-4 hover:text-accent-text"
+              >
+                {directions.label}
+                <span className="sr-only"> (új lapon nyílik)</span>
+              </a>
+            )}
             {(phone || email) && (
               <div className="mt-4 flex flex-col font-semibold">
                 {phone && <ContactAnchor link={phone} action="call" id={`${id}-phone`} label="Telefon" />}

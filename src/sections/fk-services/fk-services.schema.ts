@@ -8,8 +8,8 @@ export interface FkServiceCard {
   summary: string
   /** Canonical service route, e.g. /szolgaltatasok/konyveles */
   href: string
-  /** Short, structured preview shown in the expandable panel (optional). */
-  highlights?: string[]
+  /** Icon key (iconCards variant). */
+  icon?: string
   /** Present only when settings.showPrices is true (see data/price.ts). */
   price?: FormattedPrice
 }
@@ -23,9 +23,12 @@ export interface FkServicesData {
   numbered: boolean
   /** Visually highlight the first card. */
   highlightFirst: boolean
-  /** Label of the in-place expand control, e.g. 'Mit tartalmaz?' */
-  detailsLabel: string
-  /** Label of the always-visible link to the full service page. */
+  /**
+   * Homepage variant: uniform white cards, large corner icon (bc-services
+   * pattern), whole card clickable, dark color scheme on hover.
+   */
+  iconCards?: boolean
+  /** Label of the explicit link to the service page, e.g. 'Részletek'. */
   linkLabel: string
   tone?: 'plain' | 'warm'
 }

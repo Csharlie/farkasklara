@@ -77,6 +77,8 @@ export interface Service {
   /** ASCII, lowercase, hyphenated — route: /szolgaltatasok/<slug> */
   slug: string
   title: string
+  /** Icon key for the service card (see src/sections/shared/icons.tsx). */
+  icon?: string
   /** Card + page header text (1–2 sentences). */
   summary: string
   /** Optional longer introduction paragraphs on the service page. */
@@ -111,8 +113,10 @@ export interface Person {
   role: string
   /** Image URL. When absent, a monogram is rendered (only for known names). */
   photo?: string
-  /** Short description of the person's actual responsibility. */
+  /** Short description of the person's actual responsibility (cards). */
   bio?: string
+  /** Longer introduction paragraphs — used for the professional lead's block. */
+  intro?: string[]
   credentials?: string[]
   phone?: string
   email?: string

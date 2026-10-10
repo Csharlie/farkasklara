@@ -11,6 +11,7 @@ import type { Service } from './types'
 export const services: Service[] = [
   {
     slug: 'konyveles',
+    icon: 'book',
     title: 'Könyvelés',
     summary: 'Bizonylatok feldolgozása, főkönyvi könyvelés, áfa-nyilvántartás és havi zárás.',
     body: [
@@ -68,6 +69,7 @@ export const services: Service[] = [
   },
   {
     slug: 'adotanacsadas',
+    icon: 'lightbulb',
     title: 'Adótanácsadás',
     summary: 'Adózási forma, nagyobb kiadások, kifizetések: előre kiszámoljuk, mennyi adóval jár egy döntés.',
     includes: [
@@ -98,6 +100,7 @@ export const services: Service[] = [
   },
   {
     slug: 'adobevallas',
+    icon: 'fileCheck',
     title: 'Adóbevallás',
     summary: 'Szja-, társaságiadó-, iparűzésiadó- és áfabevallás elkészítése és beküldése.',
     includes: [
@@ -129,6 +132,7 @@ export const services: Service[] = [
   },
   {
     slug: 'berszamfejtes',
+    icon: 'users',
     title: 'Bérszámfejtés',
     summary: 'Havi bérszámfejtés, járulékbevallás, munkavállalók be- és kijelentése.',
     includes: [
@@ -165,6 +169,7 @@ export const services: Service[] = [
   },
   {
     slug: 'vegelszamolas',
+    icon: 'archive',
     title: 'Végelszámolás',
     summary: 'Cég megszüntetése végelszámolással, a kezdő beszámolótól a záró beszámolóig.',
     body: [
@@ -206,6 +211,7 @@ export const services: Service[] = [
   },
   {
     slug: 'palyazatok',
+    icon: 'target',
     title: 'Pályázatok',
     summary: 'Pályázatok előkészítése, megírása és elszámolása.',
     includes: [

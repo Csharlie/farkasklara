@@ -103,45 +103,68 @@ describe('homepage', () => {
   const home = pageBy(buildSiteData(content).pages, 'home')
 
   it('has the focused section order: no stats strip under the hero, no generic process', () => {
-    expect(types(home)).toEqual(['hero', 'fk-services', 'features', 'fk-team', 'fk-quote', 'fk-map'])
+    expect(types(home)).toEqual(['hero', 'fk-services', 'features', 'fk-team', 'fk-trust', 'fk-quote', 'fk-map'])
   })
 
   it('keeps the hero message', () => {
     expect(sectionData<{ title: string }>(home, 'hero').title).toBe('Rendben tartjuk a számait. Szólunk, mielőtt baj lenne.')
   })
 
-  it('numbers the six services, highlights the first and offers a short preview', () => {
-    const data = sectionData<{ items: { number: string; href: string; highlights?: string[] }[]; highlightFirst: boolean }>(home, 'fk-services')
-    expect(data.highlightFirst).toBe(true)
-    expect(data.items.map((i) => i.number)).toEqual(['01', '02', '03', '04', '05', '06'])
-    expect(data.items[0]!.href).toBe('/szolgaltatasok/konyveles')
-    for (const item of data.items) {
-      expect(item.highlights!.length).toBeGreaterThan(0)
-      expect(item.highlights!.length).toBeLessThanOrEqual(4)
-    }
+  it('keeps six uniform icon cards linking to their pages', () => {
+    const data = sectionData<{ items: { icon?: string; href: string; highlights?: unknown }[]; highlightFirst: boolean; iconCards?: boolean; linkLabel: string }>(home, 'fk-services')
+    expect(data.highlightFirst).toBe(false)
+    expect(data.iconCards).toBe(true)
+    expect(data.linkLabel).toBe('Részletek')
+    expect(data.items.map((i) => i.icon)).toEqual(['book', 'lightbulb', 'fileCheck', 'users', 'archive', 'target'])
+    expect(data.items.map((i) => i.href)).toEqual([
+      '/szolgaltatasok/konyveles',
+      '/szolgaltatasok/adotanacsadas',
+      '/szolgaltatasok/adobevallas',
+      '/szolgaltatasok/berszamfejtes',
+      '/szolgaltatasok/vegelszamolas',
+      '/szolgaltatasok/palyazatok',
+    ])
+    expect(data.items.every((i) => i.highlights === undefined)).toBe(true)
   })
 
-  it('shows the professional lead emphasized, with verified facts only', () => {
-    const team = sectionData<{ lead: { name: string; badge: string }; facts: { value: string }[]; members: { role: string }[] }>(home, 'fk-team')
+  it('presents the professional lead with a substantive, claim-free introduction', () => {
+    const team = sectionData<{ lead: { name: string; badge: string; paragraphs: string[]; credentials: string[] }; members: { name: string; role: string }[] }>(home, 'fk-team')
     expect(team.lead.name).toBe('Farkas Klára')
     expect(team.lead.badge).toBe('Szakmai vezető')
-    expect(team.facts.map((f) => f.value)).toEqual(['3', 'Kecskemét'])
-    expect(team.members.map((m) => m.role)).toEqual(['Ügyintéző, kapcsolattartó', 'Könyvelő'])
+    expect(team.lead.paragraphs).toHaveLength(2) // homepage shows the short version
+    expect(team.lead.credentials).toEqual([])
+    expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
+    expect(team.members.map((m) => [m.name, m.role])).toEqual([
+      ['Posszert Ervin', 'Ügyintéző, kapcsolattartó'],
+      ['Halász Réka', 'Könyvelő'],
+    ])
   })
 
-  it('shows a fact once it is known', () => {
+  it('shows four data-derived facts directly below the About section', () => {
+    const order = types(home)
+    expect(order.indexOf('fk-trust')).toBe(order.indexOf('fk-team') + 1)
+    const trust = sectionData<{ facts: { value: string; label: string }[] }>(home, 'fk-trust')
+    expect(trust.facts.map((f) => f.value)).toEqual(['3', '6', '3', 'Kecskemét'])
+  })
+
+  it('shows a verified metric once it is set in content', () => {
     const c = withContent((x) => ({
       ...x,
       copy: {
         ...x.copy,
         home: {
           ...x.copy.home,
-          about: { ...x.copy.home.about, facts: [{ value: '2010', label: 'óta dolgozunk' }, ...x.copy.home.about.facts.slice(1)] },
+          facts: { ...x.copy.home.facts, items: [{ value: '2010', label: 'óta dolgozunk' }, ...x.copy.home.facts.items.slice(1)] },
         },
       },
     }))
-    const team = sectionData<{ facts: { value: string }[] }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-team')
-    expect(team.facts.map((f) => f.value)).toEqual(['2010', '3', 'Kecskemét'])
+    const trust = sectionData<{ facts: { value: string }[] }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-trust')
+    expect(trust.facts.map((f) => f.value)).toEqual(['2010', '6', '3', 'Kecskemét'])
+  })
+
+  it('places the compact contact panel next to the homepage form', () => {
+    const quote = sectionData<{ panel?: { addressLines: string[] } }>(home, 'fk-quote')
+    expect(quote.panel?.addressLines).toEqual(['6000 Kecskemét', 'Berzsenyi utca 19.'])
   })
 })
 
@@ -153,7 +176,7 @@ describe('audiences', () => {
   }
 
   it('shows the three primary client groups; switching is not an audience', () => {
-    expect(audienceTitles(content)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások', 'Nagyobb vállalatok'])
+    expect(audienceTitles(content)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások', 'Vállalatok'])
   })
 
   it('can switch off the larger-company group through configuration only', () => {
@@ -202,10 +225,11 @@ describe('service page template', () => {
     expect(headerData.secondary?.href).toBe('/konyvelovaltas')
   })
 
-  it('keeps related-service cards compact (no preview panel)', () => {
+  it('lists related services as plain, unnumbered cards', () => {
     const page = pageBy(site.pages, 'szolgaltatasok/konyveles')
-    const related = page.sections.find((s) => s.id === 'konyveles-kapcsolodo')!.data as { items: { highlights?: string[] }[] }
-    expect(related.items.every((i) => i.highlights === undefined)).toBe(true)
+    const related = page.sections.find((s) => s.id === 'konyveles-kapcsolodo')!.data as { numbered: boolean; items: { slug: string }[] }
+    expect(related.numbered).toBe(false)
+    expect(related.items.map((i) => i.slug)).toEqual(['adobevallas', 'berszamfejtes'])
   })
 
   it('omits every empty optional block', () => {
@@ -314,8 +338,13 @@ describe('contact — roles and single source', () => {
       expect(last.type, page.slug).toBe('fk-map')
       expect((last.data as { query: string }).query).toBe('6000 Kecskemét, Berzsenyi utca 19.')
     }
-    const contact = sectionData<{ address: string }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
+    const contact = sectionData<{ address: string; directions?: { href: string } }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
     expect(contact.address).toBe('6000 Kecskemét, Berzsenyi utca 19.')
+    expect(contact.directions?.href).toBe(
+      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('6000 Kecskemét, Berzsenyi utca 19.')}`,
+    )
+    // The contact page shows the details above the form — no duplicate panel.
+    expect(sectionData<{ panel?: unknown }>(pageBy(site.pages, 'kapcsolat'), 'fk-quote').panel).toBeUndefined()
   })
 
   it('shows no map for an incomplete address', () => {

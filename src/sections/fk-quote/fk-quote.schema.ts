@@ -40,6 +40,17 @@ export interface FkQuoteData {
   privacyHref: string
   labels: FkQuoteLabels
   success: { title: string; message: string; reset: string }
+  /**
+   * Compact contact panel next to the form (luxcover lc-contact layout
+   * pattern). Omitted where a full contact section precedes the form.
+   */
+  panel?: {
+    title: string
+    labels: { address: string; phone: string; email: string }
+    addressLines: string[]
+    phone?: ContactLink
+    email?: ContactLink
+  }
   /** Receives the enquiry. name/phone/email are absent while unknown. */
   primaryContact: {
     label: string

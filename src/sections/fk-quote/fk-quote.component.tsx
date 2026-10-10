@@ -1,10 +1,11 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { cn } from '@spektra/components'
 import { useFormHandler } from '@spektra/runtime'
 import { readPrefillService } from '../../data/routes'
 import { fillTemplate } from '../../data/text'
 import { contentWidth, ctaClassName, sectionSpacing, toneClassName } from '../../theme/layout'
 import { ContactAnchor } from '../shared/ContactAnchor'
+import { Icon, type IconName } from '../shared/icons'
 import { SectionIntro } from '../shared/SectionIntro'
 import type { FkQuoteData } from './fk-quote.schema'
 
@@ -32,6 +33,21 @@ const inputClassName = cn(
   'aria-[invalid=true]:border-destructive disabled:opacity-60',
 )
 
+/** One contact row of the panel: icon tile + small label + value. */
+function PanelRow({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
+  return (
+    <li className="flex items-start gap-4">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-muted text-accent-text">
+        <Icon name={icon} className="size-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <div className="mt-0.5 font-semibold">{children}</div>
+      </div>
+    </li>
+  )
+}
+
 export function FkQuote({
   id,
   title,
@@ -43,6 +59,7 @@ export function FkQuote({
   privacyHref,
   labels,
   success,
+  panel,
   primaryContact,
   tone,
 }: FkQuoteData) {
@@ -143,29 +160,61 @@ export function FkQuote({
       aria-labelledby={`${id}-title`}
       className={cn(sectionSpacing, toneClassName(tone), 'scroll-mt-20')}
     >
-      <div className={cn(contentWidth, 'grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]')}>
-        <div>
-          <SectionIntro id={id} title={title} intro={intro} />
-          <div className="mt-10 border-l-2 border-border pl-5">
-            <p className="text-sm text-muted-foreground">{primaryContact.label}</p>
-            <p className="mt-1 font-display text-2xl font-bold tracking-heading">
-              {primaryContact.name ?? primaryContact.role}
-            </p>
-            {primaryContact.name && <p className="text-muted-foreground">{primaryContact.role}</p>}
-            {(primaryContact.phone || primaryContact.email) && (
-              <div className="mt-3 flex flex-col font-semibold">
-                {primaryContact.phone && (
-                  <ContactAnchor link={primaryContact.phone} action="call" id={`${id}-phone`} label="Telefon" />
-                )}
-                {primaryContact.email && (
-                  <ContactAnchor link={primaryContact.email} action="email" id={`${id}-email`} label="E-mail" />
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+      <div className={contentWidth}>
+        <SectionIntro id={id} title={title} intro={intro} />
+      </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 md:p-10">
+      <div
+        className={cn(
+          contentWidth,
+          'mt-10 grid gap-5',
+          panel && 'lg:grid-cols-5',
+        )}
+      >
+        {panel && (
+          <aside
+            aria-labelledby={`${id}-panel-title`}
+            className="flex flex-col rounded-2xl border border-border bg-surface p-6 md:p-8 lg:col-span-2 lg:self-start"
+          >
+            <h3
+              id={`${id}-panel-title`}
+              className="text-sm font-semibold uppercase tracking-[0.08em] text-accent-text"
+            >
+              {panel.title}
+            </h3>
+            <ul className="mt-6 space-y-5">
+              {panel.addressLines.length > 0 && (
+                <PanelRow icon="mapPin" label={panel.labels.address}>
+                  {panel.addressLines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </PanelRow>
+              )}
+              <PanelRow icon="user" label={primaryContact.label}>
+                {primaryContact.name ?? primaryContact.role}
+                {primaryContact.name && (
+                  <span className="block text-sm font-normal text-muted-foreground">{primaryContact.role}</span>
+                )}
+              </PanelRow>
+              {panel.phone && (
+                <PanelRow icon="phone" label={panel.labels.phone}>
+                  <ContactAnchor link={panel.phone} action="call" id={`${id}-phone`} label={panel.labels.phone} className="min-h-0" />
+                </PanelRow>
+              )}
+              {panel.email && (
+                <PanelRow icon="mail" label={panel.labels.email}>
+                  <span className="break-all">
+                    <ContactAnchor link={panel.email} action="email" id={`${id}-email`} label={panel.labels.email} className="min-h-0" />
+                  </span>
+                </PanelRow>
+              )}
+            </ul>
+          </aside>
+        )}
+
+        <div className={cn('rounded-2xl border border-border bg-surface p-6 md:p-8', panel ? 'lg:col-span-3' : 'w-full max-w-3xl')}>
           {state.kind === 'ok' ? (
             <div
               role="status"
@@ -207,7 +256,7 @@ export function FkQuote({
               data-ui-trigger="submit"
               data-ui-status={state.kind === 'loading' ? 'loading' : state.kind === 'error' ? 'error' : undefined}
               aria-describedby={state.kind === 'error' || state.kind === 'rate_limited' ? fieldId('form-error') : undefined}
-              className="space-y-6"
+              className="space-y-5"
             >
               {(state.kind === 'error' || state.kind === 'rate_limited') && (
                 <p id={fieldId('form-error')} role="alert" className="rounded-lg bg-destructive/10 p-4 text-destructive">
@@ -327,7 +376,7 @@ export function FkQuote({
                 <legend className="mb-3 font-semibold">
                   {labels.services} <span aria-hidden="true">*</span>
                 </legend>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
                   {services.map((service) => (
                     <label
                       key={service.value}
@@ -364,7 +413,7 @@ export function FkQuote({
                 <textarea
                   id={fieldId('message')}
                   name="message"
-                  rows={4}
+                  rows={3}
                   disabled={disabled}
                   data-ui-id={`${id}-message`}
                   data-ui-type="textarea"

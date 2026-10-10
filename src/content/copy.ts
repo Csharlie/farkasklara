@@ -9,8 +9,8 @@ import type { FaqItem, Step } from './types'
 
 export type FactInput =
   | { value: string; label: string }
-  /** Derived from content: team size (people.length) or company.city. */
-  | { source: 'teamSize' | 'city'; label: string }
+  /** Derived from content data — always verifiable, never invented. */
+  | { source: 'teamSize' | 'serviceCount' | 'audienceCount' | 'city'; label: string }
 
 export const copy = {
   nav: {
@@ -43,25 +43,30 @@ export const copy = {
     },
     services: {
       title: 'Szolgáltatások',
-      intro: 'Hat terület, egy kapcsolattartó. Nyissa le a kártyát a rövid összefoglalóért.',
+      intro: 'Válassza ki a területet; a részleteket a szolgáltatás oldalán találja.',
     },
     audiences: { title: 'Kinek dolgozunk' },
     about: {
       title: 'Rólunk',
       intro:
-        'Kecskeméti könyvelőiroda. A szakmai munkát {lead} irányítja, az érdeklődéseket és az ajánlatkéréseket az iroda ügyintézője fogadja.',
-      // Facts shown with the professional lead. Placeholder values are hidden.
-      facts: [
-        { value: '[ÉV]', label: 'óta dolgozunk' },
-        { value: '[ÜGYFELEK SZÁMA]', label: 'ügyfél' },
-        { source: 'teamSize', label: 'fős csapat' },
-        { source: 'city', label: 'irodánk helye' },
-      ] satisfies FactInput[],
+        'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak és vállalatoknak. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatokkal foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
       more: 'Bővebben az irodáról',
+    },
+    // Four-item strip directly below the About section. Only verifiable,
+    // data-derived facts. Replace with verified business metrics when known
+    // (e.g. { value: '2010', label: 'óta dolgozunk' }).
+    facts: {
+      label: 'Az iroda röviden',
+      items: [
+        { source: 'teamSize', label: 'fős szakmai csapat' },
+        { source: 'serviceCount', label: 'szolgáltatási terület egy irodában' },
+        { source: 'audienceCount', label: 'ügyfélkör: egyéni, kkv, vállalati' },
+        { source: 'city', label: 'helyi iroda' },
+      ] satisfies FactInput[] as FactInput[],
     },
     quote: {
       title: 'Ajánlatkérés',
-      intro: 'Írja meg, miben segíthetünk. Az ajánlatkéréseket az iroda ügyintézője fogadja.',
+      intro: 'Írja meg, miben segíthetünk, és felvesszük Önnel a kapcsolatot.',
     },
   },
 
@@ -78,8 +83,7 @@ export const copy = {
   },
 
   serviceCard: {
-    details: 'Mit tartalmaz?',
-    fullPage: 'Teljes leírás',
+    link: 'Részletek',
   },
 
   servicePage: {
@@ -96,7 +100,7 @@ export const copy = {
     },
     closing: {
       title: 'Kérjen ajánlatot',
-      text: 'Írja meg, mire van szüksége. A szolgáltatást előre kiválasztottuk az űrlapon; az ajánlatkérést az iroda ügyintézője fogadja.',
+      text: 'Írja meg, mire van szüksége. A szolgáltatást előre kiválasztottuk az űrlapon.',
     },
   },
 
@@ -142,7 +146,7 @@ export const copy = {
     },
     cta: {
       title: 'Beszéljük meg a váltást',
-      text: 'Írja meg, mikor váltana. Az ügyintéző egyezteti Önnel a következő lépést.',
+      text: 'Írja meg, mikor váltana, és egyeztetjük a következő lépést.',
       label: 'Egyeztetést kérek a váltásról',
       prefillService: 'konyveles',
     },
@@ -180,7 +184,7 @@ export const copy = {
       ] satisfies Step[],
     },
     teamTitle: 'A csapat',
-    teamIntro: 'A szakmai munkát {lead} irányítja. Az érdeklődéseket az iroda ügyintézője fogadja.',
+    teamIntro: 'A szakmai munkát {lead} irányítja.',
   },
 
   knowledge: {
@@ -202,8 +206,9 @@ export const copy = {
     },
     eyebrow: 'Kapcsolat',
     title: 'Kapcsolat',
-    lead: 'Az érdeklődéseket és az ajánlatkéréseket az iroda ügyintézője fogadja.',
+    lead: 'Keressen minket telefonon, e-mailben vagy az ajánlatkérő űrlapon.',
     detailsTitle: 'Elérhetőségek',
+    directions: 'Útvonaltervezés',
     mapTitle: 'Az iroda helye a térképen',
     primaryContactLabel: 'Kapcsolattartó',
     leadLabel: 'Szakmai vezető',
@@ -267,9 +272,16 @@ export const copy = {
     },
     success: {
       title: 'Köszönjük, megkaptuk.',
-      message: 'Az ajánlatkérést az iroda ügyintézője kapja meg, és felveszi Önnel a kapcsolatot.',
+      message: 'Hamarosan felvesszük Önnel a kapcsolatot.',
       reset: 'Új ajánlatkérés',
     },
+  },
+
+  quotePanel: {
+    title: 'Elérhetőségeink',
+    address: 'Cím',
+    phone: 'Telefon',
+    email: 'E-mail',
   },
 
   footer: {
@@ -280,7 +292,6 @@ export const copy = {
   },
 
   team: {
-    primaryContactBadge: 'Kapcsolattartó',
     leadBadge: 'Szakmai vezető',
   },
 }

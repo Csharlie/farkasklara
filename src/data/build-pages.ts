@@ -14,6 +14,7 @@ import type { FkProseData } from '../sections/fk-prose'
 import type { FkQuoteData } from '../sections/fk-quote'
 import type { FkServicesData } from '../sections/fk-services'
 import type { FkTeamData, FkTeamMember } from '../sections/fk-team'
+import type { FkTrustData } from '../sections/fk-trust'
 import type { FkFeaturesData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
 import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, type ContactView } from './contact'
@@ -156,8 +157,7 @@ function servicesSection(
     intro?: string
     numbered: boolean
     highlightFirst: boolean
-    /** Show the in-place "Mit tartalmaz?" preview (overview cards only). */
-    preview: boolean
+    iconCards?: boolean
     tone?: 'plain' | 'warm'
   },
 ): Section<FkServicesData> | undefined {
@@ -169,17 +169,16 @@ function servicesSection(
     intro: options.intro,
     numbered: options.numbered,
     highlightFirst: options.highlightFirst,
+    iconCards: options.iconCards,
     tone: options.tone,
-    detailsLabel: labels.details,
-    linkLabel: labels.fullPage,
+    linkLabel: labels.link,
     items: items.map((service, index) => ({
       slug: service.slug,
       number: String(index + 1).padStart(2, '0'),
       title: service.title,
       summary: service.summary,
       href: routes.service(service.slug),
-      // Short preview only — the full description stays on the service page.
-      highlights: options.preview ? knownItems(service.includes).slice(0, 4) : undefined,
+      icon: service.icon,
       price: visiblePrice(service, ctx.content.settings),
     })),
   })
@@ -204,19 +203,29 @@ function teamMember(ctx: BuildContext, person: Person): FkTeamMember {
 /** Verified facts only: placeholder values are dropped, derived values are computed. */
 function knownFacts(ctx: BuildContext, facts: readonly FactInput[]): { value: string; label: string }[] {
   const { people, company } = ctx.content
+  const derived = {
+    teamSize: String(people.length),
+    serviceCount: String(ctx.services.length),
+    audienceCount: String(ctx.audiences.length),
+    city: company.city,
+  }
   return facts
-    .map((fact) =>
-      'source' in fact
-        ? { value: fact.source === 'teamSize' ? String(people.length) : company.city, label: fact.label }
-        : fact,
-    )
+    .map((fact) => ('source' in fact ? { value: derived[fact.source], label: fact.label } : fact))
     .filter((fact) => known(fact.value) !== undefined)
 }
 
 function teamSection(
   ctx: BuildContext,
   id: string,
-  options: { title: string; intro?: string; facts?: readonly FactInput[]; more?: LinkCta; tone?: 'plain' | 'warm' },
+  options: {
+    title: string
+    intro?: string
+    more?: LinkCta
+    joinedWithNext?: boolean
+    /** Limit the lead's introduction (homepage shows a shorter version). */
+    leadParagraphs?: number
+    tone?: 'plain' | 'warm'
+  },
 ) {
   const { people, copy } = ctx.content
   const leadPerson = people.find((p) => p.isLead)
@@ -230,16 +239,31 @@ function teamSection(
     id,
     title: options.title,
     intro: options.intro,
-    lead: leadPerson ? { ...teamMember(ctx, leadPerson), badge: copy.team.leadBadge } : undefined,
-    facts: options.facts ? knownFacts(ctx, options.facts) : undefined,
+    lead: leadPerson
+      ? {
+          ...teamMember(ctx, leadPerson),
+          badge: copy.team.leadBadge,
+          // Lead block: introduction paragraphs (fallback: the short bio).
+          paragraphs: (knownItems(leadPerson.intro).length > 0 ? knownItems(leadPerson.intro) : knownItems([leadPerson.bio ?? ''])).slice(
+            0,
+            options.leadParagraphs,
+          ),
+        }
+      : undefined,
     members: others,
-    primaryBadge: copy.team.primaryContactBadge,
     more: options.more,
+    joinedWithNext: options.joinedWithNext,
     tone: options.tone,
   })
 }
 
-function quoteSection(ctx: BuildContext, id: string, title: string, intro: string | undefined, tone?: 'plain' | 'warm') {
+function quoteSection(
+  ctx: BuildContext,
+  id: string,
+  title: string,
+  intro: string | undefined,
+  options: { panel: boolean; tone?: 'plain' | 'warm' },
+) {
   const { copy, settings } = ctx.content
   const { success, ...labels } = copy.quoteForm
   const contact = ctx.contact.primaryContact
@@ -254,6 +278,16 @@ function quoteSection(ctx: BuildContext, id: string, title: string, intro: strin
     privacyHref: routes.privacy,
     labels,
     success,
+    // Firm's official contact details (the enquiry itself goes to the designated contact).
+    panel: options.panel
+      ? {
+          title: copy.quotePanel.title,
+          labels: { address: copy.quotePanel.address, phone: copy.quotePanel.phone, email: copy.quotePanel.email },
+          addressLines: ctx.contact.addressLines,
+          phone: ctx.contact.phone,
+          email: ctx.contact.email,
+        }
+      : undefined,
     primaryContact: {
       label: copy.contact.primaryContactLabel,
       name: contact.name,
@@ -261,7 +295,7 @@ function quoteSection(ctx: BuildContext, id: string, title: string, intro: strin
       phone: contact.phone,
       email: contact.email,
     },
-    tone,
+    tone: options.tone,
   })
 }
 
@@ -309,18 +343,26 @@ export function buildHomePage(ctx: BuildContext): Page {
       servicesSection(ctx, 'szolgaltatasok', ctx.services, {
         title: home.services.title,
         intro: home.services.intro,
-        numbered: true,
-        highlightFirst: true,
-        preview: true,
+        numbered: false,
+        highlightFirst: false,
+        iconCards: true,
       }),
       audiencesFeatures('kinek', home.audiences.title, ctx.audiences, 'warm'),
       teamSection(ctx, 'rolunk', {
         title: home.about.title,
         intro: withLead(ctx, home.about.intro),
-        facts: home.about.facts,
         more: { id: 'rolunk-tovabb', kind: 'secondary', text: home.about.more, href: routes.about },
+        joinedWithNext: true,
+        leadParagraphs: 2,
       }),
-      quoteSection(ctx, QUOTE_ANCHOR, home.quote.title, home.quote.intro, 'warm'),
+      // Four-item facts strip directly below the About section.
+      (() => {
+        const facts = knownFacts(ctx, home.facts.items)
+        return facts.length > 0
+          ? section<FkTrustData>('rolunk-tenyek', 'fk-trust', { id: 'rolunk-tenyek', label: home.facts.label, facts })
+          : undefined
+      })(),
+      quoteSection(ctx, QUOTE_ANCHOR, home.quote.title, home.quote.intro, { panel: true, tone: 'warm' }),
     ]),
   )
 }
@@ -337,7 +379,6 @@ export function buildServicesIndexPage(ctx: BuildContext): Page {
         title: c.listTitle,
         numbered: true,
         highlightFirst: true,
-        preview: true,
       }),
       generalQuoteCta(ctx, 'szolgaltatasok-cta'),
     ]),
@@ -395,7 +436,6 @@ export function buildServicePage(ctx: BuildContext, service: Service): Page {
         title: blocks.related,
         numbered: false,
         highlightFirst: false,
-        preview: false,
         tone: 'warm',
       }),
       relatedArticles.length > 0
@@ -505,6 +545,7 @@ export function buildContactPage(ctx: BuildContext): Page {
         title: c.detailsTitle,
         companyName: contact.companyName,
         address: contact.address,
+        directions: contact.directionsHref ? { href: contact.directionsHref, label: c.directions } : undefined,
         phone: contact.phone,
         email: contact.email,
         hoursTitle: ctx.content.copy.footer.hoursTitle,
@@ -512,7 +553,8 @@ export function buildContactPage(ctx: BuildContext): Page {
         primaryContact: { label: c.primaryContactLabel, ...contact.primaryContact },
         lead: { label: c.leadLabel, name: contact.lead.name, role: contact.lead.role },
       }),
-      quoteSection(ctx, QUOTE_ANCHOR, ctx.content.copy.home.quote.title, ctx.content.copy.home.quote.intro, 'warm'),
+      // The contact details are shown right above — no duplicate panel here.
+      quoteSection(ctx, QUOTE_ANCHOR, ctx.content.copy.home.quote.title, ctx.content.copy.home.quote.intro, { panel: false, tone: 'warm' }),
     ]),
   )
 }

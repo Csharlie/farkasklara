@@ -63,7 +63,9 @@ Nyitott: `[TELEFONSZÁM]`, `[E-MAIL]`, `[NAPOK]`/`[NYITVATARTÁS]`, `[CÉGNÉV]`
 `[ADATKEZELÉSI TÁJÉKOZTATÓ SZÖVEGE: …]`, `url` (`[WEBCÍM]`).
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
-**FIKTÍV adatok (élesítés előtt cserélendők):** Farkas Klára képesítései és bemutatkozása, valamint a harmadik munkatárs (`konyvelo`: név, képesítés, leírás) — a `src/content/company.ts`-ben `FIKTÍV` megjegyzéssel jelölve.
+**Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Halász Réka neve a projekt során megadott (korábban fiktívként bevezetett) adat — élesítés előtt ellenőrizendő. Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe.
+
+**Tény-sáv (Rólunk alatt):** csak tartalomból levezetett értékek (csapatlétszám, szolgáltatási területek, ügyfélcsoportok, Kecskemét). Ellenőrzött üzleti mutató (pl. alapítás éve, ügyfélszám) a `copy.home.facts.items` listában cserélhető be.
 
 ## Platform-képességek használata
 

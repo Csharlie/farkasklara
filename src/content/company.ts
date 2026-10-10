@@ -33,10 +33,14 @@ export const people: Person[] = [
     id: 'farkas-klara',
     name: 'Farkas Klára',
     role: 'Szakmai vezető',
-    // FIKTÍV — élesítés előtt valós adatra cserélendő.
-    credentials: ['Mérlegképes könyvelő (vállalkozási)', 'Okleveles adótanácsadó'],
-    // FIKTÍV — élesítés előtt valós adatra cserélendő.
-    bio: 'Az iroda szakmai vezetője. Több mint 15 éve könyvel kis- és középvállalkozásoknak; ő felel a könyvelés, az adózás és a tanácsadás szakmai irányáért.',
+    // Firm-focused introduction — no unverified biography, qualifications or
+    // years of experience. Add verified credentials to `credentials` later.
+    intro: [
+      'Farkas Klára az iroda szakmai vezetője. Ő felel azért, hogy a könyvelés, a bevallások és az adózási tanácsadás szakmailag rendben legyen, és hogy minden ügyben megszülessen a szükséges szakmai döntés.',
+      'A könyvelést és az adózási feladatokat felelősségnek tekintjük, nem puszta adminisztrációnak. Egy havi zárás vagy egy bevallás mögött a vállalkozás döntései állnak, ezért a számok mellett azt is nézzük, mit jelentenek az Ön számára.',
+      'Ügyfeleinkkel érthetően beszélünk: szakkifejezések helyett azt mondjuk el, mi a teendő, mikorra és miért. Figyelünk a határidőkre és azokra a változásokra, amelyek a vállalkozását érintik.',
+      'Célunk, hogy a vállalkozása mögött rendezett, kiszámítható könyvelési háttér álljon, amelyre döntéskor támaszkodhat.',
+    ],
     isLead: true,
     isPrimaryContact: false,
   },
@@ -44,16 +48,15 @@ export const people: Person[] = [
     id: 'ugyintezo',
     name: 'Posszert Ervin',
     role: 'Ügyintéző, kapcsolattartó',
-    bio: 'Hozzá futnak be az általános kérdések és az ajánlatkérések, és ő egyezteti a következő lépést.',
+    bio: 'Fogadja az érdeklődéseket és az ajánlatkéréseket, egyezteti az időpontokat, és összefogja az ügyfelekkel folytatott kommunikációt és az ügyintézést.',
     isPrimaryContact: true,
   },
   {
-    // FIKTÍV — név, képesítés és leírás élesítés előtt valós adatra cserélendő.
+    // Name as provided for the project; no qualification is stated until verified.
     id: 'konyvelo',
     name: 'Halász Réka',
     role: 'Könyvelő',
-    credentials: ['Mérlegképes könyvelő'],
-    bio: 'Egyéni vállalkozók és kisebb cégek havi könyvelését és bevallásait viszi, a szakmai vezető irányításával.',
+    bio: 'Az ügyfelek könyvelési feladatain dolgozik: a bizonylatok feldolgozásán, a havi zárásokon és a bevallások előkészítésén, a szakmai vezető irányításával.',
     isPrimaryContact: false,
   },
 ]
