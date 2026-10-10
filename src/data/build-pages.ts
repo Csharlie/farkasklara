@@ -278,7 +278,7 @@ function generalQuoteCta(ctx: BuildContext, id: string) {
   return closingCta(ctx, id, {
     title: copy.home.quote.title,
     text: copy.home.quote.intro,
-    primary: { id: `${id}-quote`, kind: 'primary', text: copy.nav.quote, href: quoteHref(settings.quote.prefillParam) },
+    primary: { id: `${id}-quote`, kind: 'primary', text: copy.home.hero.primaryCta, href: quoteHref(settings.quote.prefillParam) },
   })
 }
 
@@ -299,7 +299,8 @@ export function buildHomePage(ctx: BuildContext): Page {
         title: home.hero.title,
         description: home.hero.description,
         primaryCTA: { text: home.hero.primaryCta, href: `#${QUOTE_ANCHOR}` },
-        secondaryCTA: { text: home.hero.secondaryCta, href: routes.services },
+        // Services follow right below the hero — scroll instead of a page load.
+        secondaryCTA: { text: home.hero.secondaryCta, href: '#szolgaltatasok' },
         backgroundImage: home.hero.image
           ? { src: home.hero.image, alt: known(home.hero.imageAlt) ?? '' }
           : undefined,
@@ -569,7 +570,7 @@ export function buildNotFoundPage(ctx: BuildContext): Page {
       header('nem-talalhato-fejlec', {
         title: c.title,
         lead: c.lead,
-        primary: { id: 'nem-talalhato-home', kind: 'primary', text: c.cta, href: routes.home },
+        primary: { id: 'nem-talalhato-home', kind: 'secondary', text: c.cta, href: routes.home },
       }),
     ],
   )

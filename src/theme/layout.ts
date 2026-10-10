@@ -22,19 +22,28 @@ export function toneClassName(tone: 'plain' | 'warm' | undefined): string {
 export type CtaKind = 'primary' | 'secondary'
 
 /**
- * CTA anchors reuse the platform buttonVariants recipe.
- * - primary: accent background, ink text (never white on accent)
- * - secondary: ink outline; the platform outline/ghost variants use
- *   text-accent, which fails 4.5:1 on light surfaces, so color is overridden.
- * Both are pill-shaped, 17px label, min. 44px touch target.
+ * The single CTA recipe of the site (platform buttonVariants as the base).
+ * - primary   — every quote request (ajánlatkérés): solid gold, ink label.
+ * - secondary — everything else; solid, never gold, adapts to its surface:
+ *     light surface → solid dark blue (surface-strong), white label
+ *     dark surface  → solid white, dark-blue (ink) label
+ *   (dark surface = inside [data-color-scheme='dark'], the platform convention)
+ * Both: pill, 48px high, 17px semibold label. Focus is shown only for
+ * keyboard users (global :focus-visible outline in index.css).
+ * The platform HeroBlock CTAs get the same look in index.css.
  */
 export function ctaClassName(kind: CtaKind, className?: string): string {
   return cn(
+    buttonVariants({ variant: kind === 'primary' ? 'primary' : 'outline', size: 'lg' }),
+    'min-h-12 rounded-full border px-7 py-3 text-base font-semibold leading-tight tracking-[0.01em] transition duration-200 motion-safe:hover:-translate-y-px',
+    'focus:ring-0 focus:ring-offset-0',
     kind === 'primary'
-      ? buttonVariants({ variant: 'primary', size: 'lg' })
-      : buttonVariants({ variant: 'outline', size: 'lg' }),
-    'min-h-11 rounded-full px-7 text-base font-semibold',
-    kind === 'secondary' && 'border-foreground text-foreground hover:bg-foreground/5 focus:ring-foreground',
+      ? 'border-transparent bg-accent text-accent-foreground hover:bg-accent-hover'
+      : cn(
+          'border-transparent bg-surface-strong text-on-strong hover:bg-surface-strong-raised',
+          '[[data-color-scheme=dark]_&]:bg-on-strong [[data-color-scheme=dark]_&]:text-ink',
+          '[[data-color-scheme=dark]_&]:hover:bg-muted-on-dark',
+        ),
     className,
   )
 }

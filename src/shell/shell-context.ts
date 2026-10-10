@@ -1,6 +1,7 @@
 import { content } from '../content'
 import { createBuildContext } from '../data/build-pages'
-import { quoteHref, routes } from '../data/routes'
+import type { Page } from '@spektra/types'
+import { QUOTE_ANCHOR, pathToPageSlug, quoteHref, routes } from '../data/routes'
 
 /**
  * Shell view of the client content. Header/Footer receive SiteData from the
@@ -30,4 +31,18 @@ export function ariaCurrent(href: string, path: string): 'page' | 'true' | undef
   if (href === path) return 'page'
   if (href !== '/' && path.startsWith(`${href}/`)) return 'true'
   return undefined
+}
+
+/**
+ * Header quote CTA target for the current page:
+ * - the page has the quote form (home, /kapcsolat) → scroll to it (#ajanlatkeres)
+ * - a service page → /kapcsolat with that service preselected
+ * - anywhere else → /kapcsolat quote form
+ */
+export function contextualQuoteHref(path: string, pages: readonly Page[]): string {
+  const page = pages.find((p) => p.slug === pathToPageSlug(path))
+  if (page?.sections.some((s) => s.type === 'fk-quote')) return `#${QUOTE_ANCHOR}`
+  const { prefillParam } = content.settings.quote
+  const service = shell.services.find((s) => s.href === path)
+  return service ? quoteHref(prefillParam, service.slug) : quoteHref(prefillParam)
 }

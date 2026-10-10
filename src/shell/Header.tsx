@@ -3,7 +3,7 @@ import { cn } from '@spektra/components'
 import type { LayoutShellProps } from '@spektra/layouts'
 import { ctaClassName } from '../theme/layout'
 import { ContactAnchor } from '../sections/shared/ContactAnchor'
-import { ariaCurrent, currentPath, shell } from './shell-context'
+import { ariaCurrent, contextualQuoteHref, currentPath, shell } from './shell-context'
 
 /**
  * Header — maps SiteData navigation to a route-based header.
@@ -15,6 +15,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
   const [open, setOpen] = useState(false)
   const path = currentPath()
   const links = siteData.navigation.primary
+  const quoteHref = contextualQuoteHref(path, siteData.pages)
 
   return (
     <header
@@ -65,12 +66,12 @@ export function AppHeader({ siteData }: LayoutShellProps) {
             />
           )}
           <a
-            href={shell.quote.href}
+            href={quoteHref}
             data-ui-id="header-quote"
             data-ui-type="link"
             data-ui-role="cta"
             data-ui-action="navigate"
-            className={ctaClassName('secondary', 'hidden min-h-11 px-5 py-2 sm:inline-flex')}
+            className={ctaClassName('primary', 'hidden min-h-11 px-5 py-2 sm:inline-flex')}
           >
             {shell.quote.label}
           </a>
@@ -127,11 +128,13 @@ export function AppHeader({ siteData }: LayoutShellProps) {
           ))}
           <li className="pt-5">
             <a
-              href={shell.quote.href}
+              href={quoteHref}
+              onClick={() => setOpen(false)}
               data-ui-id="nav-mobile-quote"
               data-ui-type="link"
               data-ui-role="cta"
               data-ui-action="navigate"
+              data-ui-trigger="click"
               className={ctaClassName('primary', 'w-full')}
             >
               {shell.quote.label}

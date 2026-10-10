@@ -23,6 +23,8 @@
     --fk-line: 38 22% 90%;
     --fk-accent: 42 63% 48%;
     --fk-accent-text: 41 72% 31%;
+    /* Hover of the gold CTA — darker; ink label stays above 4.5:1. */
+    --fk-accent-hover: 42 63% 43%;
 
     /* ── Platform semantic tokens (light) ─────────────────────── */
     --background: var(--fk-surface);
@@ -53,6 +55,7 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
     /* The translucent header is fixed: keep anchor targets below it. */
     scroll-padding-top: 5.5rem;
   }
@@ -90,6 +93,58 @@
 
   [data-color-scheme='dark'] :focus-visible {
     outline-color: hsl(var(--fk-accent));
+  }
+}
+
+/* Platform HeroBlock CTAs (stable data-ui-id hooks) — same look and
+   behaviour as ctaClassName() in src/theme/layout.ts. The platform renders
+   them with fixed classes (rounded-xl, text-xl, hover:bg-muted/50,
+   hover:bg-accent/90, click-time ring). Scoped to the hero block for higher
+   specificity, so these rules always win over the platform utilities —
+   without touching Platform Core. */
+[data-ui-component='hero-block'] [data-ui-id='hero-primary-cta'],
+[data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta'] {
+  min-height: 3rem;
+  padding: 0.75rem 1.75rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  transition: background-color 200ms, border-color 200ms, transform 200ms;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui-component='hero-block'] [data-ui-id='hero-primary-cta']:hover,
+  [data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta']:hover {
+    transform: translateY(-1px);
+  }
+}
+
+[data-ui-component='hero-block'] [data-ui-id='hero-primary-cta']:focus,
+[data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta']:focus {
+  box-shadow: none;
+}
+
+[data-ui-component='hero-block'] [data-ui-id='hero-primary-cta']:hover {
+  background-color: hsl(var(--fk-accent-hover));
+}
+
+/* Secondary on the dark hero image: solid white, ink label (see ctaClassName). */
+[data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta'] {
+  background-color: hsl(var(--fk-on-strong));
+  color: hsl(var(--fk-ink));
+}
+
+[data-ui-component='hero-block'] [data-ui-id='hero-secondary-cta']:hover {
+  background-color: hsl(var(--fk-muted-on-dark));
+  color: hsl(var(--fk-ink));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 

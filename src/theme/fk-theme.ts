@@ -40,9 +40,11 @@ export const fkPreset = {
         // Configurable dark surface — change --fk-surface-strong in index.css
         // to lighten every dark block at once.
         'surface-strong': clientColor('surface-strong'),
+        'surface-strong-raised': clientColor('surface-strong-raised'),
         'on-strong': clientColor('on-strong'),
         'muted-on-dark': clientColor('muted-on-dark'),
         'accent-text': clientColor('accent-text'),
+        'accent-hover': clientColor('accent-hover'),
       },
       fontFamily: {
         sans: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
