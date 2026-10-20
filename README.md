@@ -1,7 +1,7 @@
 # sp-farkasklara — Farkas Klára Könyvelőiroda (Spektra kliens)
 
 Kecskeméti könyvelőiroda weboldala a Spektra Platform Core-ra építve.
-Platform Core: `sp-platform` (`Csharlie/spektra`), `main` @ `3ab9768` — fogyasztás: `link:../../sp-platform/packages/*`.
+Platform Core: `sp-platform` (`Csharlie/spektra`), `main` @ `dfce46c` (consent: `@spektra/runtime` ConsentProvider, `@spektra/components` ConsentBanner) — fogyasztás: `link:../../sp-platform/packages/*`.
 
 ## Parancsok
 
@@ -40,8 +40,10 @@ Előfeltétel: a Platform Core buildelve (`cd sp-platform; pnpm build`) — a `d
 - **Új szolgáltatás:** új objektum a `services.ts`-be → létrejön a `/szolgaltatasok/<slug>` oldal, a főoldali kártya, az űrlap-opció, a lábléc-link és a SEO-meta.
 - **Árak megjelenítése:** `settings.showPrices = true` (jelenleg `false`, mert az árak `[ÁR]` placeholderek).
 - **Nagyobb vállalatok célcsoport:** `settings.segments.complex.enabled` (alapból `true`; `false`-ra állítva eltűnik).
+- **Elérhetőségek → kapcsolattartó:** a márka a Farkas Klára Könyvelőiroda, de minden csatorna (telefon, e-mail, ajánlatkérő űrlap) az ügyfélkapcsolati vezetőhöz, Posszert Ervinhez fut be. A `company.phone` / `company.email` az ő csatornája. Név szerint jelenik meg: Kapcsolat oldal (bevezető + kapcsolattartó-kártya a telefonnal/e-maillel), ajánlatkérő panel első kártyája, lábléc, Rólunk csapatkártya (telefon/e-mail a kártyán), fejléc-telefon aria/title, űrlap sikerüzenet, Kapcsolat/Rólunk meta description. Az e-mail szerepkör-postafiók (`iroda@farkasklara.hu`, Ervin kezeli) — a végleges domainen élesítés előtt létre kell hozni. Személyes ügyfélfogadás csak előzetes időpont-egyeztetéssel (`copy.footer.appointmentNote`, `copy.quotePanel.notes.hours`). Az űrlap-driver címzettje (`VITE_FORM_MAILTO_TARGET`, illetve a CF7 címzett) is ez a cím legyen.
 - **Szerepkörök:** a `people` tömbben pontosan egy `isLead: true` (szakmai vezető, kiemelt blokk) és pontosan egy `isPrimaryContact: true` (ügyintéző — hozzá fut be minden érdeklődés); más érték build-hibát ad.
-- **Térkép:** teljes szélességű `fk-map` section minden oldal végén, a footer előtt (a `bc-map` / `lc-map` mintája). Automatikusan megjelenik, ha `company.address` minden része valós. Google Maps beágyazás címből — élesítés előtt ellenőrizni kell a cookie-/adatkezelési vonatkozását.
+- **Térkép:** teljes szélességű `fk-map` section minden oldal végén, a footer előtt (a `bc-map` / `lc-map` mintája). Automatikusan megjelenik, ha `company.address` minden része valós. A Google Maps csak a süti-sávban adott hozzájárulás után töltődik be (platform `ConsentGate`); addig helyőrző látszik a címmel és útvonaltervező linkkel.
+- **Sütik / hozzájárulás:** platform consent (`sp-platform/docs/consent.md`). Konfiguráció és szövegek: `src/content/consent.ts`; UI-bekötés: `src/shell/ConsentUi.tsx`; lábléc: „Süti-beállítások”. Alul süti-sáv (Elfogadom / Csak a szükségesek / Beállítások); elfogadás után a térkép mindenhol automatikusan megjelenik, addig helyőrző (cím + útvonaltervezés + egyszeri „Térkép megjelenítése”). Új szolgáltatás (pl. analitika) felvételekor a `consentConfig.version`-t és az adatkezelési tájékoztató Sütik fejezetét is frissíteni kell.
 - **Hero kép:** `public/images/hero.jpg` (1672×941, JPEG), hivatkozás és alt-szöveg: `copy.home.hero.image` / `imageAlt`.
 - **Cikk:** `articles.ts`, `visible: true`; szolgáltatáshoz kötés: `service.relatedArticles`.
 
@@ -57,15 +59,19 @@ Minden ismeretlen tény `[NAGYBETŰS]` formában szerepel, csak a `src/content/`
 Select-String -Path src\content\*.ts -Pattern '\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]'
 ```
 
-Nyitott: `[TELEFONSZÁM]`, `[E-MAIL]`, `[NAPOK]`/`[NYITVATARTÁS]`, `[CÉGNÉV]`,
+Nyitott: `[NAPOK]`/`[NYITVATARTÁS]`, `[CÉGNÉV]`,
 `[CÉGJEGYZÉKSZÁM]`, `[ADÓSZÁM]`, `[NYILVÁNTARTÁSI SZÁM]`, `[TÁRHELYSZOLGÁLTATÓ]`, `[ÉV]`, `[ÜGYFELEK SZÁMA]`,
-`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`,
-`[ADATKEZELÉSI TÁJÉKOZTATÓ SZÖVEGE: …]`, `url` (`[WEBCÍM]`).
+`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, `url` (`[WEBCÍM]`),
+jogi oldalak: `[KÉPVISELŐ NEVE ÉS TISZTSÉGE]`, `[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]`, `[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]`,
+`[TÁRHELYSZOLGÁLTATÓ CÍME]`, `[TÁRHELYSZOLGÁLTATÓ E-MAIL]`, `[TÁRHELYSZOLGÁLTATÓ NEVE ÉS CÍME]`, `[E-MAIL-SZOLGÁLTATÓ NEVE ÉS CÍME]`.
+
+**Jogi oldalak** (`copy.privacy` / `copy.imprint`, `fk-legal` section): a GDPR / Infotv. / Eker. tv. szerinti szerkezet kész; a hiányzó tények sorai rejtve maradnak.
+Élesítés előtt: jogász / adatvédelmi szakértő ellenőrizze; a hatálybalépés dátumát (`privacy.updated`) frissíteni kell; ha az űrlap-driver, analitika vagy süti-banner változik, a Sütik fejezetet is.
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
-**FIKTÍV irodai elérhetőségek (élesítés előtt cserélendők):** telefonszám, e-mail-cím és nyitvatartás a `src/content/company.ts`-ben (`FIKTÍV` megjegyzéssel); a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
+**Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (iroda@farkasklara.hu, a postafiók még létrehozandó). **FIKTÍV, élesítés előtt ellenőrizendő:** nyitvatartás a `src/content/company.ts`-ben; a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
 
-**Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Halász Réka neve a projekt során megadott (korábban fiktívként bevezetett) adat — élesítés előtt ellenőrizendő. Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe.
+**Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Halász Réka neve a projekt során megadott (korábban fiktívként bevezetett) adat — élesítés előtt ellenőrizendő. Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe — megadva (2026-10-21): mindhárom munkatárs mérlegképes könyvelő.
 
 **Tény-sáv (Rólunk alatt):** csak tartalomból levezetett értékek (csapatlétszám, szolgáltatási területek, ügyfélcsoportok, Kecskemét). Ellenőrzött üzleti mutató (pl. alapítás éve, ügyfélszám) a `copy.home.facts.items` listában cserélhető be.
 
@@ -81,7 +87,7 @@ A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szak
 | Analytics | `data-ui-action="call"`, `"email"`, `"submit-form"` (platform data-ui standard) |
 | Téma | `basePreset` + szemantikus CSS-változók + `[data-color-scheme='dark']` |
 
-Form driver: `VITE_FORM_HANDLER` = `noop` (alap) | `cf7` | `mailto` — a production driver még nincs eldöntve.
+Form driver: `VITE_FORM_HANDLER` = `noop` (alap) | `cf7` | `mailto` — a production driver még nincs eldöntve. A címzett az ügyfélkapcsolati vezető (`company.email`).
 A `noop` csak fejlesztésben színlel sikert; production buildben az űrlap őszinte hibaüzenetet ad, amíg nincs valódi driver beállítva.
 
 ## Platform Extension Required (nem implementálva a kliensben)

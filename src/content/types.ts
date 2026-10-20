@@ -185,3 +185,15 @@ export interface Settings {
     pageTitleTemplate: string
   }
 }
+
+// ── Legal pages ──────────────────────────────────────────────────────
+
+/** One chapter of a legal page. Strings may hold {tokens} and [PLACEHOLDERS]. */
+export interface LegalChapterInput {
+  id: string
+  title: string
+  paragraphs?: string[]
+  items?: string[]
+  fields?: { label: string; value: string }[]
+  groups?: { title: string; fields: { label: string; value: string }[] }[]
+}

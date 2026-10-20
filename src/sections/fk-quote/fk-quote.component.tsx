@@ -189,6 +189,12 @@ export function FkQuote({
               {panel.title}
             </h3>
             <ul className="grid gap-4">
+              {panel.contactPerson && (
+                <InfoCard icon="user" label={panel.contactPerson.label} note={panel.notes.contact}>
+                  <span className="block font-display text-xl font-bold tracking-heading">{panel.contactPerson.name}</span>
+                  <span className="block text-sm font-semibold text-muted-foreground">{panel.contactPerson.role}</span>
+                </InfoCard>
+              )}
               {panel.phone && (
                 <InfoCard icon="phone" label={panel.labels.phone} note={panel.notes.phone}>
                   <ContactAnchor link={panel.phone} action="call" id={`${id}-phone`} label={panel.labels.phone} className="min-h-0 tabular-nums" />

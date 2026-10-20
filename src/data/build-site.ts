@@ -52,7 +52,7 @@ export function buildSiteData(content: ClientContent): SiteData {
           ...page,
           sections: [
             ...page.sections,
-            { id: `${page.slug}-terkep`, type: 'fk-map', data: { title: copy.contact.mapTitle, query, height: 360 } satisfies FkMapData },
+            { id: `${page.slug}-terkep`, type: 'fk-map', data: { title: copy.contact.mapTitle, query, height: 360, zoom: 17, directionsHref: ctx.contact.directionsHref } satisfies FkMapData },
           ],
         }
       : page

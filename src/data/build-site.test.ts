@@ -134,11 +134,13 @@ describe('homepage', () => {
     expect(team.lead.name).toBe('Farkas Klára')
     expect(team.lead.badge).toBe('Szakmai vezető')
     expect(team.lead.paragraphs).toHaveLength(2) // homepage shows the short version
-    expect(team.lead.credentials).toEqual([])
+    // Credentials join the role line under the name — no separate list.
+    expect(team.lead.credentials).toBeUndefined()
+    expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, alapító, irodavezető · Mérlegképes könyvelő')
     expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
     expect(team.members.map((m) => [m.name, m.role])).toEqual([
-      ['Posszert Ervin', 'Könyvelő, ügyintéző'],
-      ['Halász Réka', 'Könyvelő'],
+      ['Posszert Ervin', 'Ügyfélkapcsolati vezető · Mérlegképes könyvelő'],
+      ['Halász Réka', 'Mérlegképes könyvelő'],
     ])
   })
 
@@ -166,7 +168,7 @@ describe('homepage', () => {
 
   it('places the compact contact panel next to the homepage form', () => {
     const quote = sectionData<{ panel?: { addressLines: string[] } }>(home, 'fk-quote')
-    expect(quote.panel?.addressLines).toEqual(['6000 Kecskemét', 'Berzsenyi utca 19.'])
+    expect(quote.panel?.addressLines).toEqual(['6000 Kecskemét', 'Tatay András utca 10.'])
   })
 })
 
@@ -293,22 +295,22 @@ describe('prices — settings.showPrices', () => {
 describe('contact — roles and single source', () => {
   it('routes enquiries to the designated administrator, not to the lead', () => {
     const site = buildSiteData(content)
-    const contact = sectionData<{ primaryContact?: unknown; lead: { name?: string } }>(
+    const contact = sectionData<{ primaryContact?: { name?: string }; lead: { name?: string } }>(
       pageBy(site.pages, 'kapcsolat'),
       'fk-contact',
     )
-    // The contact page shows the firm's details and the lead, not the contact person.
-    expect(contact.primaryContact).toBeUndefined()
+    // The contact page names the contact person; the lead stays the brand.
+    expect(contact.primaryContact?.name).toBe('Posszert Ervin')
     expect(contact.lead.name).toBe('Farkas Klára')
     const quote = sectionData<{ primaryContact: { role: string } }>(pageBy(site.pages, 'home'), 'fk-quote')
-    expect(quote.primaryContact.role).toBe('Könyvelő, ügyintéző')
+    expect(quote.primaryContact.role).toBe('Ügyfélkapcsolati vezető')
   })
 
   it('hides a name that is still a placeholder', () => {
     const c = withContent((x) => ({ ...x, people: x.people.map((p) => (p.id === 'ugyintezo' ? { ...p, name: '[ÜGYINTÉZŐ NEVE]' } : p)) }))
     const quote = sectionData<{ primaryContact: { name?: string; role: string } }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-quote')
     expect(quote.primaryContact.name).toBeUndefined()
-    expect(quote.primaryContact.role).toBe('Könyvelő, ügyintéző')
+    expect(quote.primaryContact.role).toBe('Ügyfélkapcsolati vezető')
   })
 
   it('rejects zero or several primary contacts / leads', () => {
@@ -321,10 +323,35 @@ describe('contact — roles and single source', () => {
   it('propagates one company value to every contact area', () => {
     const c = withContent((x) => ({ ...x, company: { ...x.company, phone: '+36 76 000 0000' } }))
     const site = buildSiteData(c)
-    const contact = sectionData<{ phone?: { href?: string } }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
+    const contact = sectionData<{ phone?: { href?: string }; primaryContact?: { phone?: { href?: string } } }>(
+      pageBy(site.pages, 'kapcsolat'),
+      'fk-contact',
+    )
     const quote = sectionData<{ primaryContact: { phone?: { href?: string } } }>(pageBy(site.pages, 'home'), 'fk-quote')
-    expect(contact.phone?.href).toBe('tel:+36760000000')
+    // Shown once: on the contact person's card, not repeated in the office block.
+    expect(contact.phone).toBeUndefined()
+    expect(contact.primaryContact?.phone?.href).toBe('tel:+36760000000')
     expect(quote.primaryContact.phone?.href).toBe('tel:+36760000000')
+  })
+
+  it('builds the legal pages from the company source without placeholders', () => {
+    const site = buildSiteData(content)
+    for (const slug of ['adatvedelem', 'impresszum']) {
+      const legal = sectionData<{ chapters: { id: string }[] }>(pageBy(site.pages, slug), 'fk-legal')
+      expect(legal.chapters.length, slug).toBeGreaterThan(0)
+      expect(JSON.stringify(legal), slug).not.toMatch(/\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]|\{\w+\}/)
+    }
+    const privacy = sectionData<{ chapters: { id: string; fields: { label: string; value: string }[] }[] }>(
+      pageBy(site.pages, 'adatvedelem'),
+      'fk-legal',
+    )
+    const controller = privacy.chapters.find((c) => c.id === 'adatkezelo')!
+    // The brand names the controller until the legal name is known.
+    expect(controller.fields.find((f) => f.label === 'Név')?.value).toBe('Farkas Klára Könyvelőiroda')
+    expect(controller.fields.find((f) => f.label === 'E-mail')?.value).toBe(content.company.email)
+    // The hosting chapter of the imprint stays hidden while every value is a placeholder.
+    const imprint = sectionData<{ chapters: { id: string }[] }>(pageBy(site.pages, 'impresszum'), 'fk-legal')
+    expect(imprint.chapters.map((c) => c.id)).not.toContain('tarhely')
   })
 
   it('never builds contact values from placeholders', () => {
@@ -338,12 +365,12 @@ describe('contact — roles and single source', () => {
     for (const page of site.pages) {
       const last = page.sections[page.sections.length - 1]!
       expect(last.type, page.slug).toBe('fk-map')
-      expect((last.data as { query: string }).query).toBe('6000 Kecskemét, Berzsenyi utca 19.')
+      expect((last.data as { query: string }).query).toBe('6000 Kecskemét, Tatay András utca 10.')
     }
     const contact = sectionData<{ address: string; directions?: { href: string } }>(pageBy(site.pages, 'kapcsolat'), 'fk-contact')
-    expect(contact.address).toBe('6000 Kecskemét, Berzsenyi utca 19.')
+    expect(contact.address).toBe('6000 Kecskemét, Tatay András utca 10.')
     expect(contact.directions?.href).toBe(
-      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('6000 Kecskemét, Berzsenyi utca 19.')}`,
+      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('6000 Kecskemét, Tatay András utca 10.')}`,
     )
     // The contact page shows the details above the form — no duplicate panel.
     expect(sectionData<{ panel?: unknown }>(pageBy(site.pages, 'kapcsolat'), 'fk-quote').panel).toBeUndefined()

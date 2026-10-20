@@ -1,4 +1,4 @@
-import type { FaqItem, Step } from './types'
+import type { FaqItem, LegalChapterInput, Step } from './types'
 
 /**
  * Page copy — wording only. Structure (which sections, in which order) lives
@@ -26,9 +26,9 @@ export const copy = {
 
   home: {
     meta: {
-      title: 'Könyvelőiroda Kecskemét | {company}',
+      title: 'Könyvelő Kecskemét | {company}',
       description:
-        'Könyvelés, adótanácsadás, adóbevallás, bérszámfejtés, végelszámolás és pályázatok Kecskeméten. Határidő előtt szólunk, ha teendője van.',
+        'Könyvelőiroda Kecskeméten: könyvelés, adótanácsadás, adóbevallás és bérszámfejtés vállalkozóknak és cégeknek. Határidő előtt szólunk. Kérjen ajánlatot!',
     },
     hero: {
       eyebrow: 'Könyvelőiroda Kecskeméten',
@@ -75,9 +75,9 @@ export const copy = {
 
   servicesIndex: {
     meta: {
-      title: 'Szolgáltatások | {company}',
+      title: 'Könyvelési szolgáltatások | {company}',
       description:
-        'Könyvelés, adótanácsadás, adóbevallás, bérszámfejtés, végelszámolás és pályázatok Kecskeméten.',
+        'Könyvelés, adótanácsadás, adóbevallás, bérszámfejtés, végelszámolás és pályázatírás Kecskeméten. Nézze meg, mit tartalmaz a munka, és kérjen ajánlatot.',
     },
     eyebrow: 'Szolgáltatások',
     title: 'Mivel foglalkozunk',
@@ -109,9 +109,9 @@ export const copy = {
 
   switch: {
     meta: {
-      title: 'Könyvelőváltás | {company}',
+      title: 'Könyvelőváltás Kecskeméten | {company}',
       description:
-        'Könyvelőt váltana? Az átállás menete, a szükséges iratok és a gyakori kérdések egy helyen.',
+        'Könyvelőt váltana Kecskeméten? Az iratok átvételét mi egyeztetjük az előző könyvelővel. Az átállás menete, a szükséges iratok és a gyakori kérdések.',
     },
     eyebrow: 'Könyvelőváltás',
     title: 'Könyvelőt váltana?',
@@ -157,9 +157,9 @@ export const copy = {
 
   about: {
     meta: {
-      title: 'Rólunk | {company}',
+      title: 'Rólunk – könyvelők Kecskeméten | {company}',
       description:
-        'Kecskeméti könyvelőiroda: szakmai vezető, ügyintéző és könyvelő. Hogyan dolgozunk, és kihez fordulhat.',
+        'Kecskeméti könyvelőiroda Farkas Klára szakmai vezetésével. Ügyfélkapcsolati vezetőnk, {primaryContact} fogadja a megkereséseket. Ismerje meg, hogyan dolgozunk.',
     },
     eyebrow: 'Rólunk',
     title: 'Stabil háttér a vállalkozása mögött',
@@ -204,12 +204,13 @@ export const copy = {
 
   contact: {
     meta: {
-      title: 'Kapcsolat | {company}',
-      description: 'Ajánlatkérés és elérhetőségek: cím, telefon, e-mail és nyitvatartás. Kecskemét.',
+      title: 'Kapcsolat és ajánlatkérés | {company}',
+      description:
+        'Hívja ügyfélkapcsolati vezetőnket, {primaryContact} kollégánkat ({phone}), vagy kérjen ajánlatot online. Iroda: {address}.',
     },
     eyebrow: 'Kapcsolat',
     title: 'Kapcsolat',
-    lead: 'Keressen minket telefonon, e-mailben vagy az ajánlatkérő űrlapon.',
+    lead: 'Minden megkeresés {primaryContact} ügyfélkapcsolati vezetőnkhöz fut be: hívja, írjon e-mailt, vagy kérjen ajánlatot az űrlapon. Személyes találkozóra előre egyeztetett időpontban várjuk.',
     detailsTitle: 'Elérhetőségek',
     directions: 'Útvonaltervezés',
     mapTitle: 'Az iroda helye a térképen',
@@ -217,29 +218,238 @@ export const copy = {
     leadLabel: 'Szakmai vezető',
   },
 
+  /**
+   * Legal pages. Tokens: {controller} (legal name, or the brand while unknown),
+   * {legalName}, {company}, {address}, {email}, {phone}. Any line still holding
+   * a [PLACEHOLDER] is omitted — fill the facts before go-live and have the
+   * text reviewed by a lawyer / data-protection adviser.
+   */
   privacy: {
-    meta: { title: 'Adatvédelem | {company}', description: 'Adatkezelési tájékoztató.' },
+    meta: {
+      title: 'Adatkezelési tájékoztató | {company}',
+      description:
+        'Hogyan kezeli a {company} a weboldalon, telefonon és e-mailben megadott személyes adatokat, és milyen jogai vannak Önnek.',
+    },
+    eyebrow: 'Jogi információk',
     title: 'Adatkezelési tájékoztató',
-    // Shown only while the legal text below is still a placeholder.
+    lead: 'Közérthetően leírjuk, milyen személyes adatokat kezelünk, milyen célból és mennyi ideig, és hogyan gyakorolhatja a jogait.',
+    // Shown only while no chapter has known content.
     pending: 'Az adatkezelési tájékoztató szövege előkészítés alatt áll.',
-    body: ['[ADATKEZELÉSI TÁJÉKOZTATÓ SZÖVEGE: jogi szöveg szükséges]'],
+    updated: 'Hatályos: 2026. október 21-től',
+    tocTitle: 'Tartalom',
+    chapters: [
+      {
+        id: 'adatkezelo',
+        title: 'Az adatkezelő',
+        paragraphs: ['A weboldal és az azon keresztül történő adatkezelés felelőse (a továbbiakban: Adatkezelő):'],
+        fields: [
+          { label: 'Név', value: '{controller}' },
+          { label: 'Székhely', value: '{address}' },
+          { label: 'Cégjegyzékszám / nyilvántartási szám', value: '[CÉGJEGYZÉKSZÁM]' },
+          { label: 'Adószám', value: '[ADÓSZÁM]' },
+          { label: 'E-mail', value: '{email}' },
+          { label: 'Telefon', value: '{phone}' },
+        ],
+      },
+      {
+        id: 'jogszabalyok',
+        title: 'Jogszabályi háttér',
+        paragraphs: ['Adatkezelésünk során különösen az alábbi jogszabályok szerint járunk el:'],
+        items: [
+          'az Európai Parlament és a Tanács (EU) 2016/679 rendelete (általános adatvédelmi rendelet, GDPR);',
+          'az információs önrendelkezési jogról és az információszabadságról szóló 2011. évi CXII. törvény (Infotv.);',
+          'az elektronikus kereskedelmi szolgáltatások, valamint az információs társadalommal összefüggő szolgáltatások egyes kérdéseiről szóló 2001. évi CVIII. törvény (Eker. tv.);',
+          'a számvitelről szóló 2000. évi C. törvény (Szt.), az ügyfélkapcsolat során keletkező bizonylatok tekintetében.',
+        ],
+      },
+      {
+        id: 'adatkezelesek',
+        title: 'Milyen adatokat, milyen célból kezelünk',
+        paragraphs: [
+          'Csak azokat az adatokat kezeljük, amelyekre a megkeresés megválaszolásához vagy a jogszabályi kötelezettségeink teljesítéséhez szükség van. Az adatokat nem használjuk hírlevélküldésre vagy profilalkotásra, és nem adjuk át harmadik félnek értékesítési céllal.',
+        ],
+        groups: [
+          {
+            title: 'Ajánlatkérés az online űrlapon',
+            fields: [
+              { label: 'Kezelt adatok', value: 'név, e-mail-cím és/vagy telefonszám, a választott szolgáltatás, az üzenet szövege' },
+              { label: 'Cél', value: 'az ajánlatkérés megválaszolása, kapcsolatfelvétel, ajánlat készítése' },
+              { label: 'Jogalap', value: 'a szerződés megkötését megelőzően, az Ön kérésére tett lépések – GDPR 6. cikk (1) bekezdés b) pont' },
+              { label: 'Megőrzés', value: 'ha nem jön létre megbízás, a megkeresés lezárását követő 1 évig; megbízás esetén a szerződéses adatkezelés szabályai szerint' },
+            ],
+          },
+          {
+            title: 'Megkeresés telefonon vagy e-mailben',
+            fields: [
+              { label: 'Kezelt adatok', value: 'név, telefonszám, e-mail-cím, valamint a megkeresésben Ön által megadott információk' },
+              { label: 'Cél', value: 'kérdések megválaszolása, időpont-egyeztetés, ajánlatadás' },
+              { label: 'Jogalap', value: 'a szerződés megkötését megelőző lépések – GDPR 6. cikk (1) bekezdés b) pont; egyéb megkeresésnél az Adatkezelő válaszadáshoz fűződő jogos érdeke – GDPR 6. cikk (1) bekezdés f) pont' },
+              { label: 'Megőrzés', value: 'a megkeresés lezárását követő 1 évig' },
+            ],
+          },
+          {
+            title: 'Ügyfelek adatai megbízás esetén',
+            fields: [
+              { label: 'Kezelt adatok', value: 'a megbízási szerződésben és a könyvelési szolgáltatás teljesítéséhez átadott adatok' },
+              { label: 'Cél', value: 'a megbízási szerződés teljesítése, valamint számviteli, adózási és pénzmosás elleni kötelezettségek teljesítése' },
+              { label: 'Jogalap', value: 'szerződés teljesítése – GDPR 6. cikk (1) bekezdés b) pont; jogi kötelezettség – GDPR 6. cikk (1) bekezdés c) pont' },
+              { label: 'Megőrzés', value: 'a vonatkozó jogszabályokban előírt ideig (számviteli bizonylatoknál az Szt. 169. §-a szerint legalább 8 évig)' },
+            ],
+          },
+          {
+            title: 'A weboldal technikai naplói',
+            fields: [
+              { label: 'Kezelt adatok', value: 'IP-cím, a látogatás időpontja, a megtekintett oldal címe, a böngésző és az operációs rendszer típusa' },
+              { label: 'Cél', value: 'a weboldal biztonságos és zavartalan működtetése, hibák és visszaélések felderítése' },
+              { label: 'Jogalap', value: 'az Adatkezelő jogos érdeke – GDPR 6. cikk (1) bekezdés f) pont' },
+              { label: 'Megőrzés', value: 'a tárhelyszolgáltató naplózási beállításai szerint, legfeljebb 30 napig' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'sutik',
+        title: 'Sütik és külső szolgáltatások',
+        paragraphs: [
+          'A weboldal nem használ analitikai, reklám- vagy közösségimédia-sütiket, és nem követi a látogatók viselkedését. Az első látogatáskor a lap alján megjelenő sávban dönthet arról, hogy hozzájárul-e a külső tartalmak (térkép) betöltéséhez.',
+        ],
+        items: [
+          'Süti-döntés (szükséges): a süti-beállításait böngészője helyi tárolójában („spektra-consent”) legfeljebb 12 hónapig megjegyezzük, hogy ne kelljen újra kérdeznünk. Ez a weboldal működéséhez szükséges, ezért hozzájárulást nem igényel; személyes adatot nem tartalmaz.',
+          'Google Maps térkép – külső tartalom (Google Ireland Ltd., Gordon House, Barrow Street, Dublin 4, Írország): csak akkor töltődik be, ha Ön a süti-sávban az „Elfogadom” gombra, vagy a térkép helyén a „Térkép megjelenítése” gombra kattint. Ekkor a Google megkapja az Ön IP-címét, és saját sütiket helyezhet el, amelyekre a Google adatvédelmi tájékoztatója vonatkozik (policies.google.com/privacy). Jogalap: az Ön hozzájárulása – GDPR 6. cikk (1) bekezdés a) pont. Hozzájárulás nélkül a Google-hoz a térkép miatt semmilyen adat nem jut.',
+          'Google Fonts betűtípusok (Google Ireland Ltd.): az oldal betűtípusainak megjelenítésére; betöltésükkor a Google megkapja az Ön IP-címét. Sütit nem helyeznek el.',
+          'Hozzájárulását bármikor, indoklás nélkül visszavonhatja a lap alján található „Süti-beállítások” linken; a visszavonás a korábbi adatkezelés jogszerűségét nem érinti. A Google által már elhelyezett sütiket böngészője beállításaiban törölheti.',
+        ],
+      },
+      {
+        id: 'cimzettek',
+        title: 'Kik férhetnek hozzá az adatokhoz',
+        paragraphs: [
+          'Az adatokhoz kizárólag az Adatkezelő munkatársai férnek hozzá, abban a körben, amelyre a feladatuk ellátásához szükségük van; munkatársainkat titoktartási kötelezettség terheli. Az adatkezelés technikai hátterét az alábbi adatfeldolgozók biztosítják:',
+        ],
+        items: [
+          'Tárhelyszolgáltató: [TÁRHELYSZOLGÁLTATÓ NEVE ÉS CÍME]',
+          'E-mail-szolgáltató: [E-MAIL-SZOLGÁLTATÓ NEVE ÉS CÍME]',
+          'Google Ireland Ltd. – térkép és betűtípusok (lásd: Sütik és külső szolgáltatások)',
+        ],
+      },
+      {
+        id: 'harmadik-orszag',
+        title: 'Adattovábbítás az Európai Unión kívülre',
+        paragraphs: [
+          'A Google szolgáltatásainál nem zárható ki, hogy adatok az Amerikai Egyesült Államokba kerülnek. A Google LLC részt vesz az EU–USA adatvédelmi keretrendszerben (EU–U.S. Data Privacy Framework), amely az Európai Bizottság megfelelőségi határozata alapján biztosítja a megfelelő védelmi szintet. Ezen kívül harmadik országba nem továbbítunk adatot.',
+        ],
+      },
+      {
+        id: 'biztonsag',
+        title: 'Adatbiztonság',
+        paragraphs: [
+          'Megfelelő technikai és szervezési intézkedésekkel védjük az adatokat a jogosulatlan hozzáférés, megváltoztatás, továbbítás, nyilvánosságra hozatal, törlés vagy megsemmisülés ellen. A weboldal titkosított (HTTPS) kapcsolaton érhető el, az adatokhoz csak jelszóval védett rendszerekben, jogosultsággal rendelkező munkatársaink férnek hozzá. Könyvelőirodaként az ügyféladatok bizalmas kezelése szakmai kötelezettségünk is.',
+        ],
+      },
+      {
+        id: 'jogok',
+        title: 'Az Ön jogai',
+        paragraphs: ['Az adatkezeléssel kapcsolatban Önt az alábbi jogok illetik meg:'],
+        items: [
+          'Hozzáférés: tájékoztatást kérhet arról, hogy kezelünk-e Önről adatot, és ha igen, melyeket (GDPR 15. cikk).',
+          'Helyesbítés: kérheti a pontatlan adatok javítását, a hiányosak kiegészítését (GDPR 16. cikk).',
+          'Törlés: kérheti adatai törlését, ha az adatkezelésnek nincs további jogalapja (GDPR 17. cikk).',
+          'Korlátozás: kérheti az adatkezelés korlátozását, például ha vitatja az adatok pontosságát (GDPR 18. cikk).',
+          'Adathordozhatóság: kérheti, hogy az Ön által megadott adatokat tagolt, géppel olvasható formában kiadjuk (GDPR 20. cikk).',
+          'Tiltakozás: a jogos érdeken alapuló adatkezelés ellen tiltakozhat (GDPR 21. cikk).',
+        ],
+      },
+      {
+        id: 'joggyakorlas',
+        title: 'Hogyan gyakorolhatja a jogait',
+        paragraphs: [
+          'Kérelmét e-mailben ({email}), telefonon ({phone}) vagy a székhelyünkre ({address}) küldött levélben juttathatja el hozzánk. Indokolatlan késedelem nélkül, legfeljebb egy hónapon belül válaszolunk; ez a határidő indokolt esetben további két hónappal meghosszabbítható, amiről tájékoztatjuk. A tájékoztatás és az intézkedés díjmentes.',
+        ],
+      },
+      {
+        id: 'jogorvoslat',
+        title: 'Jogorvoslat',
+        paragraphs: [
+          'Ha úgy érzi, hogy személyes adatai kezelése nem felel meg a jogszabályoknak, kérjük, először keressen meg minket – igyekszünk a kérdést gyorsan rendezni. Emellett jogosult panaszt tenni a felügyeleti hatóságnál, vagy bírósághoz fordulni; a per – választása szerint – a lakóhelye vagy tartózkodási helye szerint illetékes törvényszék előtt is megindítható.',
+        ],
+        fields: [
+          { label: 'Felügyeleti hatóság', value: 'Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH)' },
+          { label: 'Cím', value: '1055 Budapest, Falk Miksa utca 9–11.' },
+          { label: 'Postacím', value: '1363 Budapest, Pf. 9.' },
+          { label: 'Telefon', value: '+36 1 391 1400' },
+          { label: 'E-mail', value: 'ugyfelszolgalat@naih.hu' },
+          { label: 'Weboldal', value: 'www.naih.hu' },
+        ],
+      },
+      {
+        id: 'modositas',
+        title: 'A tájékoztató módosítása',
+        paragraphs: [
+          'Jelen tájékoztatót a jogszabályi változásoknak vagy az adatkezelés módosulásának megfelelően frissítjük. A mindenkor hatályos változat ezen az oldalon érhető el.',
+        ],
+      },
+    ] satisfies LegalChapterInput[] as LegalChapterInput[],
   },
 
   imprint: {
-    meta: { title: 'Impresszum | {company}', description: 'A weboldal üzemeltetőjének adatai.' },
+    meta: {
+      title: 'Impresszum | {company}',
+      description: 'A {company} weboldalának üzemeltetői adatai: cégadatok, nyilvántartási számok, elérhetőség és tárhelyszolgáltató.',
+    },
+    eyebrow: 'Jogi információk',
     title: 'Impresszum',
-    // Shown only while every field below is still a placeholder.
+    lead: 'A weboldal üzemeltetőjének adatai az elektronikus kereskedelmi szolgáltatásokról szóló 2001. évi CVIII. törvény 4. §-a alapján.',
+    // Shown only while no chapter has known content.
     pending: 'Az üzemeltető adatai előkészítés alatt állnak.',
-    fields: [
-      { label: 'Cégnév', value: '{legalName}' },
-      { label: 'Székhely', value: '{address}' },
-      { label: 'Cégjegyzékszám / nyilvántartási szám', value: '[CÉGJEGYZÉKSZÁM]' },
-      { label: 'Adószám', value: '[ADÓSZÁM]' },
-      { label: 'Könyvviteli szolgáltatás nyilvántartási száma', value: '[NYILVÁNTARTÁSI SZÁM]' },
-      { label: 'Telefon', value: '{phone}' },
-      { label: 'E-mail', value: '{email}' },
-      { label: 'Tárhelyszolgáltató', value: '[TÁRHELYSZOLGÁLTATÓ]' },
-    ],
+    chapters: [
+      {
+        id: 'uzemelteto',
+        title: 'Üzemeltető',
+        fields: [
+          { label: 'Cégnév', value: '{legalName}' },
+          { label: 'Márkanév', value: '{company}' },
+          { label: 'Székhely', value: '{address}' },
+          { label: 'Képviselő', value: '[KÉPVISELŐ NEVE ÉS TISZTSÉGE]' },
+          { label: 'Telefon', value: '{phone}' },
+          { label: 'E-mail', value: '{email}' },
+        ],
+      },
+      {
+        id: 'nyilvantartas',
+        title: 'Nyilvántartási adatok',
+        fields: [
+          { label: 'Cégjegyzékszám / nyilvántartási szám', value: '[CÉGJEGYZÉKSZÁM]' },
+          { label: 'Nyilvántartó hatóság', value: '[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]' },
+          { label: 'Adószám', value: '[ADÓSZÁM]' },
+          { label: 'Könyvviteli szolgáltatás nyilvántartási száma', value: '[NYILVÁNTARTÁSI SZÁM]' },
+          { label: 'Adótanácsadói nyilvántartási szám', value: '[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]' },
+        ],
+      },
+      {
+        id: 'tarhely',
+        title: 'Tárhelyszolgáltató',
+        fields: [
+          { label: 'Név', value: '[TÁRHELYSZOLGÁLTATÓ]' },
+          { label: 'Cím', value: '[TÁRHELYSZOLGÁLTATÓ CÍME]' },
+          { label: 'E-mail', value: '[TÁRHELYSZOLGÁLTATÓ E-MAIL]' },
+        ],
+      },
+      {
+        id: 'panaszkezeles',
+        title: 'Panaszkezelés',
+        paragraphs: [
+          'Szolgáltatásunkkal kapcsolatos panaszát telefonon ({phone}), e-mailben ({email}) vagy személyesen, előzetes időpont-egyeztetéssel a székhelyünkön teheti meg. Fogyasztónak minősülő ügyfeleink panaszuk elutasítása esetén a lakóhelyük szerint illetékes békéltető testülethez is fordulhatnak.',
+        ],
+      },
+      {
+        id: 'szerzoi-jog',
+        title: 'Szerzői jogok',
+        paragraphs: [
+          'A weboldal szövegei, arculati elemei és szerkezete szerzői jogi védelem alatt állnak. Tartalmuk az üzemeltető előzetes írásbeli engedélye nélkül nem másolható és nem terjeszthető; a forrás megjelölésével történő rövid idézés megengedett.',
+          'A weboldalon közölt szakmai tartalmak általános tájékoztatásul szolgálnak, és nem helyettesítik az egyedi tanácsadást.',
+        ],
+      },
+    ] satisfies LegalChapterInput[] as LegalChapterInput[],
   },
 
   notFound: {
@@ -273,29 +483,32 @@ export const copy = {
     },
     success: {
       title: 'Köszönjük, megkaptuk.',
-      message: 'Hamarosan felvesszük Önnel a kapcsolatot.',
+      message: '{primaryContact} hamarosan felveszi Önnel a kapcsolatot.',
       reset: 'Új ajánlatkérés',
     },
   },
 
   quotePanel: {
     title: 'Elérhetőségeink',
+    contact: 'Kapcsolattartó',
     address: 'Iroda',
     phone: 'Telefon',
     email: 'E-mail',
-    hours: 'Nyitvatartás',
+    hours: 'Ügyfélfogadás',
     directions: 'Útvonaltervezés',
     notes: {
-      phone: 'Munkanapokon, nyitvatartási időben',
+      phone: 'Időpont-egyeztetés és gyors kérdések',
       email: 'Írásos kérdésekhez és ajánlatkéréshez',
-      hours: 'Személyes egyeztetés előre megbeszélt időpontban',
-      contact: 'Az ajánlatkéréseket és az általános kérdéseket kezeli',
+      hours: 'Kizárólag előzetes időpont-egyeztetéssel',
+      contact: 'Minden érdeklődés és ajánlatkérés hozzá fut be',
     },
   },
 
   footer: {
     contactTitle: 'Elérhetőség',
-    hoursTitle: 'Nyitvatartás',
+    hoursTitle: 'Ügyfélfogadás',
+    // Shown under the reception hours everywhere (footer, contact page).
+    appointmentNote: 'Előzetes időpont-egyeztetéssel',
     servicesTitle: 'Szolgáltatások',
     pagesTitle: 'Oldalak',
   },

@@ -29,7 +29,7 @@ export function formatAddress(address: Address): string {
   return street ? `${head}, ${street}` : head
 }
 
-/** Address as display lines: ['6000 Kecskemét', 'Berzsenyi utca 19.'] (known parts only). */
+/** Address as display lines: ['6000 Kecskemét', 'Tatay András utca 10.'] (known parts only). */
 export function addressLines(address: Address): string[] {
   const head = [known(address.postalCode), address.city].filter(Boolean).join(' ')
   const street = known(address.street)

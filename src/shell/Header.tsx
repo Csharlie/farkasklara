@@ -15,6 +15,10 @@ export function AppHeader({ siteData }: LayoutShellProps) {
   const [open, setOpen] = useState(false)
   const path = currentPath()
   const links = siteData.navigation.primary
+  const contactName = shell.contact.primaryContact.name
+  const callLabel = contactName
+    ? `${contactName} hívása: ${shell.contact.phone?.text ?? ''}`
+    : `Telefon: ${shell.contact.phone?.text ?? ''}`
 
   return (
     <header
@@ -66,7 +70,8 @@ export function AppHeader({ siteData }: LayoutShellProps) {
           {shell.contact.phone?.href && (
             <a
               href={shell.contact.phone.href}
-              aria-label={`Telefon: ${shell.contact.phone.text}`}
+              aria-label={callLabel}
+              title={callLabel}
               data-ui-id="header-phone"
               data-ui-type="link"
               data-ui-role="cta"
@@ -122,7 +127,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
             <li className="pt-5">
               <a
                 href={shell.contact.phone.href}
-                aria-label={`Hívás: ${shell.contact.phone.text}`}
+                aria-label={callLabel}
                 onClick={() => setOpen(false)}
                 data-ui-id="nav-mobile-call"
                 data-ui-type="link"

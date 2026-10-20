@@ -45,6 +45,8 @@ export interface FkQuoteData {
     title: string
     labels: { address: string; phone: string; email: string; hours: string }
     notes: { phone?: string; email?: string; hours?: string; contact?: string }
+    /** The person every enquiry goes to — first card of the panel. */
+    contactPerson?: { label: string; name: string; role: string }
     addressLines: string[]
     directions?: { href: string; label: string }
     phone?: ContactLink

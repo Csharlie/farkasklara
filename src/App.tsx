@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { FormHandlerProvider, SiteDataProvider, useSiteData } from '@spektra/runtime'
+import { ConsentProvider, FormHandlerProvider, SiteDataProvider, useSiteData } from '@spektra/runtime'
 import { LandingTemplate } from '@spektra/layouts'
 import { registry } from './registry'
-import { AppFooter, AppHeader } from './shell'
+import { consentConfig } from './content/consent'
+import { AppFooter, AppHeader, ConsentUi } from './shell'
 import { createAdapter } from './data/create-adapter'
 import { createFkFormHandler } from './data/create-form-handler'
 import { resolvePageSlug } from './data/routes'
@@ -52,10 +53,13 @@ function RoutedPage() {
 
 export default function App() {
   return (
-    <SiteDataProvider adapter={adapter}>
-      <FormHandlerProvider handler={formHandler}>
-        <RoutedPage />
-      </FormHandlerProvider>
-    </SiteDataProvider>
+    <ConsentProvider config={consentConfig}>
+      <SiteDataProvider adapter={adapter}>
+        <FormHandlerProvider handler={formHandler}>
+          <RoutedPage />
+        </FormHandlerProvider>
+      </SiteDataProvider>
+      <ConsentUi />
+    </ConsentProvider>
   )
 }

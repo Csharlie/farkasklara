@@ -5,6 +5,7 @@ import { fkArticlesDefinition } from './sections/fk-articles'
 import { fkContactDefinition } from './sections/fk-contact'
 import { fkCtaDefinition } from './sections/fk-cta'
 import { fkFaqDefinition } from './sections/fk-faq'
+import { fkLegalDefinition } from './sections/fk-legal'
 import { fkListDefinition } from './sections/fk-list'
 import { fkMapDefinition } from './sections/fk-map'
 import { fkPageHeaderDefinition } from './sections/fk-page-header'
@@ -35,6 +36,7 @@ const fkSections: readonly AnySectionDefinition[] = [
   fkCtaDefinition,
   fkArticlesDefinition,
   fkProseDefinition,
+  fkLegalDefinition,
   fkContactDefinition,
   fkMapDefinition,
 ]

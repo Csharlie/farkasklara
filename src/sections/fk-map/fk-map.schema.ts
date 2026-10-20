@@ -4,4 +4,6 @@ export interface FkMapData {
   query: string
   height?: number
   zoom?: number
+  /** Google Maps directions link — shown in the consent placeholder (a plain link sets no cookie). */
+  directionsHref?: string
 }

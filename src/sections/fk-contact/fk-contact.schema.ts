@@ -18,6 +18,8 @@ export interface FkContactData {
   phone?: ContactLink
   email?: ContactLink
   hoursTitle: string
+  /** E.g. "by appointment only" — shown under the hours. */
+  hoursNote?: string
   hours: { days: string; hours: string }[]
   primaryContact?: PersonBlock & { phone?: ContactLink; email?: ContactLink }
   lead?: PersonBlock

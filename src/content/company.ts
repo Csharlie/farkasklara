@@ -14,14 +14,18 @@ export const company: Company = {
   address: {
     postalCode: '6000',
     city: 'Kecskemét',
-    street: 'Berzsenyi utca 19.',
+    street: 'Tatay András utca 10.',
   },
-  // FIKTÍV — telefon, e-mail és nyitvatartás élesítés előtt valós adatra cserélendő.
-  phone: '+36 76 000 1234',
-  email: 'iroda@farkasklara-konyveles.hu',
+  // Every enquiry channel (header, footer, CTAs, contact page, impressum, quote
+  // form) belongs to the primary contact, Posszert Ervin.
+  phone: '+36 70 231 2517',
+  // Role mailbox (handled by the primary contact) — must exist on the final
+  // domain (farkasklara.hu) before go-live.
+  email: 'iroda@farkasklara.hu',
+  // Client reception hours — in-person visits by appointment only (copy.appointment).
+  // FIKTÍV — élesítés előtt ellenőrizendő.
   openingHours: [
-    { days: 'Hétfő–csütörtök', hours: '8:00–16:30' },
-    { days: 'Péntek', hours: '8:00–13:00' },
+    { days: 'Hétfő–csütörtök', hours: '9:00–16:00' },
   ],
   // url: '[WEBCÍM]' — set the public URL to enable canonical links.
 }
@@ -36,23 +40,25 @@ export const people: Person[] = [
   {
     id: 'farkas-klara',
     name: 'Farkas Klára',
-    role: 'Irodavezető, szakmai vezető',
-    // Firm-focused introduction — no unverified biography, qualifications or
-    // years of experience. Add verified credentials to `credentials` later.
+    role: 'Tulajdonos, alapító, irodavezető',
+    // Firm-focused introduction — no unverified biography or years of
+    // experience. Qualifications go to `credentials` (provided 2026-10-21).
     intro: [
       'Farkas Klára az iroda szakmai vezetője. Ő felel azért, hogy a könyvelés, a bevallások és az adózási tanácsadás szakmailag rendben legyen, és hogy minden ügyben megszülessen a szükséges szakmai döntés.',
       'A könyvelést és az adózási feladatokat felelősségnek tekintjük, nem puszta adminisztrációnak. Egy havi zárás vagy egy bevallás mögött a vállalkozás döntései állnak, ezért a számok mellett azt is nézzük, mit jelentenek az Ön számára.',
       'Ügyfeleinkkel érthetően beszélünk: szakkifejezések helyett azt mondjuk el, mi a teendő, mikorra és miért. Figyelünk a határidőkre és azokra a változásokra, amelyek a vállalkozását érintik.',
       'Célunk, hogy a vállalkozása mögött rendezett, kiszámítható könyvelési háttér álljon, amelyre döntéskor támaszkodhat.',
     ],
+    credentials: ['Mérlegképes könyvelő'],
     isLead: true,
     isPrimaryContact: false,
   },
   {
     id: 'ugyintezo',
     name: 'Posszert Ervin',
-    role: 'Könyvelő, ügyintéző',
-    bio: 'Könyvelőként az ügyfelek napi feladatain dolgozik, emellett fogadja az érdeklődéseket és az ajánlatkéréseket, egyezteti az időpontokat és az ügyintézést.',
+    role: 'Ügyfélkapcsolati vezető',
+    bio: 'Hozzá futnak be az érdeklődések, az ajánlatkérések és az ügyfelek napi kérdései. Egyezteti az időpontokat, intézi az ügyek adminisztrációját, és gondoskodik róla, hogy minden kérdés gyorsan a megfelelő kollégához kerüljön.',
+    credentials: ['Mérlegképes könyvelő'],
     isPrimaryContact: true,
   },
   {
@@ -60,6 +66,7 @@ export const people: Person[] = [
     id: 'konyvelo',
     name: 'Halász Réka',
     role: 'Könyvelő',
+    credentials: ['Mérlegképes könyvelő'],
     bio: 'Az ügyfelek könyvelési feladatain dolgozik: a bizonylatok feldolgozásán, a havi zárásokon és a bevallások előkészítésén, a szakmai vezető irányításával.',
     isPrimaryContact: false,
   },

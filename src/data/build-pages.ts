@@ -1,11 +1,12 @@
 import type { Page, PageMeta, Section } from '@spektra/types'
 import type { ClientContent } from '../content'
 import type { FactInput } from '../content/copy'
-import type { Article, Audience, Cta, FaqItem, Person, Service, Step } from '../content/types'
+import type { Article, Audience, Cta, FaqItem, LegalChapterInput, Person, Service, Step } from '../content/types'
 import type { FkArticlesData } from '../sections/fk-articles'
 import type { FkContactData } from '../sections/fk-contact'
 import type { FkCtaData } from '../sections/fk-cta'
 import type { FkFaqData } from '../sections/fk-faq'
+import type { FkLegalChapter, FkLegalData } from '../sections/fk-legal'
 import type { FkListData } from '../sections/fk-list'
 import type { FkPageHeaderData } from '../sections/fk-page-header'
 import type { FkPriceData } from '../sections/fk-price'
@@ -16,7 +17,7 @@ import type { FkTeamData, FkTeamMember } from '../sections/fk-team'
 import type { FkTrustData } from '../sections/fk-trust'
 import type { FkFeaturesData, FkHeroData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
-import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, type ContactView } from './contact'
+import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, type ContactLink, type ContactView } from './contact'
 import { visiblePrice } from './price'
 import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, quoteHref, routes } from './routes'
 import { fillTemplate, known, knownItems } from './text'
@@ -79,6 +80,19 @@ function pageTitle(ctx: BuildContext, template: string): string {
 
 function page(slug: string, title: string, meta: PageMeta, sections: Section[]): Page {
   return { slug, title, meta, sections }
+}
+
+/**
+ * {primaryContact} / {phone} / {address} tokens → the designated contact's
+ * name (role while unknown), the enquiry phone and the office address.
+ */
+function withContact(ctx: BuildContext, template: string): string {
+  const { primaryContact, address } = ctx.contact
+  return fillTemplate(template, {
+    primaryContact: primaryContact.name ?? primaryContact.role.toLowerCase(),
+    phone: primaryContact.phone?.text ?? '',
+    address,
+  })
 }
 
 /** {lead} token → the lead's name, or "a szakmai vezető" while unknown. */
@@ -183,14 +197,24 @@ function servicesSection(
   })
 }
 
+/**
+ * Role line under the name: role and credentials in one line
+ * ("Ügyfélkapcsolati vezető · Mérlegképes könyvelő"). A role the credential
+ * already contains is dropped ("Könyvelő" + "Mérlegképes könyvelő" → "Mérlegképes könyvelő").
+ */
+function roleLine(role: string, credentials: readonly string[]): string {
+  const covered = credentials.some((c) => c.toLowerCase().endsWith(role.trim().toLowerCase()))
+  return [...(covered ? [] : [role]), ...credentials].join(' · ')
+}
+
 function teamMember(person: Person): FkTeamMember {
   return {
     id: person.id,
     name: known(person.name),
-    role: person.role,
+    role: roleLine(person.role, knownItems(person.credentials)),
     photo: person.photo,
     bio: known(person.bio),
-    credentials: knownItems(person.credentials),
+    // Shown in the role line, not as a separate list.
     isPrimaryContact: person.isPrimaryContact,
     // Team cards show no office channels (the firm's contact details live in
     // the contact cards/footer); only a person's own, known channel appears.
@@ -231,7 +255,15 @@ function teamSection(
   // Members without a known name AND without a role description would be empty cards.
   const others = people
     .filter((p) => !p.isLead)
-    .map((p) => teamMember(p))
+    .map((p) =>
+      p.isPrimaryContact
+        ? {
+            ...teamMember(p),
+            phone: ctx.contact.primaryContact.phone,
+            email: ctx.contact.primaryContact.email,
+          }
+        : teamMember(p),
+    )
     .filter((m) => m.name || m.bio)
   if (!leadPerson && others.length === 0) return undefined
   return section<FkTeamData>(id, 'fk-team', {
@@ -287,6 +319,9 @@ function quoteSection(
             hours: copy.quotePanel.hours,
           },
           notes: copy.quotePanel.notes,
+          contactPerson: contact.name
+            ? { label: copy.quotePanel.contact, name: contact.name, role: contact.role }
+            : undefined,
           addressLines: ctx.contact.addressLines,
           directions: ctx.contact.directionsHref
             ? { href: ctx.contact.directionsHref, label: copy.quotePanel.directions }
@@ -492,7 +527,7 @@ export function buildAboutPage(ctx: BuildContext): Page {
   return page(
     'rolunk',
     c.title,
-    pageMeta(ctx, routes.about, pageTitle(ctx, c.meta.title), c.meta.description),
+    pageMeta(ctx, routes.about, pageTitle(ctx, c.meta.title), withContact(ctx, c.meta.description)),
     compact([
       header('rolunk-fejlec', { eyebrow: c.eyebrow, title: c.title, lead: c.lead }),
       knownItems(c.body).length > 0
@@ -548,19 +583,29 @@ export function buildContactPage(ctx: BuildContext): Page {
   return page(
     'kapcsolat',
     c.title,
-    pageMeta(ctx, routes.contact, pageTitle(ctx, c.meta.title), c.meta.description),
+    pageMeta(ctx, routes.contact, pageTitle(ctx, c.meta.title), withContact(ctx, c.meta.description)),
     compact([
-      header('kapcsolat-fejlec', { eyebrow: c.eyebrow, title: c.title, lead: c.lead }),
+      header('kapcsolat-fejlec', { eyebrow: c.eyebrow, title: c.title, lead: withContact(ctx, c.lead) }),
       section<FkContactData>('kapcsolat-adatok', 'fk-contact', {
         id: 'kapcsolat-adatok',
         title: c.detailsTitle,
         companyName: contact.companyName,
         address: contact.address,
         directions: contact.directionsHref ? { href: contact.directionsHref, label: c.directions } : undefined,
-        phone: contact.phone,
-        email: contact.email,
+        // The enquiry channels are the contact person's — shown once, on their card.
+        phone: sameLink(contact.phone, contact.primaryContact.phone) ? undefined : contact.phone,
+        email: sameLink(contact.email, contact.primaryContact.email) ? undefined : contact.email,
         hoursTitle: ctx.content.copy.footer.hoursTitle,
+        hoursNote: ctx.content.copy.footer.appointmentNote,
         hours: contact.hours,
+        primaryContact: {
+          label: c.primaryContactLabel,
+          name: contact.primaryContact.name,
+          role: contact.primaryContact.role,
+          description: contact.primaryContact.description,
+          phone: contact.primaryContact.phone,
+          email: contact.primaryContact.email,
+        },
         lead: { label: c.leadLabel, name: contact.lead.name, role: contact.lead.role },
       }),
       // The contact details are shown right above — no duplicate panel here.
@@ -569,47 +614,86 @@ export function buildContactPage(ctx: BuildContext): Page {
   )
 }
 
-export function buildPrivacyPage(ctx: BuildContext): Page {
-  const c = ctx.content.copy.privacy
-  const paragraphs = knownItems(c.body)
+function sameLink(a: ContactLink | undefined, b: ContactLink | undefined): boolean {
+  return a !== undefined && a.href === b?.href
+}
+
+/** Token values for the legal pages — every value comes from the single company source. */
+function legalValues(ctx: BuildContext): Record<string, string> {
+  const { company } = ctx.content
+  return {
+    company: company.name,
+    legalName: company.legalName,
+    // The privacy notice must always name a controller: the brand stands in until the legal name is known.
+    controller: known(company.legalName) ?? company.name,
+    // A partial address is not a legal entry: keep it as a placeholder (hidden).
+    address: isCompleteAddress(company.address) ? formatAddress(company.address) : '[SZÉKHELY]',
+    phone: company.phone,
+    email: company.email,
+  }
+}
+
+/** Fills tokens and drops every line that still holds a placeholder; empty chapters disappear. */
+function legalChapters(chapters: readonly LegalChapterInput[], values: Record<string, string>): FkLegalChapter[] {
+  const fill = (text: string) => fillTemplate(text, values)
+  const fields = (rows: readonly { label: string; value: string }[] | undefined) =>
+    (rows ?? []).map((f) => ({ label: f.label, value: fill(f.value) })).filter((f) => known(f.value) !== undefined)
+  return chapters
+    .map((chapter) => ({
+      id: chapter.id,
+      title: chapter.title,
+      paragraphs: knownItems(chapter.paragraphs?.map(fill)),
+      items: knownItems(chapter.items?.map(fill)),
+      fields: fields(chapter.fields),
+      groups: (chapter.groups ?? [])
+        .map((group) => ({ title: group.title, fields: fields(group.fields) }))
+        .filter((group) => group.fields.length > 0),
+    }))
+    // Keep chapters with real content; a lone intro line ending in ':' (its list gone) does not count.
+    .filter((c) => c.items.length + c.fields.length + c.groups.length > 0 || c.paragraphs.some((p) => !p.trim().endsWith(':')))
+}
+
+function legalPage(
+  ctx: BuildContext,
+  slug: string,
+  path: string,
+  c: {
+    meta: { title: string; description: string }
+    eyebrow: string
+    title: string
+    lead: string
+    pending: string
+    updated?: string
+    tocTitle?: string
+    chapters: readonly LegalChapterInput[]
+  },
+): Page {
+  const values = legalValues(ctx)
+  const chapters = legalChapters(c.chapters, values)
   return page(
-    'adatvedelem',
+    slug,
     c.title,
-    pageMeta(ctx, routes.privacy, pageTitle(ctx, c.meta.title), c.meta.description),
+    pageMeta(ctx, path, pageTitle(ctx, c.meta.title), fillTemplate(c.meta.description, values)),
     compact([
-      header('adatvedelem-fejlec', { title: c.title, lead: paragraphs.length === 0 ? c.pending : undefined }),
-      paragraphs.length > 0
-        ? section<FkProseData>('adatvedelem-szoveg', 'fk-prose', { id: 'adatvedelem-szoveg', paragraphs })
+      header(`${slug}-fejlec`, { eyebrow: c.eyebrow, title: c.title, lead: chapters.length > 0 ? c.lead : c.pending }),
+      chapters.length > 0
+        ? section<FkLegalData>(`${slug}-szoveg`, 'fk-legal', {
+            id: `${slug}-szoveg`,
+            updated: c.updated,
+            tocTitle: c.tocTitle,
+            chapters,
+          })
         : undefined,
     ]),
   )
 }
 
+export function buildPrivacyPage(ctx: BuildContext): Page {
+  return legalPage(ctx, 'adatvedelem', routes.privacy, ctx.content.copy.privacy)
+}
+
 export function buildImprintPage(ctx: BuildContext): Page {
-  const { company, copy } = ctx.content
-  const c = copy.imprint
-  const values = {
-    legalName: company.legalName,
-    // A partial address is not an imprint entry: keep it as a placeholder (hidden).
-    address: isCompleteAddress(company.address) ? formatAddress(company.address) : '[SZÉKHELY]',
-    phone: company.phone,
-    email: company.email,
-  }
-  // Only fully known values are shown.
-  const fields = c.fields
-    .map((f) => ({ label: f.label, value: fillTemplate(f.value, values) }))
-    .filter((f) => known(f.value) !== undefined)
-  return page(
-    'impresszum',
-    c.title,
-    pageMeta(ctx, routes.imprint, pageTitle(ctx, c.meta.title), c.meta.description),
-    compact([
-      header('impresszum-fejlec', { title: c.title, lead: fields.length === 0 ? c.pending : undefined }),
-      fields.length > 0
-        ? section<FkProseData>('impresszum-adatok', 'fk-prose', { id: 'impresszum-adatok', fields })
-        : undefined,
-    ]),
-  )
+  return legalPage(ctx, 'impresszum', routes.imprint, ctx.content.copy.imprint)
 }
 
 export function buildNotFoundPage(ctx: BuildContext): Page {

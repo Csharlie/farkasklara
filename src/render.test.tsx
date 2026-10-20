@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { createFormHandler } from '@spektra/data'
-import { FormHandlerProvider, SectionRenderer } from '@spektra/runtime'
+import { createFormHandler, createMemoryConsentStorage } from '@spektra/data'
+import { ConsentProvider, FormHandlerProvider, SectionRenderer } from '@spektra/runtime'
 import type { Page } from '@spektra/types'
 import { content, type ClientContent } from './content'
+import { consentConfig } from './content/consent'
 import { buildSiteData } from './data/build-site'
 import { registry } from './registry'
 
@@ -13,9 +14,11 @@ import { registry } from './registry'
  */
 function render(page: Page): string {
   return renderToStaticMarkup(
-    <FormHandlerProvider handler={createFormHandler({ driver: 'noop', logToConsole: false })}>
-      <SectionRenderer sections={page.sections} registry={registry} fallback={(type) => `UNRESOLVED:${type}`} />
-    </FormHandlerProvider>,
+    <ConsentProvider config={consentConfig} storage={createMemoryConsentStorage()}>
+      <FormHandlerProvider handler={createFormHandler({ driver: 'noop', logToConsole: false })}>
+        <SectionRenderer sections={page.sections} registry={registry} fallback={(type) => `UNRESOLVED:${type}`} />
+      </FormHandlerProvider>
+    </ConsentProvider>,
   )
 }
 
@@ -63,7 +66,7 @@ describe('rendering', () => {
   it('shows roles and a decorative corner name instead of a photo', () => {
     const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
     expect(html).toMatch(/aria-hidden="true"[^>]*>Farkas Klára</)
-    expect(html).toContain('Könyvelő, ügyintéző')
+    expect(html).toContain('Ügyfélkapcsolati vezető')
   })
 
   it('tracks call/email/form via the platform data-ui standard', () => {
@@ -100,5 +103,16 @@ describe('rendering', () => {
     for (const page of site.pages) {
       expect(render(page)).not.toMatch(/bg-accent[^"]*text-white|text-white[^"]*bg-accent/)
     }
+  })
+
+  it('never embeds Google Maps before consent — the placeholder keeps the address and directions', () => {
+    for (const page of site.pages) {
+      const html = render(page)
+      expect(html, page.slug).not.toContain('google.com/maps/embed')
+      expect(html, page.slug).toContain('data-ui-id="map-consent"')
+    }
+    const html = render(site.pages.find((p) => p.slug === 'kapcsolat')!)
+    expect(html).toContain('6000 Kecskemét, Tatay András utca 10.')
+    expect(html).toMatch(/data-ui-id="map-directions"/)
   })
 })

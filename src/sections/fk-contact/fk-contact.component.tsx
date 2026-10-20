@@ -16,6 +16,7 @@ export function FkContact({
   phone,
   email,
   hoursTitle,
+  hoursNote,
   hours,
   primaryContact,
   lead,
@@ -71,6 +72,7 @@ export function FkContact({
                   </div>
                 ))}
               </dl>
+              {hoursNote && <p className="mt-3 text-sm font-semibold text-accent-text">{hoursNote}</p>}
             </>
           )}
 

@@ -1,6 +1,7 @@
 import type { LayoutShellProps } from '@spektra/layouts'
 import { ContactAnchor } from '../sections/shared/ContactAnchor'
 import { Icon } from '../sections/shared/icons'
+import { ConsentSettingsLink } from './ConsentUi'
 import { shell } from './shell-context'
 
 /** Footer — every contact value comes from the single company source. */
@@ -37,6 +38,15 @@ export function AppFooter({ siteData }: LayoutShellProps) {
                 </address>
               </li>
             )}
+            {contact.primaryContact.name && (
+              <li className="flex items-start gap-3">
+                <Icon name="user" className="mt-0.5 size-5 shrink-0 text-accent" />
+                <span>
+                  <span className="block font-semibold text-foreground">{contact.primaryContact.name}</span>
+                  <span className="block text-sm">{contact.primaryContact.role}</span>
+                </span>
+              </li>
+            )}
             {contact.phone && (
               <li className="flex items-center gap-3">
                 <Icon name="phone" className="size-5 shrink-0 text-accent" />
@@ -64,6 +74,7 @@ export function AppFooter({ siteData }: LayoutShellProps) {
                       </div>
                     ))}
                   </dl>
+                  <p className="mt-1 text-sm">{copy.appointmentNote}</p>
                 </div>
               </li>
             )}
@@ -115,9 +126,12 @@ export function AppFooter({ siteData }: LayoutShellProps) {
         </nav>
       </div>
       <div className="border-t border-border">
-        <p className="mx-auto w-full max-w-content px-6 py-6 text-sm text-muted-foreground">
-          © {year} {contact.companyName}
-        </p>
+        <div className="mx-auto flex w-full max-w-content flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-6 text-sm text-muted-foreground">
+          <p>
+            © {year} {contact.companyName}
+          </p>
+          <ConsentSettingsLink className="inline-flex min-h-11 items-center underline-offset-4 hover:text-foreground hover:underline" />
+        </div>
       </div>
     </footer>
   )
