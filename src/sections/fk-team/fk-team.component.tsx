@@ -1,8 +1,10 @@
+import { useRef } from 'react'
 import { cn } from '@spektra/components'
 import { contentWidth, sectionSpacing, toneClassName } from '../../theme/layout'
 import { ContactAnchor } from '../shared/ContactAnchor'
 import { CtaLink } from '../shared/CtaLink'
 import { SectionIntro } from '../shared/SectionIntro'
+import { useSlantedLeftClip } from '../shared/slanted-clip'
 import type { FkTeamData, FkTeamMember } from './fk-team.schema'
 
 /**
@@ -35,7 +37,12 @@ function Channels({ member }: { member: FkTeamMember }) {
   )
 }
 
-export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, tone }: FkTeamData) {
+export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, tone, image }: FkTeamData) {
+  const photoRef = useRef<HTMLElement>(null)
+  // Slanted left edge with rounded corners (measured path); the class-based polygon is the first-paint fallback.
+  // Same shape on every screen size (mobile included).
+  const photoClip = useSlantedLeftClip(photoRef, { slant: 0.08, radius: 28, minWidth: 0 })
+
   if (!lead && members.length === 0) return null
 
   return (
@@ -47,9 +54,51 @@ export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, 
       aria-labelledby={`${id}-title`}
       className={cn(sectionSpacing, toneClassName(tone), joinedWithNext && 'pb-6 md:pb-8')}
     >
-      <div className={contentWidth}>
-        <SectionIntro id={id} title={title} intro={intro} />
+      {image ? (
+        /* Split layout: text on the left, the photo fills the right half up to the viewport edge, with a slightly slanted, rounded left edge. */
+        <div className="relative">
+          <div className={contentWidth}>
+            <div className="flex flex-col justify-center lg:min-h-[34rem] lg:w-1/2 lg:pr-16">
+              <SectionIntro id={id} title={title} intro={intro} />
+            </div>
+          </div>
+          <figure
+            ref={photoRef}
+            style={photoClip ? { clipPath: photoClip } : undefined}
+            data-ui-id={`${id}-photo`}
+            data-ui-role="media"
+            className="group relative mt-10 overflow-hidden lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:w-1/2 [clip-path:polygon(8%_0,100%_0,100%_100%,0_100%)]"
+          >
+            <img
+              src={image.src}
+              srcSet={image.srcSet}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              loading="lazy"
+              decoding="async"
+              className="aspect-[4/3] w-full object-cover object-[center_45%] transition-transform duration-[1400ms] ease-out sm:aspect-[16/9] lg:aspect-auto lg:h-full motion-safe:group-hover:scale-[1.03]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface-strong/70 via-transparent to-transparent"
+            />
+            {image.caption && (
+              <figcaption className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-md backdrop-blur md:bottom-8 md:left-8">
+                <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
+                {image.caption}
+              </figcaption>
+            )}
+          </figure>
+        </div>
+      ) : (
+        <div className={contentWidth}>
+          <SectionIntro id={id} title={title} intro={intro} />
+        </div>
+      )}
 
+      <div className={contentWidth}>
         {lead && (
           <article
             data-ui-id={`team-lead-${lead.id}`}

@@ -10,7 +10,7 @@ import type { FaqItem, LegalChapterInput, Step } from './types'
 export type FactInput =
   | { value: string; label: string }
   /** Derived from content data — always verifiable, never invented. */
-  | { source: 'teamSize' | 'serviceCount' | 'audienceCount' | 'city'; label: string }
+  | { source: 'teamSize' | 'certifiedCount' | 'serviceCount' | 'audienceCount' | 'city'; label: string }
 
 export const copy = {
   nav: {
@@ -54,6 +54,15 @@ export const copy = {
       intro:
         'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak és vállalatoknak. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatokkal foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
       more: 'Bővebben az irodáról',
+      // Storefront photo beside the "Rólunk" heading (public/images/iroda*.jpg).
+      photo: {
+        src: '/images/iroda.jpg',
+        srcSet: '/images/iroda-800.jpg 800w, /images/iroda.jpg 1375w',
+        alt: 'A Farkas Klára Könyvelőiroda bejárata: világoszöld portál „Könyvelőiroda” felirattal, a kirakatokon a szolgáltatások és az iroda elérhetőségei',
+        width: 1375,
+        height: 768,
+        caption: 'Irodánk bejárata',
+      } as { src: string; srcSet?: string; alt: string; width: number; height: number; caption: string } | undefined,
     },
     // Four-item strip directly below the About section. Only verifiable,
     // data-derived facts. Replace with verified business metrics when known
@@ -61,7 +70,7 @@ export const copy = {
     facts: {
       label: 'Az iroda röviden',
       items: [
-        { source: 'teamSize', label: 'fős szakmai csapat' },
+        { source: 'certifiedCount', label: 'mérlegképes könyvelő a csapatban' },
         { source: 'serviceCount', label: 'szolgáltatási terület egy irodában' },
         { source: 'audienceCount', label: 'ügyfélkör: egyéni, kkv, vállalati' },
         { source: 'city', label: 'helyi iroda' },
@@ -159,11 +168,11 @@ export const copy = {
     meta: {
       title: 'Rólunk – könyvelők Kecskeméten | {company}',
       description:
-        'Kecskeméti könyvelőiroda Farkas Klára szakmai vezetésével. Ügyfélkapcsolati vezetőnk, {primaryContact} fogadja a megkereséseket. Ismerje meg, hogyan dolgozunk.',
+        'Kecskeméti könyvelőiroda Farkas Klára tulajdonos-ügyvezető vezetésével, mérlegképes könyvelőkkel. Ügyfélkapcsolati vezetőnk, {primaryContact} fogadja a megkereséseket.',
     },
     eyebrow: 'Rólunk',
     title: 'Stabil háttér a vállalkozása mögött',
-    lead: 'Nem csak adminisztrálunk. Figyeljük a számokat, és szólunk, mielőtt probléma lenne belőlük.',
+    lead: 'Nem csupán adminisztrálunk: folyamatosan figyeljük vállalkozása számait, és időben jelezzük, ha egy határidő, jogszabályváltozás vagy pénzügyi kockázat teendőt jelent Önnek vagy vállalkozásának.',
     body: ['[BEMUTATKOZÁS: az iroda története és munkamódja]'],
     process: {
       title: 'Hogyan dolgozunk',
@@ -187,7 +196,7 @@ export const copy = {
       ] satisfies Step[],
     },
     teamTitle: 'A csapat',
-    teamIntro: 'A szakmai munkát {lead} irányítja.',
+    teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti. Csapatunk minden tagja mérlegképes könyvelő.',
   },
 
   knowledge: {
@@ -210,12 +219,12 @@ export const copy = {
     },
     eyebrow: 'Kapcsolat',
     title: 'Kapcsolat',
-    lead: 'Minden megkeresés {primaryContact} ügyfélkapcsolati vezetőnkhöz fut be: hívja, írjon e-mailt, vagy kérjen ajánlatot az űrlapon. Személyes találkozóra előre egyeztetett időpontban várjuk.',
+    lead: 'Keressen minket telefonon vagy e-mailben, illetve kérjen ajánlatot az alábbi űrlapon. Személyes találkozóra előre egyeztetett időpontban várjuk.',
     detailsTitle: 'Elérhetőségek',
     directions: 'Útvonaltervezés',
     mapTitle: 'Az iroda helye a térképen',
     primaryContactLabel: 'Kapcsolattartó',
-    leadLabel: 'Szakmai vezető',
+    leadLabel: 'Az iroda vezetője',
   },
 
   /**
@@ -500,7 +509,6 @@ export const copy = {
       phone: 'Időpont-egyeztetés és gyors kérdések',
       email: 'Írásos kérdésekhez és ajánlatkéréshez',
       hours: 'Kizárólag előzetes időpont-egyeztetéssel',
-      contact: 'Minden érdeklődés és ajánlatkérés hozzá fut be',
     },
   },
 
@@ -511,6 +519,10 @@ export const copy = {
     appointmentNote: 'Előzetes időpont-egyeztetéssel',
     servicesTitle: 'Szolgáltatások',
     pagesTitle: 'Oldalak',
+    rights: 'Minden jog fenntartva.',
+    legalNavLabel: 'Jogi információk',
+    // Site credit — bottom bar, deliberately understated.
+    credit: { name: 'PSPro', href: 'https://pspro.hu/' },
   },
 
   team: {

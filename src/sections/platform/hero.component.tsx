@@ -38,7 +38,8 @@ export function FkHeroBlock({ className, title, titleHighlight, ...props }: FkHe
     <HeroBlock
       {...props}
       title={richTitle(title, titleHighlight) as unknown as string}
-      className={cn('min-h-[640px] pt-16 md:min-h-[680px] md:pt-20', className)}
+      // The subtitle under the <h1> is muted in HeroBlock (not configurable) — white here for contrast on the photo.
+      className={cn('min-h-[640px] pt-16 md:min-h-[680px] md:pt-20 [&_h1+p]:text-white', className)}
     />
   )
 }

@@ -1,5 +1,5 @@
 import type { Address, Company, Person } from '../content/types'
-import { isPlaceholder, known } from './text'
+import { isPlaceholder, known, knownItems } from './text'
 
 /** A contact value with an actionable href (tel:/mailto:). */
 export interface ContactLink {
@@ -69,6 +69,16 @@ export function resolveLead(people: readonly Person[]): Person {
   return exactlyOne(people, 'isLead')
 }
 
+/**
+ * Role line under the name: role and credentials in one line
+ * ("Ügyfélkapcsolati vezető · Mérlegképes könyvelő"). A role the credential
+ * already contains is dropped ("Könyvelő" + "Mérlegképes könyvelő" → "Mérlegképes könyvelő").
+ */
+export function roleLine(role: string, credentials: readonly string[]): string {
+  const covered = credentials.some((c) => c.toLowerCase().endsWith(role.trim().toLowerCase()))
+  return [...(covered ? [] : [role]), ...credentials].join(' · ')
+}
+
 export interface PersonView {
   /** Undefined while the name is a placeholder. */
   name?: string
@@ -112,12 +122,12 @@ export function buildContactView(company: Company, people: readonly Person[]): C
       : undefined,
     primaryContact: {
       name: known(primary.name),
-      role: primary.role,
+      role: roleLine(primary.role, knownItems(primary.credentials)),
       description: known(primary.bio),
       // A person's own number/e-mail wins; otherwise the office channel.
       phone: phoneLink(primary.phone) ?? officePhone,
       email: emailLink(primary.email) ?? officeEmail,
     },
-    lead: { name: known(lead.name), role: lead.role, description: known(lead.bio) },
+    lead: { name: known(lead.name), role: roleLine(lead.role, knownItems(lead.credentials)), description: known(lead.bio) },
   }
 }

@@ -4,6 +4,9 @@ import { Icon } from '../sections/shared/icons'
 import { ConsentSettingsLink } from './ConsentUi'
 import { shell } from './shell-context'
 
+const bottomLinkClass =
+  'inline-flex min-h-11 items-center underline-offset-4 transition-colors hover:text-foreground hover:underline'
+
 /** Footer — every contact value comes from the single company source. */
 export function AppFooter({ siteData }: LayoutShellProps) {
   const { contact, copy } = shell
@@ -36,15 +39,6 @@ export function AppFooter({ siteData }: LayoutShellProps) {
                     </span>
                   ))}
                 </address>
-              </li>
-            )}
-            {contact.primaryContact.name && (
-              <li className="flex items-start gap-3">
-                <Icon name="user" className="mt-0.5 size-5 shrink-0 text-accent" />
-                <span>
-                  <span className="block font-semibold text-foreground">{contact.primaryContact.name}</span>
-                  <span className="block text-sm">{contact.primaryContact.role}</span>
-                </span>
               </li>
             )}
             {contact.phone && (
@@ -109,7 +103,7 @@ export function AppFooter({ siteData }: LayoutShellProps) {
             {copy.pagesTitle}
           </h2>
           <ul className="mt-3">
-            {[...siteData.navigation.primary, ...(siteData.navigation.footer ?? [])].map((link) => (
+            {siteData.navigation.primary.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
@@ -125,12 +119,48 @@ export function AppFooter({ siteData }: LayoutShellProps) {
           </ul>
         </nav>
       </div>
-      <div className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-content flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-6 text-sm text-muted-foreground">
-          <p>
-            © {year} {contact.companyName}
+      {/* Bottom bar: copyright · legal links · understated site credit. */}
+      <div data-ui-id="footer-bottom" className="border-t border-border">
+        <div className="mx-auto flex w-full max-w-content flex-col gap-3 px-6 py-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between md:gap-6">
+          <p data-ui-id="footer-copyright">
+            © {year} {contact.companyName}. {copy.rights}
           </p>
-          <ConsentSettingsLink className="inline-flex min-h-11 items-center underline-offset-4 hover:text-foreground hover:underline" />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+            <nav aria-label={copy.legalNavLabel} data-ui-id="footer-legal">
+              <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
+                {(siteData.navigation.footer ?? []).map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      data-ui-id={`footer-link-${link.href.slice(1)}`}
+                      data-ui-type="link"
+                      data-ui-action="navigate"
+                      className={bottomLinkClass}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+                <li>
+                  <ConsentSettingsLink className={bottomLinkClass} />
+                </li>
+              </ul>
+            </nav>
+            <p data-ui-id="footer-credit" className="sm:border-l sm:border-border sm:pl-6">
+              <a
+                href={copy.credit.href}
+                target="_blank"
+                rel="noopener"
+                data-ui-id="footer-credit-link"
+                data-ui-type="link"
+                data-ui-action="navigate"
+                className={bottomLinkClass}
+              >
+                {copy.credit.name}
+                <span className="sr-only"> – a weboldal készítője (új lapon nyílik)</span>
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

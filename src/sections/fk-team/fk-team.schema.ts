@@ -23,6 +23,16 @@ export interface FkTeamData {
   /** Other team members — smaller, compact blocks. */
   members: FkTeamMember[]
   more?: LinkCta
+  /** Office photo filling the right half of the viewport beside the heading (stacked on mobile). */
+  image?: {
+    src: string
+    /** Responsive candidates, e.g. '/images/iroda-800.jpg 800w, /images/iroda.jpg 1375w'. */
+    srcSet?: string
+    alt: string
+    width: number
+    height: number
+    caption?: string
+  }
   /** Followed directly by the facts strip — tighter bottom spacing. */
   joinedWithNext?: boolean
   tone?: 'plain' | 'warm'

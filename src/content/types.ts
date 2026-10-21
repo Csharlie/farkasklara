@@ -168,6 +168,8 @@ export interface Article {
 export interface Settings {
   /** Global price visibility. false → no price UI anywhere. */
   showPrices: boolean
+  /** Large office storefront photo in the homepage "Rólunk" block. false → no photo. */
+  showOfficePhoto: boolean
   segments: Record<SegmentKey, { enabled: boolean }>
   /** Prepared but disabled modules. Enabling them is not implemented yet. */
   modules: {

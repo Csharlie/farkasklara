@@ -95,7 +95,12 @@ describe('rendering', () => {
   it('renders the team without portraits', () => {
     const html = render(site.pages.find((p) => p.slug === 'home')!)
     const team = html.slice(html.indexOf('data-ui-component="fk-team"'), html.indexOf('data-ui-component="fk-trust"'))
-    expect(team).not.toContain('<img')
+    // The only image is the office storefront photo beside the heading — no portraits on the cards.
+    expect(team.match(/<img/g)).toHaveLength(1)
+    expect(team).toMatch(/<figure[^>]*data-ui-id="rolunk-photo"[\s\S]*src="\/images\/iroda\.jpg"/)
+    expect(team).toContain('>Irodánk bejárata</figcaption>')
+    const cards = team.slice(team.indexOf('data-ui-id="team-lead-'))
+    expect(cards).not.toContain('<img')
     expect(team).toContain('Posszert Ervin')
   })
 
@@ -114,5 +119,21 @@ describe('rendering', () => {
     const html = render(site.pages.find((p) => p.slug === 'kapcsolat')!)
     expect(html).toContain('6000 Kecskemét, Tatay András utca 10.')
     expect(html).toMatch(/data-ui-id="map-directions"/)
+  })
+
+  it('puts the office lead first on the contact page, with her title, above the contact person', () => {
+    const html = render(site.pages.find((p) => p.slug === 'kapcsolat')!)
+    const lead = html.indexOf('data-ui-id="kapcsolat-adatok-lead"')
+    const primary = html.indexOf('data-ui-id="kapcsolat-adatok-primary"')
+    expect(lead).toBeGreaterThan(-1)
+    expect(lead).toBeLessThan(primary)
+    expect(html.slice(lead, primary)).toContain('Tulajdonos, ügyvezető · Mérlegképes könyvelő')
+  })
+
+  it('drops the office photo with settings.showOfficePhoto = false', () => {
+    const c: ClientContent = { ...content, settings: { ...content.settings, showOfficePhoto: false } }
+    const html = render(buildSiteData(c).pages.find((p) => p.slug === 'home')!)
+    expect(html).not.toContain('data-ui-id="rolunk-photo"')
+    expect(html).not.toContain('/images/iroda.jpg')
   })
 })

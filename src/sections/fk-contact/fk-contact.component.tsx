@@ -79,32 +79,38 @@ export function FkContact({
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
-          {primaryContact && (
-          <div className="rounded-xl border border-border bg-muted p-6 md:p-8">
-            <p className="text-sm font-semibold text-accent-text">{primaryContact.label}</p>
-            <p className="mt-2 font-display text-2xl font-bold tracking-heading">
-              {primaryContact.name ?? primaryContact.role}
-            </p>
-            {primaryContact.name && <p className="text-muted-foreground">{primaryContact.role}</p>}
-            {primaryContact.description && <p className="mt-3">{primaryContact.description}</p>}
-            {(primaryContact.phone || primaryContact.email) && (
-              <div className="mt-4 flex flex-col font-semibold">
-                {primaryContact.phone && (
-                  <ContactAnchor link={primaryContact.phone} action="call" id={`${id}-primary-phone`} label="Telefon" />
-                )}
-                {primaryContact.email && (
-                  <ContactAnchor link={primaryContact.email} action="email" id={`${id}-primary-email`} label="E-mail" />
-                )}
-              </div>
-            )}
-          </div>
+          {/* The office lead first and emphasized (brand dark surface); the contact person below. */}
+          {lead && (
+            <div
+              data-color-scheme="dark"
+              data-ui-id={`${id}-lead`}
+              className="rounded-xl bg-background p-6 text-foreground md:p-8"
+            >
+              <p className="text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{lead.label}</p>
+              <p className="mt-2 font-display text-3xl font-bold tracking-heading">{lead.name ?? lead.role}</p>
+              {lead.name && <p className="mt-1 font-semibold text-accent">{lead.role}</p>}
+              {lead.description && <p className="mt-4 text-muted-foreground">{lead.description}</p>}
+            </div>
           )}
 
-          {lead && (
-            <div className="rounded-xl border border-border bg-surface p-6 md:p-8">
-              <p className="text-sm text-muted-foreground">{lead.label}</p>
-              <p className="mt-1 text-xl font-semibold">{lead.name ?? lead.role}</p>
-              {lead.description && <p className="mt-2 text-muted-foreground">{lead.description}</p>}
+          {primaryContact && (
+            <div data-ui-id={`${id}-primary`} className="rounded-xl border border-border bg-muted p-6 md:p-8">
+              <p className="text-sm font-semibold text-accent-text">{primaryContact.label}</p>
+              <p className="mt-2 font-display text-xl font-bold tracking-heading">
+                {primaryContact.name ?? primaryContact.role}
+              </p>
+              {primaryContact.name && <p className="text-sm text-muted-foreground">{primaryContact.role}</p>}
+              {primaryContact.description && <p className="mt-3">{primaryContact.description}</p>}
+              {(primaryContact.phone || primaryContact.email) && (
+                <div className="mt-4 flex flex-col font-semibold">
+                  {primaryContact.phone && (
+                    <ContactAnchor link={primaryContact.phone} action="call" id={`${id}-primary-phone`} label="Telefon" />
+                  )}
+                  {primaryContact.email && (
+                    <ContactAnchor link={primaryContact.email} action="email" id={`${id}-primary-email`} label="E-mail" />
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

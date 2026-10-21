@@ -17,7 +17,7 @@ import type { FkTeamData, FkTeamMember } from '../sections/fk-team'
 import type { FkTrustData } from '../sections/fk-trust'
 import type { FkFeaturesData, FkHeroData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
-import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, type ContactLink, type ContactView } from './contact'
+import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, roleLine, type ContactLink, type ContactView } from './contact'
 import { visiblePrice } from './price'
 import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, quoteHref, routes } from './routes'
 import { fillTemplate, known, knownItems } from './text'
@@ -89,10 +89,16 @@ function page(slug: string, title: string, meta: PageMeta, sections: Section[]):
 function withContact(ctx: BuildContext, template: string): string {
   const { primaryContact, address } = ctx.contact
   return fillTemplate(template, {
-    primaryContact: primaryContact.name ?? primaryContact.role.toLowerCase(),
+    // Unknown name → the plain role (without the credential part) reads naturally in a sentence.
+    primaryContact: primaryContact.name ?? primaryContact.role.split(' · ')[0]!.toLowerCase(),
     phone: primaryContact.phone?.text ?? '',
     address,
   })
+}
+
+/** Office storefront photo beside the "Rólunk" heading. */
+function officePhoto(ctx: BuildContext): FkTeamData['image'] {
+  return ctx.content.settings.showOfficePhoto ? ctx.content.copy.home.about.photo : undefined
 }
 
 /** {lead} token → the lead's name, or "a szakmai vezető" while unknown. */
@@ -197,16 +203,6 @@ function servicesSection(
   })
 }
 
-/**
- * Role line under the name: role and credentials in one line
- * ("Ügyfélkapcsolati vezető · Mérlegképes könyvelő"). A role the credential
- * already contains is dropped ("Könyvelő" + "Mérlegképes könyvelő" → "Mérlegképes könyvelő").
- */
-function roleLine(role: string, credentials: readonly string[]): string {
-  const covered = credentials.some((c) => c.toLowerCase().endsWith(role.trim().toLowerCase()))
-  return [...(covered ? [] : [role]), ...credentials].join(' · ')
-}
-
 function teamMember(person: Person): FkTeamMember {
   return {
     id: person.id,
@@ -228,6 +224,8 @@ function knownFacts(ctx: BuildContext, facts: readonly FactInput[]): { value: st
   const { people, company } = ctx.content
   const derived = {
     teamSize: String(people.length),
+    // Counted from the people's credentials — only verified qualifications.
+    certifiedCount: String(people.filter((p) => knownItems(p.credentials).includes('Mérlegképes könyvelő')).length),
     serviceCount: String(ctx.services.length),
     audienceCount: String(ctx.audiences.length),
     city: company.city,
@@ -245,6 +243,7 @@ function teamSection(
     intro?: string
     more?: LinkCta
     joinedWithNext?: boolean
+    image?: FkTeamData['image']
     /** Limit the lead's introduction (homepage shows a shorter version). */
     leadParagraphs?: number
     tone?: 'plain' | 'warm'
@@ -283,6 +282,7 @@ function teamSection(
       : undefined,
     members: others,
     more: options.more,
+    image: options.image,
     joinedWithNext: options.joinedWithNext,
     tone: options.tone,
   })
@@ -396,6 +396,7 @@ export function buildHomePage(ctx: BuildContext): Page {
         title: home.about.title,
         intro: withLead(ctx, home.about.intro),
         more: { id: 'rolunk-tovabb', kind: 'secondary', text: home.about.more, href: routes.about },
+        image: officePhoto(ctx),
         joinedWithNext: true,
         leadParagraphs: 2,
       }),
@@ -606,7 +607,7 @@ export function buildContactPage(ctx: BuildContext): Page {
           phone: contact.primaryContact.phone,
           email: contact.primaryContact.email,
         },
-        lead: { label: c.leadLabel, name: contact.lead.name, role: contact.lead.role },
+        lead: { label: c.leadLabel, name: contact.lead.name, role: contact.lead.role, description: contact.lead.description },
       }),
       // The contact details are shown right above — no duplicate panel here.
       quoteSection(ctx, QUOTE_ANCHOR, ctx.content.copy.home.quote.title, ctx.content.copy.home.quote.intro, { panel: false, tone: 'warm' }),

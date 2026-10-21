@@ -5,6 +5,10 @@ export const settings: Settings = {
   // every price block (service cards + service pages) at once.
   showPrices: false,
 
+  // Storefront photo in the homepage "Rólunk" block (copy.home.about.photo).
+  // Switch to false to remove it.
+  showOfficePhoto: true,
+
   segments: {
     // "Nagyobb vállalatok" audience — one of the three primary groups.
     complex: { enabled: true },
