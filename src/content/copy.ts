@@ -36,11 +36,11 @@ export const copy = {
     hero: {
       eyebrow: 'Könyvelőiroda Kecskeméten',
       // '\n' = line break; titleHighlight is rendered in gold.
-      title: 'Biztos alapok.\nÁtlátható pénzügyek.',
+      title: 'Könyvelés, amire építhet.\nRend a számokban. Biztonság a döntésekben.',
       // Part of the title rendered in gold.
-      titleHighlight: 'Átlátható pénzügyek.' as string | undefined,
+      titleHighlight: 'Rend a számokban. Biztonság a döntésekben.' as string | undefined,
       description:
-        'Könyvelés, adó és bér egyéni vállalkozóknak és cégeknek. Határidő előtt jelzünk, ha teendője van.',
+        'Könyvelés, adótanácsadás és bérszámfejtés egyéni vállalkozásoknak és cégeknek. Személyre szabott szakmai támogatás a mindennapi működéshez.',
       primaryCta: 'Ajánlatot kérek',
       secondaryCta: 'Szolgáltatások',
       // Office / documents / desk imagery, no faces (public/images/hero.jpg).
