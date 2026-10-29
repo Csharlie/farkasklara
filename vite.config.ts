@@ -1,8 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // Deploy base: '/' by default (dev, final domain); '/farkasklara/' for the
+  // pspro.hu preview (`vite build --mode pspro`, .env.pspro → DEPLOY_BASE).
+  base: loadEnv(mode, process.cwd(), '').DEPLOY_BASE || '/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -14,4 +17,4 @@ export default defineConfig({
   server: {
     port: 5177,
   },
-})
+}))

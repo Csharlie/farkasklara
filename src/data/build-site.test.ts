@@ -139,7 +139,7 @@ describe('homepage', () => {
     expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, ügyvezető · Mérlegképes könyvelő')
     expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
     expect(team.members.map((m) => [m.name, m.role])).toEqual([
-      ['Posszert Ervin', 'Ügyfélkapcsolati vezető · Mérlegképes könyvelő'],
+      ['Posszert Ervin', 'Ügyintéző · Mérlegképes könyvelő'],
       ['Halász Réka', 'Mérlegképes könyvelő'],
     ])
   })
@@ -303,14 +303,14 @@ describe('contact — roles and single source', () => {
     expect(contact.primaryContact?.name).toBe('Posszert Ervin')
     expect(contact.lead.name).toBe('Farkas Klára')
     const quote = sectionData<{ primaryContact: { role: string } }>(pageBy(site.pages, 'home'), 'fk-quote')
-    expect(quote.primaryContact.role).toBe('Ügyfélkapcsolati vezető · Mérlegképes könyvelő')
+    expect(quote.primaryContact.role).toBe('Ügyintéző · Mérlegképes könyvelő')
   })
 
   it('hides a name that is still a placeholder', () => {
     const c = withContent((x) => ({ ...x, people: x.people.map((p) => (p.id === 'ugyintezo' ? { ...p, name: '[ÜGYINTÉZŐ NEVE]' } : p)) }))
     const quote = sectionData<{ primaryContact: { name?: string; role: string } }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-quote')
     expect(quote.primaryContact.name).toBeUndefined()
-    expect(quote.primaryContact.role).toBe('Ügyfélkapcsolati vezető · Mérlegképes könyvelő')
+    expect(quote.primaryContact.role).toBe('Ügyintéző · Mérlegképes könyvelő')
   })
 
   it('rejects zero or several primary contacts / leads', () => {

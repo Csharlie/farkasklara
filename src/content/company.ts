@@ -58,7 +58,7 @@ export const people: Person[] = [
   {
     id: 'ugyintezo',
     name: 'Posszert Ervin',
-    role: 'Ügyfélkapcsolati vezető',
+    role: 'Ügyintéző',
     bio: 'Hozzá futnak be az érdeklődések, az ajánlatkérések és az ügyfelek napi kérdései. Egyezteti az időpontokat, intézi az ügyek adminisztrációját, és gondoskodik róla, hogy minden kérdés gyorsan a megfelelő kollégához kerüljön.',
     credentials: ['Mérlegképes könyvelő'],
     isPrimaryContact: true,

@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:pspro": "tsc -b && vite build --mode pspro --outDir dist-pspro --emptyOutDir",
+    "deploy:pspro": "node scripts/deploy-pspro.mjs",
     "preview": "vite preview",
     "lint": "eslint src/",
     "test": "vitest run",

@@ -19,17 +19,23 @@ export const shell = {
   copy: content.copy.footer,
 }
 
-/** Current path without trailing slash ('/' stays '/'). */
+/** Path without trailing slash ('/' stays '/'). */
+function normalize(path: string): string {
+  const trimmed = path.replace(/\/+$/, '')
+  return trimmed === '' ? '/' : trimmed
+}
+
+/** Current path (deploy base included, like every link href), without trailing slash. */
 export function currentPath(): string {
-  if (typeof window === 'undefined') return '/'
-  const path = window.location.pathname.replace(/\/+$/, '')
-  return path === '' ? '/' : path
+  if (typeof window === 'undefined') return normalize(routes.home)
+  return normalize(window.location.pathname)
 }
 
 /** aria-current for a nav link: exact page, or a section parent (e.g. /szolgaltatasok/*). */
 export function ariaCurrent(href: string, path: string): 'page' | 'true' | undefined {
-  if (href === path) return 'page'
-  if (href !== '/' && path.startsWith(`${href}/`)) return 'true'
+  const target = normalize(href)
+  if (target === path) return 'page'
+  if (target !== normalize(routes.home) && path.startsWith(`${target}/`)) return 'true'
   return undefined
 }
 

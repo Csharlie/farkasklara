@@ -3,7 +3,11 @@ import { cn } from '@spektra/components'
 import type { LayoutShellProps } from '@spektra/layouts'
 import { ctaClassName } from '../theme/layout'
 import { Icon } from '../sections/shared/icons'
+import { pathToPageSlug, routes } from '../data/routes'
 import { ariaCurrent, currentPath, shell } from './shell-context'
+
+/** data-ui-id fragment of a link: its page slug ('home', 'kapcsolat') — independent of the deploy base. */
+const uiSlug = (href: string) => pathToPageSlug(href).replace(/\//g, '-')
 
 /**
  * Header — maps SiteData navigation to a route-based header.
@@ -29,7 +33,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
     >
       <div className="mx-auto flex min-h-16 w-full max-w-content items-center gap-6 px-6 md:min-h-20">
         <a
-          href="/"
+          href={routes.home}
           data-ui-id="header-logo"
           data-ui-type="link"
           data-ui-role="logo"
@@ -46,7 +50,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
                 <a
                   href={link.href}
                   aria-current={ariaCurrent(link.href, path)}
-                  data-ui-id={`nav-link-${link.href.slice(1) || 'home'}`}
+                  data-ui-id={`nav-link-${uiSlug(link.href)}`}
                   data-ui-type="link"
                   data-ui-action="navigate"
                   className={cn(
@@ -114,7 +118,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
               <a
                 href={link.href}
                 aria-current={ariaCurrent(link.href, path)}
-                data-ui-id={`nav-mobile-link-${link.href.slice(1) || 'home'}`}
+                data-ui-id={`nav-mobile-link-${uiSlug(link.href)}`}
                 data-ui-type="link"
                 data-ui-action="navigate"
                 className="flex min-h-12 items-center border-b border-border text-lg font-medium aria-[current]:underline"

@@ -1,6 +1,6 @@
 import type { Page, PageMeta, Section } from '@spektra/types'
 import type { ClientContent } from '../content'
-import type { FactInput } from '../content/copy'
+import type { FactInput, SectionPhoto } from '../content/copy'
 import type { Article, Audience, Cta, FaqItem, LegalChapterInput, Person, Service, Step } from '../content/types'
 import type { FkArticlesData } from '../sections/fk-articles'
 import type { FkContactData } from '../sections/fk-contact'
@@ -19,7 +19,7 @@ import type { FkFeaturesData, FkHeroData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
 import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, roleLine, type ContactLink, type ContactView } from './contact'
 import { visiblePrice } from './price'
-import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, quoteHref, routes } from './routes'
+import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, pathToPageSlug, quoteHref, routes, withBase, withBaseSrcSet } from './routes'
 import { fillTemplate, known, knownItems } from './text'
 
 // ── Context ──────────────────────────────────────────────────────────
@@ -96,9 +96,15 @@ function withContact(ctx: BuildContext, template: string): string {
   })
 }
 
-/** Office storefront photo beside the "Rólunk" heading. */
+/** Section photo with URLs under the deploy base. */
+function sectionPhoto(photo: SectionPhoto | undefined): FkTeamData['image'] {
+  if (!photo) return undefined
+  return { ...photo, src: withBase(photo.src), srcSet: photo.srcSet ? withBaseSrcSet(photo.srcSet) : undefined }
+}
+
+/** Office storefront photo beside the homepage "Rólunk" heading (settings.showOfficePhoto). */
 function officePhoto(ctx: BuildContext): FkTeamData['image'] {
-  return ctx.content.settings.showOfficePhoto ? ctx.content.copy.home.about.photo : undefined
+  return ctx.content.settings.showOfficePhoto ? sectionPhoto(ctx.content.copy.home.about.photo) : undefined
 }
 
 /** {lead} token → the lead's name, or "a szakmai vezető" while unknown. */
@@ -380,7 +386,7 @@ export function buildHomePage(ctx: BuildContext): Page {
         // Services follow right below the hero — scroll instead of a page load.
         secondaryCTA: { text: home.hero.secondaryCta, href: '#szolgaltatasok' },
         backgroundImage: home.hero.image
-          ? { src: home.hero.image, alt: known(home.hero.imageAlt) ?? '' }
+          ? { src: withBase(home.hero.image), alt: known(home.hero.imageAlt) ?? '' }
           : undefined,
         colorScheme: 'dark',
       }),
@@ -454,7 +460,7 @@ export function buildServicePage(ctx: BuildContext, service: Service): Page {
     fillTemplate(settings.seo.serviceTitleTemplate, { service: service.title, city: company.city, company: company.name })
 
   return page(
-    path.slice(1),
+    pathToPageSlug(path),
     service.title,
     pageMeta(ctx, path, title, service.seo.description),
     compact([
@@ -535,7 +541,12 @@ export function buildAboutPage(ctx: BuildContext): Page {
         ? section<FkProseData>('rolunk-bemutatkozas', 'fk-prose', { id: 'rolunk-bemutatkozas', paragraphs: knownItems(c.body) })
         : undefined,
       stepsFeatures('rolunk-hogyan-dolgozunk', c.process.title, c.process.steps, 'plain'),
-      teamSection(ctx, 'rolunk-csapat', { title: c.teamTitle, intro: withLead(ctx, c.teamIntro), tone: 'warm' }),
+      teamSection(ctx, 'rolunk-csapat', {
+        title: c.teamTitle,
+        intro: withLead(ctx, c.teamIntro),
+        image: sectionPhoto(c.teamPhoto),
+        tone: 'warm',
+      }),
       generalQuoteCta(ctx, 'rolunk-cta'),
     ]),
   )
@@ -562,7 +573,7 @@ export function buildKnowledgePage(ctx: BuildContext): Page {
 export function buildArticlePage(ctx: BuildContext, article: Article): Page {
   const path = routes.article(article.slug)
   return page(
-    path.slice(1),
+    pathToPageSlug(path),
     article.title,
     pageMeta(
       ctx,

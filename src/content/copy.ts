@@ -12,6 +12,9 @@ export type FactInput =
   /** Derived from content data — always verifiable, never invented. */
   | { source: 'teamSize' | 'certifiedCount' | 'serviceCount' | 'audienceCount' | 'city'; label: string }
 
+/** Photo shown beside a section heading (fk-team split layout); paths are app paths ('/images/…'). */
+export type SectionPhoto = { src: string; srcSet?: string; alt: string; width: number; height: number; caption: string }
+
 export const copy = {
   nav: {
     services: 'Szolgáltatások',
@@ -56,13 +59,13 @@ export const copy = {
       more: 'Bővebben az irodáról',
       // Storefront photo beside the "Rólunk" heading (public/images/iroda*.jpg).
       photo: {
-        src: '/images/iroda.jpg',
-        srcSet: '/images/iroda-800.jpg 800w, /images/iroda.jpg 1375w',
-        alt: 'A Farkas Klára Könyvelőiroda bejárata: világoszöld portál „Könyvelőiroda” felirattal, a kirakatokon a szolgáltatások és az iroda elérhetőségei',
-        width: 1375,
-        height: 768,
+        src: '/images/iroda-bejarat.jpg',
+        srcSet: '/images/iroda-bejarat-800.jpg 800w, /images/iroda-bejarat.jpg 1024w',
+        alt: 'A Farkas Klára Könyvelőiroda bejárata: világoszöld portál „Könyvelőiroda” felirattal, a kirakatokon a szolgáltatások – könyvelés, bérszámfejtés, visszamenőleg is, adótanácsadás – és az iroda elérhetőségei',
+        width: 1024,
+        height: 572,
         caption: 'Irodánk bejárata',
-      } as { src: string; srcSet?: string; alt: string; width: number; height: number; caption: string } | undefined,
+      } as SectionPhoto | undefined,
     },
     // Four-item strip directly below the About section. Only verifiable,
     // data-derived facts. Replace with verified business metrics when known
@@ -168,7 +171,7 @@ export const copy = {
     meta: {
       title: 'Rólunk – könyvelők Kecskeméten | {company}',
       description:
-        'Kecskeméti könyvelőiroda Farkas Klára tulajdonos-ügyvezető vezetésével, mérlegképes könyvelőkkel. Ügyfélkapcsolati vezetőnk, {primaryContact} fogadja a megkereséseket.',
+        'Kecskeméti könyvelőiroda Farkas Klára tulajdonos-ügyvezető vezetésével, mérlegképes könyvelőkkel. Ügyintézőnk, {primaryContact} fogadja a megkereséseket.',
     },
     eyebrow: 'Rólunk',
     title: 'Stabil háttér a vállalkozása mögött',
@@ -195,7 +198,16 @@ export const copy = {
         },
       ] satisfies Step[],
     },
-    teamTitle: 'A csapat',
+    teamTitle: 'Irodánk és munkatársaink',
+    // Office interior beside the team heading (public/images/iroda-belso*.jpg); undefined → no photo.
+    teamPhoto: {
+      src: '/images/iroda-belso.jpg',
+      srcSet: '/images/iroda-belso-800.jpg 800w, /images/iroda-belso.jpg 1365w',
+      alt: 'A Farkas Klára Könyvelőiroda belső tere: két munkaállomás monitorokkal, iratrendezők, a falon keretezett oklevelek és tanúsítványok',
+      width: 1365,
+      height: 768,
+      caption: 'Irodánk belülről',
+    } as SectionPhoto | undefined,
     teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti. Csapatunk minden tagja mérlegképes könyvelő.',
   },
 
@@ -215,7 +227,7 @@ export const copy = {
     meta: {
       title: 'Kapcsolat és ajánlatkérés | {company}',
       description:
-        'Hívja ügyfélkapcsolati vezetőnket, {primaryContact} kollégánkat ({phone}), vagy kérjen ajánlatot online. Iroda: {address}.',
+        'Hívja ügyintézőnket, {primaryContact} kollégánkat ({phone}), vagy kérjen ajánlatot online. Iroda: {address}.',
     },
     eyebrow: 'Kapcsolat',
     title: 'Kapcsolat',

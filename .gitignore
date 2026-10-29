@@ -6,3 +6,7 @@ dist
 # .env committed (public defaults, no secrets), local overrides gitignored
 .env.local
 .env.*.local
+
+# Deploy staging (pnpm deploy:pspro)
+dist-*
+.deploy-stage

@@ -71,7 +71,7 @@ export function resolveLead(people: readonly Person[]): Person {
 
 /**
  * Role line under the name: role and credentials in one line
- * ("Ügyfélkapcsolati vezető · Mérlegképes könyvelő"). A role the credential
+ * ("Ügyintéző · Mérlegképes könyvelő"). A role the credential
  * already contains is dropped ("Könyvelő" + "Mérlegképes könyvelő" → "Mérlegképes könyvelő").
  */
 export function roleLine(role: string, credentials: readonly string[]): string {

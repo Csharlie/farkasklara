@@ -40,7 +40,7 @@ Előfeltétel: a Platform Core buildelve (`cd sp-platform; pnpm build`) — a `d
 - **Új szolgáltatás:** új objektum a `services.ts`-be → létrejön a `/szolgaltatasok/<slug>` oldal, a főoldali kártya, az űrlap-opció, a lábléc-link és a SEO-meta.
 - **Árak megjelenítése:** `settings.showPrices = true` (jelenleg `false`, mert az árak `[ÁR]` placeholderek).
 - **Nagyobb vállalatok célcsoport:** `settings.segments.complex.enabled` (alapból `true`; `false`-ra állítva eltűnik).
-- **Elérhetőségek → kapcsolattartó:** a márka a Farkas Klára Könyvelőiroda, de minden csatorna (telefon, e-mail, ajánlatkérő űrlap) az ügyfélkapcsolati vezetőhöz, Posszert Ervinhez fut be. A `company.phone` / `company.email` az ő csatornája. Név szerint jelenik meg: Kapcsolat oldal (kapcsolattartó-kártya a telefonnal/e-maillel, az irodavezető kártyája alatt), ajánlatkérő panel utolsó kártyája, Rólunk csapatkártya (telefon/e-mail a kártyán), fejléc-telefon aria/title, űrlap sikerüzenet, Kapcsolat/Rólunk meta description. Az e-mail szerepkör-postafiók (`iroda@farkasklara.hu`, Ervin kezeli) — a végleges domainen élesítés előtt létre kell hozni. Személyes ügyfélfogadás csak előzetes időpont-egyeztetéssel (`copy.footer.appointmentNote`, `copy.quotePanel.notes.hours`). Az űrlap-driver címzettje (`VITE_FORM_MAILTO_TARGET`, illetve a CF7 címzett) is ez a cím legyen.
+- **Elérhetőségek → kapcsolattartó:** a márka a Farkas Klára Könyvelőiroda, de minden csatorna (telefon, e-mail, ajánlatkérő űrlap) az ügyintézőhöz, Posszert Ervinhez fut be. A `company.phone` / `company.email` az ő csatornája. Név szerint jelenik meg: Kapcsolat oldal (kapcsolattartó-kártya a telefonnal/e-maillel, az irodavezető kártyája alatt), ajánlatkérő panel utolsó kártyája, Rólunk csapatkártya (telefon/e-mail a kártyán), fejléc-telefon aria/title, űrlap sikerüzenet, Kapcsolat/Rólunk meta description. Az e-mail szerepkör-postafiók (`iroda@farkasklara.hu`, Ervin kezeli) — a végleges domainen élesítés előtt létre kell hozni. Személyes ügyfélfogadás csak előzetes időpont-egyeztetéssel (`copy.footer.appointmentNote`, `copy.quotePanel.notes.hours`). Az űrlap-driver címzettje (`VITE_FORM_MAILTO_TARGET`, illetve a CF7 címzett) is ez a cím legyen.
 - **Szerepkörök:** a `people` tömbben pontosan egy `isLead: true` (szakmai vezető, kiemelt blokk) és pontosan egy `isPrimaryContact: true` (ügyintéző — hozzá fut be minden érdeklődés); más érték build-hibát ad.
 - **Térkép:** teljes szélességű `fk-map` section minden oldal végén, a footer előtt (a `bc-map` / `lc-map` mintája). Automatikusan megjelenik, ha `company.address` minden része valós. A Google Maps csak a süti-sávban adott hozzájárulás után töltődik be (platform `ConsentGate`); addig helyőrző látszik a címmel és útvonaltervező linkkel.
 - **Sütik / hozzájárulás:** platform consent (`sp-platform/docs/consent.md`). Konfiguráció és szövegek: `src/content/consent.ts`; UI-bekötés: `src/shell/ConsentUi.tsx`; lábléc: „Süti-beállítások”. Alul süti-sáv (Elfogadom / Csak a szükségesek / Beállítások); elfogadás után a térkép mindenhol automatikusan megjelenik, addig helyőrző (cím + útvonaltervezés + egyszeri „Térkép megjelenítése”). Új szolgáltatás (pl. analitika) felvételekor a `consentConfig.version`-t és az adatkezelési tájékoztató Sütik fejezetét is frissíteni kell.
@@ -87,7 +87,7 @@ A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szak
 | Analytics | `data-ui-action="call"`, `"email"`, `"submit-form"` (platform data-ui standard) |
 | Téma | `basePreset` + szemantikus CSS-változók + `[data-color-scheme='dark']` |
 
-Form driver: `VITE_FORM_HANDLER` = `noop` (alap) | `cf7` | `mailto` — a production driver még nincs eldöntve. A címzett az ügyfélkapcsolati vezető (`company.email`).
+Form driver: `VITE_FORM_HANDLER` = `noop` (alap) | `cf7` | `mailto` — a production driver még nincs eldöntve. A címzett az ügyintéző (`company.email`).
 A `noop` csak fejlesztésben színlel sikert; production buildben az űrlap őszinte hibaüzenetet ad, amíg nincs valódi driver beállítva.
 
 ## Platform Extension Required (nem implementálva a kliensben)
@@ -105,6 +105,20 @@ A `noop` csak fejlesztésben színlel sikert; production buildben az űrlap ősz
 
 Addig a kliens kliensoldalon renderel: a szolgáltatások teljes tartalma a JS lefutása után kerül a DOM-ba,
 a generált HTML-ben nincs benne.
+
+## Előnézet a pspro.hu-n (`pnpm deploy:pspro`)
+
+Ügyfél-előnézet: **https://pspro.hu/farkasklara/**, jelszavas belépőkapu mögött (a LuxCover mintájára).
+
+1. Egyszer: `deploy/pspro/.env.deploy.example` → `.env.deploy.local` (gitignore-olt): FTP host/user/jelszó/mappa + az előnézet felhasználóneve és jelszava.
+2. `pnpm deploy:pspro --dry-run` — build + csomag összeállítása, feltöltés nélkül (fájllista).
+3. `pnpm deploy:pspro` — build (`--mode pspro`, `DEPLOY_BASE=/farkasklara/` a `.env.pspro`-ból) → csomag → FTP-feltöltés (TLS kötelező; `FTP_TLS=optional` csak ha a tárhely nem tud FTPS-t).
+
+Hogyan működik:
+- **Alap-útvonal:** minden belső link és kép a `withBase()`-en át épül (`src/data/routes.ts`); helyben és a végleges domainen `/`, az előnézeten `/farkasklara/`.
+- **Belépőkapu** (`deploy/pspro/`): `auth-check.php` csak bejelentkezett látogatónak adja ki az `index.html`-t, minden más útvonal (`/farkasklara/kapcsolat` stb.) is ide fut; `login.php` márkaszínű belépőoldal. A jelszó csak PBKDF2-hashként kerül a szerverre (`auth-config.php`, minden deploynál generálva, új aláíró titokkal → mindenki újra belép). A süti aláírt és lejár (14 nap). `noindex` + `X-Robots-Tag`.
+- **Űrlap:** az előnézeten `noop` driver → production buildben őszinte hibaüzenet („nem érhető el”), amíg nincs valódi driver.
+- Régi, már nem használt `assets/*` fájlokat a szkript nem töröl a szerverről (ártalmatlanok).
 
 ## Deploy-megjegyzés
 

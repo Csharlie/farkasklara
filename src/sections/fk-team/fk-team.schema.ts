@@ -26,7 +26,7 @@ export interface FkTeamData {
   /** Office photo filling the right half of the viewport beside the heading (stacked on mobile). */
   image?: {
     src: string
-    /** Responsive candidates, e.g. '/images/iroda-800.jpg 800w, /images/iroda.jpg 1375w'. */
+    /** Responsive candidates, e.g. '/images/iroda-bejarat-800.jpg 800w, /images/iroda-bejarat.jpg 1024w'. */
     srcSet?: string
     alt: string
     width: number

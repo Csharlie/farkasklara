@@ -66,7 +66,7 @@ describe('rendering', () => {
   it('shows roles and a decorative corner name instead of a photo', () => {
     const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
     expect(html).toMatch(/aria-hidden="true"[^>]*>Farkas Klára</)
-    expect(html).toContain('Ügyfélkapcsolati vezető')
+    expect(html).toContain('Ügyintéző · Mérlegképes könyvelő')
   })
 
   it('tracks call/email/form via the platform data-ui standard', () => {
@@ -97,7 +97,7 @@ describe('rendering', () => {
     const team = html.slice(html.indexOf('data-ui-component="fk-team"'), html.indexOf('data-ui-component="fk-trust"'))
     // The only image is the office storefront photo beside the heading — no portraits on the cards.
     expect(team.match(/<img/g)).toHaveLength(1)
-    expect(team).toMatch(/<figure[^>]*data-ui-id="rolunk-photo"[\s\S]*src="\/images\/iroda\.jpg"/)
+    expect(team).toMatch(/<figure[^>]*data-ui-id="rolunk-photo"[\s\S]*src="\/images\/iroda-bejarat\.jpg"/)
     expect(team).toContain('>Irodánk bejárata</figcaption>')
     const cards = team.slice(team.indexOf('data-ui-id="team-lead-'))
     expect(cards).not.toContain('<img')
@@ -134,6 +134,14 @@ describe('rendering', () => {
     const c: ClientContent = { ...content, settings: { ...content.settings, showOfficePhoto: false } }
     const html = render(buildSiteData(c).pages.find((p) => p.slug === 'home')!)
     expect(html).not.toContain('data-ui-id="rolunk-photo"')
-    expect(html).not.toContain('/images/iroda.jpg')
+    expect(html).not.toContain('/images/iroda-bejarat.jpg')
+  })
+
+  it('shows the office interior beside the team heading on the About page', () => {
+    const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
+    expect(html).toContain('id="rolunk-csapat-title"')
+    expect(html).toMatch(/>Irodánk és munkatársaink</)
+    expect(html).toMatch(/<figure[^>]*data-ui-id="rolunk-csapat-photo"[\s\S]*src="\/images\/iroda-belso\.jpg"/)
+    expect(html).toContain('>Irodánk belülről</figcaption>')
   })
 })

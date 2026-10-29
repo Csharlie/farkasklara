@@ -2,10 +2,14 @@ import type { LayoutShellProps } from '@spektra/layouts'
 import { ContactAnchor } from '../sections/shared/ContactAnchor'
 import { Icon } from '../sections/shared/icons'
 import { ConsentSettingsLink } from './ConsentUi'
+import { pathToPageSlug } from '../data/routes'
 import { shell } from './shell-context'
 
 const bottomLinkClass =
   'inline-flex min-h-11 items-center underline-offset-4 transition-colors hover:text-foreground hover:underline'
+
+/** data-ui-id fragment of a link: its page slug ('home', 'kapcsolat') — independent of the deploy base. */
+const uiSlug = (href: string) => pathToPageSlug(href).replace(/\//g, '-')
 
 /** Footer — every contact value comes from the single company source. */
 export function AppFooter({ siteData }: LayoutShellProps) {
@@ -107,7 +111,7 @@ export function AppFooter({ siteData }: LayoutShellProps) {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  data-ui-id={`footer-link-${link.href.slice(1)}`}
+                  data-ui-id={`footer-link-${uiSlug(link.href)}`}
                   data-ui-type="link"
                   data-ui-action="navigate"
                   className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground"
@@ -132,7 +136,7 @@ export function AppFooter({ siteData }: LayoutShellProps) {
                   <li key={link.href}>
                     <a
                       href={link.href}
-                      data-ui-id={`footer-link-${link.href.slice(1)}`}
+                      data-ui-id={`footer-link-${uiSlug(link.href)}`}
                       data-ui-type="link"
                       data-ui-action="navigate"
                       className={bottomLinkClass}
