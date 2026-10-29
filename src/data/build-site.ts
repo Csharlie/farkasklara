@@ -32,7 +32,12 @@ export function buildSiteData(content: ClientContent): SiteData {
   const { copy, company } = content
 
   const primary: NavItem[] = [
-    { label: copy.nav.services, href: routes.services },
+    {
+      label: copy.nav.services,
+      href: routes.services,
+      // Header dropdown: one entry per visible service, in service order.
+      children: ctx.services.map((s) => ({ label: s.title, href: routes.service(s.slug) })),
+    },
     { label: copy.nav.switch, href: routes.switch },
     { label: copy.nav.about, href: routes.about },
     { label: copy.nav.knowledge, href: routes.knowledge },

@@ -85,6 +85,14 @@ describe('SiteData', () => {
     ])
   })
 
+  it('lists the visible services under the services nav item (header dropdown)', () => {
+    const services = site.navigation.primary[0]!
+    expect(services.children?.map((c) => c.href)).toEqual(
+      content.services.filter((s) => s.visible).sort((a, b) => a.order - b.order).map((s) => `/szolgaltatasok/${s.slug}`),
+    )
+    expect(site.navigation.primary.slice(1).every((n) => !n.children)).toBe(true)
+  })
+
   it('fails loudly when a disabled module is switched on', () => {
     const enabled = withContent((c) => ({ ...c, settings: { ...c.settings, modules: { ...c.settings.modules, pricingPage: true } } }))
     expect(() => buildSiteData(enabled)).toThrow(/pricingPage/)
