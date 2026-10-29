@@ -136,7 +136,7 @@ describe('homepage', () => {
     expect(team.lead.paragraphs).toHaveLength(2) // homepage shows the short version
     // Credentials join the role line under the name — no separate list.
     expect(team.lead.credentials).toBeUndefined()
-    expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, ügyvezető · Mérlegképes könyvelő')
+    expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, ügyvezető')
     expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
     expect(team.members.map((m) => [m.name, m.role])).toEqual([
       ['Posszert Ervin', 'Ügyintéző · Mérlegképes könyvelő'],
@@ -148,7 +148,7 @@ describe('homepage', () => {
     const order = types(home)
     expect(order.indexOf('fk-trust')).toBe(order.indexOf('fk-team') + 1)
     const trust = sectionData<{ facts: { value: string; label: string }[] }>(home, 'fk-trust')
-    expect(trust.facts.map((f) => f.value)).toEqual(['3', '6', '3', 'Kecskemét'])
+    expect(trust.facts.map((f) => f.value)).toEqual(['2', '6', '3', 'Kecskemét'])
   })
 
   it('shows a verified metric once it is set in content', () => {
@@ -205,7 +205,8 @@ describe('service page template', () => {
 
   it('keeps the fixed block order', () => {
     const order = ['fk-page-header', 'fk-list', 'features', 'features', 'fk-list', 'fk-price', 'fk-faq', 'fk-cta', 'fk-services', 'fk-articles', 'fk-map']
-    for (const page of servicePages) {
+    const audiencesLast = new Set(content.services.filter((s) => s.audiencesLast).map((s) => `szolgaltatasok/${s.slug}`))
+    for (const page of servicePages.filter((p) => !audiencesLast.has(p.slug))) {
       const ids = types(page)
       let cursor = 0
       for (const type of ids) {
@@ -214,6 +215,13 @@ describe('service page template', () => {
         cursor += 1
       }
     }
+  })
+
+  it('moves audiences below process and requirements with service.audiencesLast', () => {
+    const ids = pageBy(site.pages, 'szolgaltatasok/palyazatok').sections.map((s) => s.id)
+    expect(ids.indexOf('palyazatok-kinek')).toBeGreaterThan(ids.indexOf('palyazatok-folyamat'))
+    expect(ids.indexOf('palyazatok-kinek')).toBeGreaterThan(ids.indexOf('palyazatok-amit-kerunk'))
+    expect(ids.indexOf('palyazatok-folyamat')).toBeGreaterThan(ids.indexOf('palyazatok-tartalom'))
   })
 
   it('uses a request CTA (not "start now"), prefilled with the service', () => {

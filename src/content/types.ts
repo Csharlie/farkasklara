@@ -88,6 +88,8 @@ export interface Service {
   includes?: string[]
   /** Audience ids (see content/audiences.ts). */
   audiences?: string[]
+  /** Moves the audiences block below process and requirements (default: right after includes). */
+  audiencesLast?: boolean
   process?: Step[]
   requirements?: string[]
   price?: Price

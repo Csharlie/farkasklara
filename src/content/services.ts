@@ -21,8 +21,8 @@ export const services: Service[] = [
       'Bejövő és kimenő számlák, bankkivonatok feldolgozása',
       'Főkönyvi könyvelés és áfa-analitika',
       'Áfabevallás a vállalkozás bevallási gyakorisága szerint',
-      'Éves beszámoló előkészítése',
-      'Kapcsolattartás a NAV-val az Ön meghatalmazása alapján',
+      'Éves beszámolók elkészítése',
+      'Kapcsolattartás a NAV-val és az önkormányzatokkal az Ön meghatalmazása alapján',
     ],
     audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
     process: [
@@ -73,10 +73,10 @@ export const services: Service[] = [
     title: 'Adótanácsadás',
     summary: 'Adózási forma, nagyobb kiadások, kifizetések: előre kiszámoljuk, mennyi adóval jár egy döntés.',
     includes: [
-      'Adózási formák összehasonlítása az Ön számaival',
+      'Adózási formák összehasonlítása',
       'Beruházások, nagyobb kiadások adóhatásának kiszámítása',
       'Munkabér, osztalék, tagi kölcsön: melyik mivel jár',
-      'Felkészülés NAV-ellenőrzésre',
+      'Felkészülés esetleges NAV-ellenőrzésre',
     ],
     audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
     process: [
@@ -139,6 +139,7 @@ export const services: Service[] = [
       'Havi bérjegyzék és utalási lista',
       'Havi járulékbevallás',
       'Munkavállalók be- és kijelentése',
+      'Egyszerűsített foglalkoztatás (alkalmi és idénymunka) bejelentése',
       'Kilépéskor kiadandó igazolások',
       'Éves igazolások a munkavállalóknak',
     ],
@@ -162,7 +163,7 @@ export const services: Service[] = [
     related: ['konyveles'],
     seo: {
       description:
-        'Bérszámfejtés Kecskeméten: havi bérjegyzék, járulékbevallás, munkavállalók be- és kijelentése, éves igazolások.',
+        'Bérszámfejtés Kecskeméten: havi bérjegyzék, járulékbevallás, munkavállalók be- és kijelentése, egyszerűsített foglalkoztatás bejelentése, éves igazolások.',
     },
     order: 4,
     visible: true,
@@ -174,12 +175,6 @@ export const services: Service[] = [
     summary: 'Cég megszüntetése végelszámolással, a kezdő beszámolótól a záró beszámolóig.',
     body: [
       'A végelszámolás határidőkhöz kötött eljárás. Az elején ütemtervet készítünk, hogy lássa, mikor mi következik.',
-    ],
-    includes: [
-      'Végelszámolást kezdő beszámoló',
-      'Hitelezői igények nyilvántartása',
-      'Adóhatósági bejelentések',
-      'Végelszámolást záró beszámoló és vagyonfelosztási javaslat',
     ],
     audiences: ['kkv'],
     process: [
@@ -212,19 +207,17 @@ export const services: Service[] = [
   {
     slug: 'palyazatok',
     icon: 'target',
-    title: 'Pályázatok',
-    summary: 'Pályázatok előkészítése, megírása és elszámolása.',
+    title: 'Pályázat-előkészítés',
+    summary: 'Megnézzük, megfelel-e a vállalkozás a pályázati kiírás feltételeinek.',
     includes: [
-      'Előkészítés: megfelel-e a vállalkozás a feltételeknek, milyen dokumentumok kellenek',
-      'Megírás: a pályázati anyag és a költségterv',
-      'Elszámolás: kifizetési kérelmek és a fenntartási időszak beszámolói',
+      'A jogosultsági feltételek ellenőrzése a vállalkozás pénzügyi adatai alapján',
     ],
     audiences: ['egyeni-vallalkozok', 'kkv'],
+    audiencesLast: true,
     process: [
-      { title: 'Felmérés', description: 'Megnézzük, melyik kiírás illik a tervezett fejlesztéshez.' },
-      { title: 'Előkészítés', description: 'Összegyűjtjük a szükséges dokumentumokat.' },
-      { title: 'Megírás', description: 'Megírjuk és beadjuk a pályázatot.' },
-      { title: 'Elszámolás', description: 'Elkészítjük a kifizetési kérelmeket és a beszámolókat.' },
+      { title: 'Kiírás', description: 'Elküldi a kiírást és a tervezett fejlesztés leírását.' },
+      { title: 'Ellenőrzés', description: 'A pénzügyi adatok alapján átnézzük a feltételeket.' },
+      { title: 'Visszajelzés', description: 'Megtudja, mely feltételek teljesülnek, és hol van hiány.' },
     ],
     requirements: [
       'A tervezett fejlesztés leírása',
@@ -235,7 +228,7 @@ export const services: Service[] = [
     related: ['konyveles', 'adotanacsadas'],
     seo: {
       description:
-        'Pályázatírás Kecskeméten: pályázatok előkészítése, megírása és elszámolása vállalkozásoknak.',
+        'Pályázat-előkészítés Kecskeméten: a pályázati jogosultság ellenőrzése a vállalkozás pénzügyi adatai alapján.',
     },
     order: 6,
     visible: true,

@@ -42,7 +42,8 @@ export const people: Person[] = [
     name: 'Farkas Klára',
     role: 'Tulajdonos, ügyvezető',
     // Firm-focused introduction — no unverified biography or years of
-    // experience. Qualifications go to `credentials` (provided 2026-10-21).
+    // experience. No `credentials`: the qualification is not shown for her
+    // (client request, 2026-10-29).
     intro: [
       'Farkas Klára az iroda tulajdonosa és ügyvezetője. Ő felel azért, hogy a könyvelés, a bevallások és az adózási tanácsadás szakmailag rendben legyen, és hogy minden ügyben megszülessen a szükséges szakmai döntés.',
       'A könyvelést és az adózási feladatokat felelősségnek tekintjük, nem puszta adminisztrációnak. Egy havi zárás vagy egy bevallás mögött a vállalkozás döntései állnak, ezért a számok mellett azt is nézzük, mit jelentenek az Ön számára.',
@@ -51,7 +52,6 @@ export const people: Person[] = [
     ],
     // Short role summary — contact page card (the long `intro` is for the team block).
     bio: 'Az iroda tulajdonosa és ügyvezetője. Ő felel a könyvelés, a bevallások és az adózási tanácsadás szakmai minőségéért.',
-    credentials: ['Mérlegképes könyvelő'],
     isLead: true,
     isPrimaryContact: false,
   },
@@ -59,7 +59,7 @@ export const people: Person[] = [
     id: 'ugyintezo',
     name: 'Posszert Ervin',
     role: 'Ügyintéző',
-    bio: 'Hozzá futnak be az érdeklődések, az ajánlatkérések és az ügyfelek napi kérdései. Egyezteti az időpontokat, intézi az ügyek adminisztrációját, és gondoskodik róla, hogy minden kérdés gyorsan a megfelelő kollégához kerüljön.',
+    bio: 'Részt vesz az új ügyfelek fogadásában, az érdeklődések és ajánlatkérések kezelésében, valamint az ügyintézéshez kapcsolódó feladatok koordinálásában. Mérlegképes könyvelőként könyvelési, adózási és bevallási feladatokat lát el, valamint közreműködik az ügyfelek számviteli kötelezettségeinek teljesítésében.',
     credentials: ['Mérlegképes könyvelő'],
     isPrimaryContact: true,
   },

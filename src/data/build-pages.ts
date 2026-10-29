@@ -442,6 +442,7 @@ export function buildServicesIndexPage(ctx: BuildContext): Page {
  * Service page template — FIXED block order, every block optional:
  *  1 header · 2 includes · 3 audiences · 4 process · 5 requirements · 6 price
  *  7 faq · 8 closing CTA · 9 related services · 10 related articles
+ * `service.audiencesLast` moves audiences after requirements (tones re-alternate).
  */
 export function buildServicePage(ctx: BuildContext, service: Service): Page {
   const { company, settings, copy } = ctx.content
@@ -454,6 +455,8 @@ export function buildServicePage(ctx: BuildContext, service: Service): Page {
   const related = ctx.services.filter((s) => s.slug !== service.slug && service.related?.includes(s.slug))
   const relatedArticles = ctx.articles.filter((a) => service.relatedArticles?.includes(a.slug))
   const price = visiblePrice(service, settings)
+  const audiencesLast = service.audiencesLast === true
+  const audiencesBlock = audiencesFeatures(id('kinek'), blocks.audiences, audiences, 'warm')
 
   const title =
     service.seo.title ??
@@ -475,9 +478,10 @@ export function buildServicePage(ctx: BuildContext, service: Service): Page {
           : undefined,
       }),
       listSection(id('tartalom'), blocks.includes, service.includes),
-      audiencesFeatures(id('kinek'), blocks.audiences, audiences, 'warm'),
-      stepsFeatures(id('folyamat'), blocks.process, service.process ?? [], 'plain'),
-      listSection(id('amit-kerunk'), blocks.requirements, service.requirements, 'warm'),
+      audiencesLast ? undefined : audiencesBlock,
+      stepsFeatures(id('folyamat'), blocks.process, service.process ?? [], audiencesLast ? 'warm' : 'plain'),
+      listSection(id('amit-kerunk'), blocks.requirements, service.requirements, audiencesLast ? 'plain' : 'warm'),
+      audiencesLast ? audiencesBlock : undefined,
       price ? section<FkPriceData>(id('dij'), 'fk-price', { id: id('dij'), title: blocks.price, price }) : undefined,
       faqSection(id('gyik'), blocks.faq, service.faq, 'warm'),
       closingCta(ctx, id('cta'), {

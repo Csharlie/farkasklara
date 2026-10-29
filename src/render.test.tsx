@@ -41,7 +41,7 @@ describe('rendering', () => {
   it('renders the full service content (not only a card)', () => {
     const html = render(site.pages.find((p) => p.slug === 'szolgaltatasok/vegelszamolas')!)
     expect(html).toContain('Végelszámolás')
-    expect(html).toContain('Végelszámolást kezdő beszámoló')
+    expect(html).toContain('Elkészítjük a végelszámolást kezdő beszámolót.')
     expect(html).toContain('Mennyi ideig tart egy végelszámolás?')
     expect(html).toContain('href="/kapcsolat?szolgaltatas=vegelszamolas#ajanlatkeres"')
   })
@@ -127,7 +127,8 @@ describe('rendering', () => {
     const primary = html.indexOf('data-ui-id="kapcsolat-adatok-primary"')
     expect(lead).toBeGreaterThan(-1)
     expect(lead).toBeLessThan(primary)
-    expect(html.slice(lead, primary)).toContain('Tulajdonos, ügyvezető · Mérlegképes könyvelő')
+    expect(html.slice(lead, primary)).toContain('Tulajdonos, ügyvezető')
+    expect(html.slice(lead, primary)).not.toContain('Mérlegképes könyvelő')
   })
 
   it('drops the office photo with settings.showOfficePhoto = false', () => {

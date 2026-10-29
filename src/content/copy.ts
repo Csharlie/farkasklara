@@ -55,7 +55,7 @@ export const copy = {
     about: {
       title: 'Rólunk',
       intro:
-        'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak és vállalatoknak. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatokkal foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
+        'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak és vállalatoknak. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatok előkészítésével foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
       more: 'Bővebben az irodáról',
       // Storefront photo beside the "Rólunk" heading (public/images/iroda*.jpg).
       photo: {
@@ -89,7 +89,7 @@ export const copy = {
     meta: {
       title: 'Könyvelési szolgáltatások | {company}',
       description:
-        'Könyvelés, adótanácsadás, adóbevallás, bérszámfejtés, végelszámolás és pályázatírás Kecskeméten. Nézze meg, mit tartalmaz a munka, és kérjen ajánlatot.',
+        'Könyvelés, adótanácsadás, adóbevallás, bérszámfejtés, végelszámolás és pályázat-előkészítés Kecskeméten. Nézze meg, mit tartalmaz a munka, és kérjen ajánlatot.',
     },
     eyebrow: 'Szolgáltatások',
     title: 'Mivel foglalkozunk',
@@ -208,7 +208,7 @@ export const copy = {
       height: 768,
       caption: 'Irodánk belülről',
     } as SectionPhoto | undefined,
-    teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti. Csapatunk minden tagja mérlegképes könyvelő.',
+    teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti, munkatársai mérlegképes könyvelők.',
   },
 
   knowledge: {
