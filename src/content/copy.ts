@@ -55,15 +55,15 @@ export const copy = {
     about: {
       title: 'Rólunk',
       intro:
-        'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak és vállalatoknak. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatok előkészítésével foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
+        'A Farkas Klára Könyvelőiroda Kecskeméten dolgozik egyéni vállalkozóknak, kis- és középvállalkozásoknak, kft.-knek, alapítványoknak, társasházaknak és egyesületeknek. Könyveléssel, adózással, bérszámfejtéssel, végelszámolással és pályázatok előkészítésével foglalkozunk, egy irodában, egy szakmai vezetés alatt.',
       more: 'Bővebben az irodáról',
       // Storefront photo beside the "Rólunk" heading (public/images/iroda*.jpg).
       photo: {
         src: '/images/iroda-bejarat.jpg',
         srcSet: '/images/iroda-bejarat-800.jpg 800w, /images/iroda-bejarat.jpg 1024w',
-        alt: 'A Farkas Klára Könyvelőiroda bejárata: világoszöld portál „Könyvelőiroda” felirattal, a kirakatokon a szolgáltatások – könyvelés, bérszámfejtés, visszamenőleg is, adótanácsadás – és az iroda elérhetőségei',
+        alt: 'A Farkas Klára Könyvelőiroda bejárata: világoszöld portál „Könyvelőiroda” felirattal, mérleges logóval. A bal kirakaton a szolgáltatások – könyvelés, bérszámfejtés, visszamenőleg is, adótanácsadás –, a jobbon Farkas Klára Judit tulajdonos, ügyvezető és az ügyfélkapcsolat, Posszert Ervin telefonszáma',
         width: 1024,
-        height: 572,
+        height: 680,
         caption: 'Irodánk bejárata',
       } as SectionPhoto | undefined,
     },
@@ -75,7 +75,7 @@ export const copy = {
       items: [
         { source: 'certifiedCount', label: 'mérlegképes könyvelő a csapatban' },
         { source: 'serviceCount', label: 'szolgáltatási terület egy irodában' },
-        { source: 'audienceCount', label: 'ügyfélkör: egyéni, kkv, vállalati' },
+        { source: 'audienceCount', label: 'ügyfélkör a vállalkozásoktól a társasházakig' },
         { source: 'city', label: 'helyi iroda' },
       ] satisfies FactInput[] as FactInput[],
     },
@@ -207,6 +207,16 @@ export const copy = {
       width: 1365,
       height: 768,
       caption: 'Irodánk belülről',
+    } as SectionPhoto | undefined,
+    // Second office photo at the bottom of the team block, mirrored (left half);
+    // public/images/iroda-galeria*.jpg. undefined → no photo.
+    teamClosingPhoto: {
+      src: '/images/iroda-galeria.jpg',
+      srcSet: '/images/iroda-galeria-800.jpg 800w, /images/iroda-galeria.jpg 1365w',
+      alt: 'A Farkas Klára Könyvelőiroda munkaterei: monitoros munkaállomások, a galéria alatti sarokban asztali lámpás íróasztal, festmények a falon és fa lépcső',
+      width: 1365,
+      height: 768,
+      caption: 'Munkatereink',
     } as SectionPhoto | undefined,
     teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti, munkatársai mérlegképes könyvelők.',
   },

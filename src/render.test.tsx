@@ -145,4 +145,13 @@ describe('rendering', () => {
     expect(html).toMatch(/<figure[^>]*data-ui-id="rolunk-csapat-photo"[\s\S]*src="\/images\/iroda-belso\.jpg"/)
     expect(html).toContain('>Irodánk belülről</figcaption>')
   })
+
+  it('closes the About team block with a mirrored office photo, after the team cards', () => {
+    const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
+    const closing = html.search(/<figure[^>]*data-ui-id="rolunk-csapat-closing-photo"/)
+    expect(closing).toBeGreaterThan(html.indexOf('data-ui-id="team-member-ugyintezo"'))
+    expect(html.slice(closing)).toMatch(/^<figure[^>]*-scale-x-100[\s\S]*src="\/images\/iroda-galeria\.jpg"/)
+    // Homepage team block keeps only its storefront photo.
+    expect(render(site.pages.find((p) => p.slug === 'home')!)).not.toContain('closing-photo')
+  })
 })

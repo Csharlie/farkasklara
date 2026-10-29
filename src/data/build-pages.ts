@@ -29,21 +29,18 @@ export interface BuildContext {
   contact: ContactView
   /** Visible services, ordered by `order`. */
   services: Service[]
-  /** Visible audiences (enabled + segment switch), content order. */
+  /** Visible audiences (enabled, known description), content order. */
   audiences: Audience[]
   /** Visible articles. */
   articles: Article[]
 }
 
 export function createBuildContext(content: ClientContent): BuildContext {
-  const { settings } = content
   return {
     content,
     contact: buildContactView(content.company, content.people),
     services: content.services.filter((s) => s.visible).sort((a, b) => a.order - b.order),
-    audiences: content.audiences.filter(
-      (a) => a.enabled && known(a.description) && (a.segment === undefined || settings.segments[a.segment].enabled),
-    ),
+    audiences: content.audiences.filter((a) => a.enabled && known(a.description)),
     articles: content.articles.filter((a) => a.visible),
   }
 }
@@ -128,7 +125,8 @@ function audiencesFeatures(id: string, title: string, audiences: readonly Audien
   return section<FkFeaturesData>(id, 'features', {
     title,
     features: audiences.map((a) => ({ title: a.label, description: a.description, iconName: a.icon })),
-    columns: audiences.length >= 4 ? 4 : audiences.length === 2 ? 2 : 3,
+    // Full rows where possible: 6 → 3 + 3, 4 → one row of 4, 2 → 2; otherwise 3.
+    columns: audiences.length % 3 === 0 ? 3 : audiences.length % 4 === 0 ? 4 : audiences.length === 2 ? 2 : 3,
     tone,
   })
 }
@@ -250,6 +248,7 @@ function teamSection(
     more?: LinkCta
     joinedWithNext?: boolean
     image?: FkTeamData['image']
+    closingImage?: FkTeamData['closingImage']
     /** Limit the lead's introduction (homepage shows a shorter version). */
     leadParagraphs?: number
     tone?: 'plain' | 'warm'
@@ -289,6 +288,7 @@ function teamSection(
     members: others,
     more: options.more,
     image: options.image,
+    closingImage: options.closingImage,
     joinedWithNext: options.joinedWithNext,
     tone: options.tone,
   })
@@ -549,6 +549,7 @@ export function buildAboutPage(ctx: BuildContext): Page {
         title: c.teamTitle,
         intro: withLead(ctx, c.teamIntro),
         image: sectionPhoto(c.teamPhoto),
+        closingImage: sectionPhoto(c.teamClosingPhoto),
         tone: 'warm',
       }),
       generalQuoteCta(ctx, 'rolunk-cta'),

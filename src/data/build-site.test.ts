@@ -156,7 +156,7 @@ describe('homepage', () => {
     const order = types(home)
     expect(order.indexOf('fk-trust')).toBe(order.indexOf('fk-team') + 1)
     const trust = sectionData<{ facts: { value: string; label: string }[] }>(home, 'fk-trust')
-    expect(trust.facts.map((f) => f.value)).toEqual(['2', '6', '3', 'Kecskemét'])
+    expect(trust.facts.map((f) => f.value)).toEqual(['2', '6', '6', 'Kecskemét'])
   })
 
   it('shows a verified metric once it is set in content', () => {
@@ -171,7 +171,7 @@ describe('homepage', () => {
       },
     }))
     const trust = sectionData<{ facts: { value: string }[] }>(pageBy(buildSiteData(c).pages, 'home'), 'fk-trust')
-    expect(trust.facts.map((f) => f.value)).toEqual(['2010', '6', '3', 'Kecskemét'])
+    expect(trust.facts.map((f) => f.value)).toEqual(['2010', '6', '6', 'Kecskemét'])
   })
 
   it('places the compact contact panel next to the homepage form', () => {
@@ -187,13 +187,22 @@ describe('audiences', () => {
     return features.features.map((f) => f.title)
   }
 
-  it('shows the three primary client groups; switching is not an audience', () => {
-    expect(audienceTitles(content)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások', 'Vállalatok'])
+  it('shows the six client groups in two full rows of three; switching is not an audience', () => {
+    expect(audienceTitles(content)).toEqual([
+      'Egyéni vállalkozók',
+      'Kis- és középvállalkozások',
+      'Kft.-k',
+      'Alapítványok',
+      'Társasházak',
+      'Egyesületek',
+    ])
+    const home = pageBy(buildSiteData(content).pages, 'home')
+    expect((home.sections.find((s) => s.id === 'kinek')!.data as { columns: number }).columns).toBe(3)
   })
 
-  it('can switch off the larger-company group through configuration only', () => {
-    const off = withContent((c) => ({ ...c, settings: { ...c.settings, segments: { complex: { enabled: false } } } }))
-    expect(audienceTitles(off)).toEqual(['Egyéni vállalkozók', 'Kis- és középvállalkozások'])
+  it('hides a client group with enabled: false (content only)', () => {
+    const off = withContent((c) => ({ ...c, audiences: c.audiences.map((a) => (a.id === 'egyesuletek' ? { ...a, enabled: false } : a)) }))
+    expect(audienceTitles(off)).not.toContain('Egyesületek')
   })
 })
 

@@ -22,7 +22,7 @@ Előfeltétel: a Platform Core buildelve (`cd sp-platform; pnpm build`) — a `d
 | Mit | Hol |
 |---|---|
 | Kapcsolati adatok (egyetlen forrás), csapat, `isLead` (szakmai vezető), `isPrimaryContact` (ügyintéző) | `src/content/company.ts` |
-| Kapcsolók: `showPrices`, `segments.complex.enabled`, letiltott modulok, SEO-minták | `src/content/settings.ts` |
+| Kapcsolók: `showPrices`, letiltott modulok, SEO-minták | `src/content/settings.ts` |
 | Szolgáltatások (oldal, kártya, űrlap-opció, ár, GYIK, CTA, SEO) | `src/content/services.ts` |
 | Célcsoportok | `src/content/audiences.ts` |
 | Tudástár cikkek | `src/content/articles.ts` |
@@ -39,7 +39,7 @@ Előfeltétel: a Platform Core buildelve (`cd sp-platform; pnpm build`) — a `d
 
 - **Új szolgáltatás:** új objektum a `services.ts`-be → létrejön a `/szolgaltatasok/<slug>` oldal, a főoldali kártya, az űrlap-opció, a lábléc-link és a SEO-meta.
 - **Árak megjelenítése:** `settings.showPrices = true` (jelenleg `false`, mert az árak `[ÁR]` placeholderek).
-- **Nagyobb vállalatok célcsoport:** `settings.segments.complex.enabled` (alapból `true`; `false`-ra állítva eltűnik).
+- **Célcsoportok:** `src/content/audiences.ts` — hat csoport (főoldalon két teljes, hármas sor). Egy csoport elrejtése: `enabled: false`; szolgáltatáshoz kötés: `service.audiences`.
 - **Elérhetőségek → kapcsolattartó:** a márka a Farkas Klára Könyvelőiroda, de minden csatorna (telefon, e-mail, ajánlatkérő űrlap) az ügyintézőhöz, Posszert Ervinhez fut be. A `company.phone` / `company.email` az ő csatornája. Név szerint jelenik meg: Kapcsolat oldal (kapcsolattartó-kártya a telefonnal/e-maillel, az irodavezető kártyája alatt), ajánlatkérő panel utolsó kártyája, Rólunk csapatkártya (telefon/e-mail a kártyán), fejléc-telefon aria/title, űrlap sikerüzenet, Kapcsolat/Rólunk meta description. Az e-mail szerepkör-postafiók (`iroda@farkasklara.hu`, Ervin kezeli) — a végleges domainen élesítés előtt létre kell hozni. Személyes ügyfélfogadás csak előzetes időpont-egyeztetéssel (`copy.footer.appointmentNote`, `copy.quotePanel.notes.hours`). Az űrlap-driver címzettje (`VITE_FORM_MAILTO_TARGET`, illetve a CF7 címzett) is ez a cím legyen.
 - **Szerepkörök:** a `people` tömbben pontosan egy `isLead: true` (szakmai vezető, kiemelt blokk) és pontosan egy `isPrimaryContact: true` (ügyintéző — hozzá fut be minden érdeklődés); más érték build-hibát ad.
 - **Térkép:** teljes szélességű `fk-map` section minden oldal végén, a footer előtt (a `bc-map` / `lc-map` mintája). Automatikusan megjelenik, ha `company.address` minden része valós. A Google Maps csak a süti-sávban adott hozzájárulás után töltődik be (platform `ConsentGate`); addig helyőrző látszik a címmel és útvonaltervező linkkel.

@@ -40,9 +40,6 @@ export type Price =
 
 // ── Audience ─────────────────────────────────────────────────────────
 
-/** Configuration-gated audience segments (settings.segments). */
-export type SegmentKey = 'complex'
-
 export interface Audience {
   /** ASCII slug — also the future /kinek/<id> route (module disabled). */
   id: string
@@ -51,8 +48,6 @@ export interface Audience {
   /** Icon key for the features card (see src/sections/shared/icons.tsx). */
   icon?: string
   enabled: boolean
-  /** When set, the audience is visible only if settings.segments[segment].enabled. */
-  segment?: SegmentKey
 }
 
 // ── Shared blocks ────────────────────────────────────────────────────
@@ -172,7 +167,6 @@ export interface Settings {
   showPrices: boolean
   /** Large office storefront photo in the homepage "Rólunk" block. false → no photo. */
   showOfficePhoto: boolean
-  segments: Record<SegmentKey, { enabled: boolean }>
   /** Prepared but disabled modules. Enabling them is not implemented yet. */
   modules: {
     audiencePages: boolean // /kinek/<audience>

@@ -14,6 +14,16 @@ export interface FkTeamMember {
   isPrimaryContact: boolean
 }
 
+export interface FkTeamImage {
+  src: string
+  /** Responsive candidates, e.g. '/images/iroda-bejarat-800.jpg 800w, /images/iroda-bejarat.jpg 1024w'. */
+  srcSet?: string
+  alt: string
+  width: number
+  height: number
+  caption?: string
+}
+
 export interface FkTeamData {
   id: string
   title: string
@@ -24,15 +34,9 @@ export interface FkTeamData {
   members: FkTeamMember[]
   more?: LinkCta
   /** Office photo filling the right half of the viewport beside the heading (stacked on mobile). */
-  image?: {
-    src: string
-    /** Responsive candidates, e.g. '/images/iroda-bejarat-800.jpg 800w, /images/iroda-bejarat.jpg 1024w'. */
-    srcSet?: string
-    alt: string
-    width: number
-    height: number
-    caption?: string
-  }
+  image?: FkTeamImage
+  /** Second photo below the team cards — mirrored: fills the left half of the viewport. */
+  closingImage?: FkTeamImage
   /** Followed directly by the facts strip — tighter bottom spacing. */
   joinedWithNext?: boolean
   tone?: 'plain' | 'warm'

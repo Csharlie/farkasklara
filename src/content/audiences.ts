@@ -1,8 +1,8 @@
 import type { Audience } from './types'
 
 /**
- * Primary client groups. Order = display order.
- * Visibility: enabled && (segment ? settings.segments[segment].enabled : true).
+ * Primary client groups. Order = display order; `enabled: false` hides one.
+ * Six groups fill two full rows of three on the homepage.
  * Switching accountants is not an audience — it has its own page (/konyvelovaltas).
  */
 export const audiences: Audience[] = [
@@ -23,12 +23,36 @@ export const audiences: Audience[] = [
     enabled: true,
   },
   {
-    id: 'nagyobb-vallalatok',
+    id: 'kft',
     icon: 'building',
-    label: 'Vállalatok',
+    label: 'Kft.-k',
     description:
-      'Könyvelés, bérszámfejtés és adótanácsadás előzetes egyeztetés alapján, a cég működési rendjéhez igazítva.',
+      'Éves beszámoló, társasági adó és a tagokat érintő kifizetések, például az osztalék rendezése, egy kézben.',
     enabled: true,
-    segment: 'complex',
+  },
+  {
+    id: 'alapitvanyok',
+    icon: 'heart',
+    label: 'Alapítványok',
+    description:
+      'Könyvelés és éves beszámoló a nonprofit szervezetekre vonatkozó szabályok szerint, közhasznú alapítványoknál a közhasznúsági melléklettel együtt.',
+    enabled: true,
+  },
+  {
+    id: 'tarsashazak',
+    icon: 'home',
+    label: 'Társasházak',
+    description:
+      'Könyvelés és éves beszámoló a közös képviselővel együttműködve, hogy a közgyűlés elé rendezett számok kerüljenek.',
+    enabled: true,
+  },
+  {
+    // Sixth group: completes the second row of three (client list had five).
+    id: 'egyesuletek',
+    icon: 'handshake',
+    label: 'Egyesületek',
+    description:
+      'Könyvelés és éves beszámoló, a tagdíjak és a támogatások átlátható nyilvántartásával.',
+    enabled: true,
   },
 ]

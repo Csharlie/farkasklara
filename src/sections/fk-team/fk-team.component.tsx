@@ -5,7 +5,7 @@ import { ContactAnchor } from '../shared/ContactAnchor'
 import { CtaLink } from '../shared/CtaLink'
 import { SectionIntro } from '../shared/SectionIntro'
 import { useSlantedLeftClip } from '../shared/slanted-clip'
-import type { FkTeamData, FkTeamMember } from './fk-team.schema'
+import type { FkTeamData, FkTeamImage, FkTeamMember } from './fk-team.schema'
 
 /**
  * Decorative name in the top-left corner — large, pale gold, partly cropped
@@ -37,12 +37,59 @@ function Channels({ member }: { member: FkTeamMember }) {
   )
 }
 
-export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, tone, image }: FkTeamData) {
+/**
+ * Half-viewport photo with a slightly slanted, rounded inner edge.
+ * side 'right': the slant faces left (beside the heading). side 'left': the
+ * whole figure is mirrored (the clip path is drawn once, for the left edge),
+ * and its content is mirrored back, so the slant faces right.
+ */
+function SplitPhoto({ image, uiId, side, className }: { image: FkTeamImage; uiId: string; side: 'left' | 'right'; className?: string }) {
   const photoRef = useRef<HTMLElement>(null)
-  // Slanted left edge with rounded corners (measured path); the class-based polygon is the first-paint fallback.
+  // Slanted edge with rounded corners (measured path); the class-based polygon is the first-paint fallback.
   // Same shape on every screen size (mobile included).
   const photoClip = useSlantedLeftClip(photoRef, { slant: 0.08, radius: 28, minWidth: 0 })
+  const mirrored = side === 'left'
 
+  return (
+    <figure
+      ref={photoRef}
+      style={photoClip ? { clipPath: photoClip } : undefined}
+      data-ui-id={uiId}
+      data-ui-role="media"
+      className={cn(
+        'group relative overflow-hidden [clip-path:polygon(8%_0,100%_0,100%_100%,0_100%)]',
+        mirrored && '-scale-x-100',
+        className,
+      )}
+    >
+      <div className={cn('relative h-full', mirrored && '-scale-x-100')}>
+        <img
+          src={image.src}
+          srcSet={image.srcSet}
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          loading="lazy"
+          decoding="async"
+          className="aspect-[4/3] w-full object-cover object-[center_45%] transition-transform duration-[1400ms] ease-out sm:aspect-[16/9] lg:aspect-auto lg:h-full motion-safe:group-hover:scale-[1.03]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface-strong/70 via-transparent to-transparent"
+        />
+        {image.caption && (
+          <figcaption className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-md backdrop-blur md:bottom-8 md:left-8">
+            <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
+            {image.caption}
+          </figcaption>
+        )}
+      </div>
+    </figure>
+  )
+}
+
+export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, tone, image, closingImage }: FkTeamData) {
   if (!lead && members.length === 0) return null
 
   return (
@@ -62,35 +109,12 @@ export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, 
               <SectionIntro id={id} title={title} intro={intro} />
             </div>
           </div>
-          <figure
-            ref={photoRef}
-            style={photoClip ? { clipPath: photoClip } : undefined}
-            data-ui-id={`${id}-photo`}
-            data-ui-role="media"
-            className="group relative mt-10 overflow-hidden lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:w-1/2 [clip-path:polygon(8%_0,100%_0,100%_100%,0_100%)]"
-          >
-            <img
-              src={image.src}
-              srcSet={image.srcSet}
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              loading="lazy"
-              decoding="async"
-              className="aspect-[4/3] w-full object-cover object-[center_45%] transition-transform duration-[1400ms] ease-out sm:aspect-[16/9] lg:aspect-auto lg:h-full motion-safe:group-hover:scale-[1.03]"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface-strong/70 via-transparent to-transparent"
-            />
-            {image.caption && (
-              <figcaption className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-md backdrop-blur md:bottom-8 md:left-8">
-                <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
-                {image.caption}
-              </figcaption>
-            )}
-          </figure>
+          <SplitPhoto
+            image={image}
+            uiId={`${id}-photo`}
+            side="right"
+            className="mt-10 lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:w-1/2"
+          />
         </div>
       ) : (
         <div className={contentWidth}>
@@ -182,6 +206,16 @@ export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, 
           </div>
         )}
       </div>
+
+      {closingImage && (
+        /* Mirror of the heading photo: fills the left half up to the viewport edge, slanted edge facing right. */
+        <SplitPhoto
+          image={closingImage}
+          uiId={`${id}-closing-photo`}
+          side="left"
+          className="mt-10 md:mt-14 lg:h-[34rem] lg:w-1/2"
+        />
+      )}
     </section>
   )
 }

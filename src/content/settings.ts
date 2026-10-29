@@ -9,11 +9,6 @@ export const settings: Settings = {
   // Switch to false to remove it.
   showOfficePhoto: true,
 
-  segments: {
-    // "Nagyobb vállalatok" audience — one of the three primary groups.
-    complex: { enabled: true },
-  },
-
   // Prepared, not implemented. Enabling throws at build time (no silent page).
   modules: {
     audiencePages: false, // /kinek/<audience>

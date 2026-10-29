@@ -24,7 +24,7 @@ export const services: Service[] = [
       'Éves beszámolók elkészítése',
       'Kapcsolattartás a NAV-val és az önkormányzatokkal az Ön meghatalmazása alapján',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'kft', 'alapitvanyok', 'tarsashazak', 'egyesuletek'],
     process: [
       {
         title: 'Bizonylatok',
@@ -78,7 +78,7 @@ export const services: Service[] = [
       'Munkabér, osztalék, tagi kölcsön: melyik mivel jár',
       'Felkészülés esetleges NAV-ellenőrzésre',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv', 'nagyobb-vallalatok'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'kft'],
     process: [
       { title: 'Kérdés', description: 'Leírja, milyen döntés előtt áll.' },
       { title: 'Számítás', description: 'A vállalkozás adataiból kiszámoljuk a lehetőségeket.' },
@@ -109,7 +109,7 @@ export const services: Service[] = [
       'Áfabevallás és összesítő nyilatkozatok',
       'Elektronikus beküldés az Ön meghatalmazásával',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'kft'],
     process: [
       { title: 'Adatok', description: 'Összegyűjtjük az adóév bevételeit és kiadásait.' },
       { title: 'Elkészítés', description: 'Elkészítjük a bevallást.' },
@@ -143,7 +143,7 @@ export const services: Service[] = [
       'Kilépéskor kiadandó igazolások',
       'Éves igazolások a munkavállalóknak',
     ],
-    audiences: ['kkv', 'nagyobb-vallalatok'],
+    audiences: ['kkv', 'kft'],
     process: [
       {
         title: 'Jelenléti adatok',
@@ -176,7 +176,7 @@ export const services: Service[] = [
     body: [
       'A végelszámolás határidőkhöz kötött eljárás. Az elején ütemtervet készítünk, hogy lássa, mikor mi következik.',
     ],
-    audiences: ['kkv'],
+    audiences: ['kkv', 'kft'],
     process: [
       { title: 'Döntés', description: 'Átnézzük a cég helyzetét és a nyitott tételeket.' },
       { title: 'Kezdő beszámoló', description: 'Elkészítjük a végelszámolást kezdő beszámolót.' },
@@ -212,7 +212,7 @@ export const services: Service[] = [
     includes: [
       'A jogosultsági feltételek ellenőrzése a vállalkozás pénzügyi adatai alapján',
     ],
-    audiences: ['egyeni-vallalkozok', 'kkv'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'kft'],
     audiencesLast: true,
     process: [
       { title: 'Kiírás', description: 'Elküldi a kiírást és a tervezett fejlesztés leírását.' },
