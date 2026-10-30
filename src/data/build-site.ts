@@ -32,6 +32,7 @@ export function buildSiteData(content: ClientContent): SiteData {
   const { copy, company } = content
 
   const primary: NavItem[] = [
+    { label: copy.nav.home, href: routes.home },
     {
       label: copy.nav.services,
       href: routes.services,

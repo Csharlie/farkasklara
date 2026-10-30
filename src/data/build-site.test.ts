@@ -77,6 +77,7 @@ describe('SiteData', () => {
     expect(slugs.some((s) => s.startsWith('kinek'))).toBe(false)
     expect(slugs).not.toContain('dijak')
     expect(site.navigation.primary.map((n) => n.href)).toEqual([
+      '/',
       '/szolgaltatasok',
       '/konyvelovaltas',
       '/rolunk',
@@ -86,11 +87,11 @@ describe('SiteData', () => {
   })
 
   it('lists the visible services under the services nav item (header dropdown)', () => {
-    const services = site.navigation.primary[0]!
+    const services = site.navigation.primary.find((n) => n.href === '/szolgaltatasok')!
     expect(services.children?.map((c) => c.href)).toEqual(
       content.services.filter((s) => s.visible).sort((a, b) => a.order - b.order).map((s) => `/szolgaltatasok/${s.slug}`),
     )
-    expect(site.navigation.primary.slice(1).every((n) => !n.children)).toBe(true)
+    expect(site.navigation.primary.filter((n) => n !== services).every((n) => !n.children)).toBe(true)
   })
 
   it('fails loudly when a disabled module is switched on', () => {
@@ -116,7 +117,7 @@ describe('homepage', () => {
 
   it('keeps the hero message', () => {
     expect(sectionData<{ title: string; titleHighlight?: string }>(home, 'hero')).toMatchObject({
-      title: 'Könyvelés, amire építhet.\nRend a számokban. Biztonság a döntésekben.',
+      title: 'Könyvelés, amire építhet.\nMegbízhatóság a számok mögött.',
     })
   })
 

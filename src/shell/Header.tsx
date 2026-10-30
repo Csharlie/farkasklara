@@ -188,7 +188,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
               data-ui-trigger="click"
               className={ctaClassName('secondary', 'hidden min-h-11 gap-2 px-5 py-2 tabular-nums sm:inline-flex')}
             >
-              <Icon name="phone" className="size-[1.125rem] text-accent" />
+              <Icon name="phone" fill="currentColor" className="size-[1.125rem] text-accent" />
               {shell.contact.phone.text}
             </a>
           )}
@@ -263,7 +263,7 @@ export function AppHeader({ siteData }: LayoutShellProps) {
                 data-ui-trigger="click"
                 className={ctaClassName('secondary', 'w-full gap-2 tabular-nums')}
               >
-                <Icon name="phone" className="size-[1.125rem] text-accent" />
+                <Icon name="phone" fill="currentColor" className="size-[1.125rem] text-accent" />
                 {shell.contact.phone.text}
               </a>
             </li>

@@ -143,7 +143,7 @@ export const services: Service[] = [
       'Kilépéskor kiadandó igazolások',
       'Éves igazolások a munkavállalóknak',
     ],
-    audiences: ['kkv', 'kft'],
+    audiences: ['egyeni-vallalkozok', 'kkv', 'kft'],
     process: [
       {
         title: 'Jelenléti adatok',

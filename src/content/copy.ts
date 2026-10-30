@@ -17,6 +17,7 @@ export type SectionPhoto = { src: string; srcSet?: string; alt: string; width: n
 
 export const copy = {
   nav: {
+    home: 'Főoldal',
     services: 'Szolgáltatások',
     switch: 'Könyvelőváltás',
     about: 'Rólunk',
@@ -36,9 +37,9 @@ export const copy = {
     hero: {
       eyebrow: 'Könyvelőiroda Kecskeméten',
       // '\n' = line break; titleHighlight is rendered in gold.
-      title: 'Könyvelés, amire építhet.\nRend a számokban. Biztonság a döntésekben.',
+      title: 'Könyvelés, amire építhet.\nMegbízhatóság a számok mögött.',
       // Part of the title rendered in gold.
-      titleHighlight: 'Rend a számokban. Biztonság a döntésekben.' as string | undefined,
+      titleHighlight: 'Megbízhatóság a számok mögött.' as string | undefined,
       description:
         'Könyvelés, adótanácsadás és bérszámfejtés egyéni vállalkozásoknak és cégeknek. Személyre szabott szakmai támogatás a mindennapi működéshez.',
       primaryCta: 'Ajánlatot kérek',
