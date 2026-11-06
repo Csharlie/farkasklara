@@ -60,6 +60,8 @@ export function fkSeo(): Plugin {
         if (file.fileName === 'index.html') index.source = file.source
         else this.emitFile({ type: 'asset', fileName: file.fileName, source: file.source })
       }
+      // 16 random bytes (128-bit) HMAC key, generated fresh on every build — never
+      // reused, never in the repo. See quoteFormConfig() / ajanlatkeres.php.
       this.emitFile({ type: 'asset', fileName: 'ajanlatkeres-config.php', source: quoteFormConfigPhp(content, randomBytes(16).toString('hex')) })
     },
   }

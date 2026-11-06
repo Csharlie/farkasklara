@@ -76,11 +76,11 @@ describe('quote endpoint config', () => {
     .sections.find((s) => s.type === 'fk-quote')!.data as FkQuoteData
 
   it('accepts exactly the service labels the form sends', () => {
-    expect(quoteFormConfig(content, 'salt').services).toEqual(quote.services.map((s) => s.label))
+    expect(quoteFormConfig(content, 'key').services).toEqual(quote.services.map((s) => s.label))
   })
 
   it('mails the enquiry mailbox of company.ts on the canonical host', () => {
-    const config = quoteFormConfig(content, 'salt')
+    const config = quoteFormConfig(content, 'key')
     expect(config.to).toBe('kapcsolat@farkaskonyveles.hu')
     expect(config.from).toBe(config.to)
     expect(config.host).toBe('farkaskonyveles.hu')
@@ -90,7 +90,7 @@ describe('quote endpoint config', () => {
     const php = quoteFormConfigPhp({ ...content, company: { ...content.company, name: "O'Brien \\ Iroda" } }, 'abc')
     expect(php.startsWith('<?php')).toBe(true)
     expect(php).toContain("'site' => 'O\\'Brien \\\\ Iroda',")
-    expect(php).toContain("'salt' => 'abc',")
+    expect(php).toContain("'ipHashKey' => 'abc',")
     expect(php).not.toMatch(/\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]/)
   })
 

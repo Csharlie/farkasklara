@@ -17,9 +17,10 @@ DirectorySlash Off
 # Unknown URLs: the site's own 404 page, with a real 404 status.
 ErrorDocument 404 /404.html
 
-# Server-side files that are never served: the form settings and any login
-# gate files left over from the staging preview.
-<FilesMatch "^(ajanlatkeres-config|gate|auth-config|auth-check|login)\.php$">
+# Server-side files that are never served: the form settings, the rate-limit
+# helpers meant for CLI/cron only, and any login gate files left over from
+# the staging preview.
+<FilesMatch "^(ajanlatkeres-config|ajanlatkeres-ratelimit|ajanlatkeres-cleanup|gate|auth-config|auth-check|login)\.php$">
     Require all denied
 </FilesMatch>
 

@@ -110,11 +110,18 @@ A `noop` csak fejlesztésben színlel sikert; production buildben (így a pspro/
 **`php` driver (éles):** az űrlap a saját domainen lévő `/ajanlatkeres.php`-nak küld (`VITE_FORM_ENDPOINT`). Azonos origin, ezért CORS-beállítás nem kell.
 - Mezők: `name`, `email`, `phone`, `services[]` (a szolgáltatás **címkéje**, pl. „Könyvelés”), `message`, `consent=yes`, `website` (honeypot), `elapsed`, `formId`. A tömbök `kulcs[]` néven mennek, hogy a PHP tömbként olvassa őket.
 - A végpont (`deploy/production/ajanlatkeres.php`, PHP 7) csak POST-ot fogad, és csak akkor, ha az `Origin` vagy a `Referer` a saját domain; ha mindkettő hiányzik, 403-at ad.
-- Spam ellen: rejtett honeypot mező, a 3 másodpercen belüli beküldés csendben eldobva, IP-nként 10 percenként legfeljebb 5 kérés (429).
+- Spam ellen: rejtett honeypot mező, a 3 másodpercen belüli beküldés csendben eldobva, IP-nként 10 percenként legfeljebb 5 kérés (429). A limithez az IP-címet nem tárolja nyersen: HMAC-SHA256-tal (titkos, csak a szerveren élő, buildenként új kulccsal) képzett lenyomatot ment egy fájlba, legfeljebb 10 percre — ehhez kell a lenti cron-feladat (`ajanlatkeres-cleanup.php`), különben csendes napokon a fájl tovább megmaradhatna, mint amit a tájékoztató ígér.
 - Ellenőrzés: név, e-mail vagy telefon, 1…N ismert szolgáltatás, hozzájárulás.
 - Levél a `company.email`-re. A `From` és a borítékfeladó (`-f`) ugyanez a saját domaines cím, így a tárhely SPF/DKIM-je érvényes. A `Reply-To` a látogató címe, tehát a válasz gomb neki ír.
 - A címzett, a domain, a szolgáltatáslista és a hibaüzenetek nem a kérésből jönnek: a build a tartalomból generálja őket (`ajanlatkeres-config.php`), és a `.htaccess` tiltja a közvetlen elérésüket.
 - A szerveren kell az `mbstring` PHP-bővítmény (cPanel → Select PHP Version → Extensions). Nélküle is működik, de egyszerűbb fejléc-kódolással.
+- **Cron-feladat (`deploy/production/ajanlatkeres-cleanup.php`):** a 10 percnél régebbi vagy üres visszaélés-szűrő fájlokat törli — a végpont maga is söpör minden kéréskor, de alacsony forgalomnál ez a cron adja a garanciát, hogy a fájl ténylegesen legfeljebb 10 percig marad meg. Csak parancssorból fut (a `.htaccess` webről is tiltja). cPanel → Cron Jobs:
+  - Gyakoriság: „Every 10 Minutes” (vagy kézzel: Minute `*/10`, a többi `*`).
+  - Parancs (a PHP-CLI elérési útját a cPanel Terminal `which php` parancsával, vagy a „Select PHP Version” oldalon ellenőrizd — ugyanaz a verzió fusson, mint a weben):
+    ```
+    /usr/local/bin/php /home/<cpanel-felhasznalo>/public_html/ajanlatkeres-cleanup.php >/dev/null 2>&1
+    ```
+  - A `<cpanel-felhasznalo>` és az útvonal az `.env.deploy.local` `PRODUCTION_SFTP_DIR`-jéből jön (a cron parancsban abszolút útvonal kell, nem a relatív `~/public_html`).
 
 ## Platform Extension Required (nem implementálva a kliensben)
 
@@ -190,7 +197,8 @@ Nyilvános, indexelhető oldal: **https://farkaskonyveles.hu** (www és http né
 2. A `kapcsolat@farkaskonyveles.hu` postafiók létezzen. cPanel → Email Deliverability: az SPF és a DKIM legyen „Valid”; DMARC-rekord ajánlott (`v=DMARC1; p=none; rua=mailto:kapcsolat@farkaskonyveles.hu`).
 3. cPanel → Select PHP Version → Extensions: az `mbstring` legyen bekapcsolva.
 4. `pnpm deploy:production --dry-run`, ellenőrizd a fájllistát, majd `pnpm deploy:production`.
-5. Ellenőrzés `curl -sI`-vel. Mindegyik **egyetlen** `301`, `Location: https://farkaskonyveles.hu/kapcsolat`:
+5. cPanel → Cron Jobs: állítsd be a fenti `ajanlatkeres-cleanup.php` tízpercenkénti futtatását.
+6. Ellenőrzés `curl -sI`-vel. Mindegyik **egyetlen** `301`, `Location: https://farkaskonyveles.hu/kapcsolat`:
    ```
    curl -sI http://www.farkaskonyveles.hu/kapcsolat/
    curl -sI http://farkaskonyveles.hu/kapcsolat
@@ -201,9 +209,9 @@ Nyilvános, indexelhető oldal: **https://farkaskonyveles.hu** (www és http né
    - a `curl -sI https://farkaskonyveles.hu/szolgaltatasok` `200` (nem `301` a `/szolgaltatasok/`-ra) — ebből látszik, hogy a `DirectorySlash Off` érvényes;
    - az `assets/*.js` válaszában `Cache-Control: public, max-age=31536000, immutable` áll;
    - ha a módosított `.htaccess` nem hat azonnal, a LiteSpeed újraolvasása (cPanelen általában automatikus).
-6. **Csak az 5. pont sikere után:** cPanel → Domains → „Force HTTPS Redirect” kikapcsolása a `farkaskonyveles.hu`-n. Bekapcsolva a `http://www.` kérés két ugrással ér célba (előbb a cPanel viszi https-re, utána a `.htaccess` a csupasz domainre). Utána ismételd meg az 5. pontot.
-7. Ha maradtak kapufájlok: `pnpm deploy:production --remove-gate`, vagy törlés kézzel.
-8. Google Search Console: tulajdon-ellenőrzés, a `https://farkaskonyveles.hu/sitemap.xml` beküldése.
+7. **Csak a 6. pont sikere után:** cPanel → Domains → „Force HTTPS Redirect” kikapcsolása a `farkaskonyveles.hu`-n. Bekapcsolva a `http://www.` kérés két ugrással ér célba (előbb a cPanel viszi https-re, utána a `.htaccess` a csupasz domainre). Utána ismételd meg a 6. pontot.
+8. Ha maradtak kapufájlok: `pnpm deploy:production --remove-gate`, vagy törlés kézzel.
+9. Google Search Console: tulajdon-ellenőrzés, a `https://farkaskonyveles.hu/sitemap.xml` beküldése.
 
 ## Deploy-megjegyzés
 

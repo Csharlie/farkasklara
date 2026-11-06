@@ -22,11 +22,11 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
+require __DIR__ . '/ajanlatkeres-ratelimit.php'; // FK_RATE_WINDOW, fk_rate_file(), fk_rate_sweep()
 $config = require __DIR__ . '/ajanlatkeres-config.php';
 
-/** Rate limit: at most this many submissions per IP within the window (seconds). */
+/** Rate limit: at most this many submissions per IP within the window (FK_RATE_WINDOW). */
 const FK_RATE_MAX = 5;
-const FK_RATE_WINDOW = 600;
 /** Submissions faster than this after page load (ms) are treated as bots. */
 const FK_MIN_ELAPSED_MS = 3000;
 
@@ -81,31 +81,29 @@ function fk_mime_header(string $value): string
 }
 
 /**
- * Sliding-window limit per visitor. Stores only a salted hash of the IP (the
- * salt is a per-build secret from ajanlatkeres-config.php, which the
- * .htaccess denies direct access to — the IP itself cannot be recovered from
- * the file name) and the timestamps of recent submissions. Entries older
- * than the window are dropped whenever that IP's file is next read, and
- * every request also sweeps the whole temp directory for files that have not
- * been touched for a full window — so a one-off visitor's file is deleted
- * the next time anyone submits the form, not just their own next visit.
+ * Sliding-window limit per visitor. Stores only an HMAC-SHA256 of the IP (the
+ * key is a per-build secret from ajanlatkeres-config.php, which the
+ * .htaccess denies direct access to — the IP cannot be recovered or
+ * brute-forced from the file name without that key) and the timestamps of
+ * recent submissions. Entries older than the window are dropped whenever
+ * that IP's file is next read, and every request also sweeps the whole temp
+ * directory for stale or empty files (fk_rate_sweep, shared with the cron
+ * job in ajanlatkeres-cleanup.php — see the README for its setup) — so a
+ * one-off visitor's file is deleted the next time anyone submits the form,
+ * not just their own next visit, and within FK_RATE_WINDOW regardless of
+ * traffic once the cron job runs.
  * Returns the seconds to wait, 0 when the request may proceed.
  */
-function fk_rate_limit(string $ip, string $salt): int
+function fk_rate_limit(string $ip, string $key): int
 {
     $dir = sys_get_temp_dir();
     $now = time();
-    $file = $dir . '/fk-ajanlatkeres-' . hash('sha256', $salt . '|' . $ip);
+    $file = fk_rate_file($dir, $ip, $key);
 
-    // Cleanup of expired entries on every request: this endpoint gets only a
-    // handful of submissions a day, so scanning the (few) leftover files here
-    // is cheap, and keeps stale data from outliving the 10-minute window by
-    // more than "until the next visitor submits the form".
-    foreach (glob($dir . '/fk-ajanlatkeres-*') ?: [] as $old) {
-        if (is_file($old) && filemtime($old) < $now - FK_RATE_WINDOW) {
-            @unlink($old);
-        }
-    }
+    // Opportunistic cleanup on every request — cheap at this endpoint's
+    // traffic — on top of the cron job, which is what actually guarantees
+    // the 10-minute retention on a quiet day.
+    fk_rate_sweep($dir, $now);
 
     $handle = @fopen($file, 'c+');
     if ($handle === false) {
@@ -149,7 +147,7 @@ if ($source === '' || fk_host_of($source) !== strtolower($config['host'])) {
 }
 
 // 2. Rate limit -----------------------------------------------------------------
-$wait = fk_rate_limit((string) ($_SERVER['REMOTE_ADDR'] ?? ''), (string) $config['salt']);
+$wait = fk_rate_limit((string) ($_SERVER['REMOTE_ADDR'] ?? ''), (string) $config['ipHashKey']);
 if ($wait > 0) {
     header('Retry-After: ' . $wait);
     fk_respond(429, ['status' => 'rate_limited', 'retryAfter' => $wait]);

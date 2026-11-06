@@ -129,7 +129,9 @@ if (target.gate) {
   for (const file of ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'ajanlatkeres-config.php']) {
     if (!existsSync(join(stage, file))) fail(`${outDir}/${file} is missing — is the fk-seo plugin active in vite.config.ts?`)
   }
-  cpSync(join(root, 'deploy/production/ajanlatkeres.php'), join(stage, 'ajanlatkeres.php'))
+  for (const file of ['ajanlatkeres.php', 'ajanlatkeres-ratelimit.php', 'ajanlatkeres-cleanup.php']) {
+    cpSync(join(root, 'deploy/production', file), join(stage, file))
+  }
   for (const dir of ['assets', 'images']) {
     if (existsSync(join(stage, dir))) cpSync(join(root, `deploy/production/${dir}.htaccess`), join(stage, dir, '.htaccess'))
   }
