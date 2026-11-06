@@ -82,7 +82,7 @@ A kiszolgált dokumentumokban (minden `.html`, `sitemap.xml`, `robots.txt`, gene
 - Ajánlatkérő űrlap: a kérés a tárhely PHP-végpontján át, a tárhely levelezőszerverén keresztül érkezik a `kapcsolat@` postafiókba (a megőrzés ott történik). Visszaélés-szűréshez a látogató IP-címének sózott hash-e legfeljebb ~10 percig a tárhely ideiglenes könyvtárában tárolódik.
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
-**Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **Megerősítve (2026-11-06):** nyitvatartás (Hétfő–csütörtök 9:00–16:00, `src/content/company.ts`) — a JSON-LD-ben is szerepel. **FIKTÍV, élesítés előtt ellenőrizendő:** a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
+**Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **Megerősítve (2026-11-06):** nyitvatartás (Hétfő–csütörtök 9:00–16:00, `src/content/company.ts`) — a JSON-LD-ben is szerepel —, valamint a kapcsolati kártyák rövid megjegyzései (`copy.quotePanel.notes`). Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
 
 **Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Gelencsérné Csipkereki Edina neve az ügyfél által megadott adat (2026-11-06). Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe — megadva (2026-10-21): mindhárom munkatárs mérlegképes könyvelő.
 
