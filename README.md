@@ -169,7 +169,7 @@ Ugyanaz a belépőkapu a végleges domain gyökerében (`DEPLOY_BASE=/`, `.env.s
 
 ## Élesítés a farkaskonyveles.hu-n (`pnpm deploy:production`)
 
-Nyilvános, indexelhető oldal: **https://farkaskonyveles.hu** (www és http nélkül — ez a kanonikus cím, `company.url`).
+**Élesítve: 2026-11-06.** Nyilvános, indexelhető oldal: **https://farkaskonyveles.hu** (www és http nélkül — ez a kanonikus cím, `company.url`).
 Élesre **csak** a `pnpm deploy:production` használható. A VS Code SFTP-bővítmény (`context: dist`) erre nem jó: az `ajanlatkeres.php` és a `.htaccess`-ek nincsenek a `dist/`-ben (a szkript a `deploy/production/`-ből teszi őket a csomagba), és a cPanel-blokkok megtartása is elmaradna.
 
 **Mit csinál a szkript:**
@@ -213,7 +213,9 @@ Nyilvános, indexelhető oldal: **https://farkaskonyveles.hu** (www és http né
 8. Ha maradtak kapufájlok: `pnpm deploy:production --remove-gate`, vagy törlés kézzel.
 9. Google Search Console: tulajdon-ellenőrzés, a `https://farkaskonyveles.hu/sitemap.xml` beküldése.
 
+**Visszaállás**, ha az éles oldal elérhetetlen vagy hibás: `pnpm deploy:staging` visszateszi a jelszavas kaput (`noindex`, tiltó `robots.txt`) — ez az azonnali „vegyük le a nyilvánosságról” lépés. A 2026-11-06-i élesítés előtti szerverállapot (a korábbi, kapus `.htaccess` és `robots.txt`, valamint a gyökér fájllistája) a `deploy/backup/20261106-1746/` alatt van elmentve (gitignore-olt, csak helyi).
+
 ## Deploy-megjegyzés
 
-- **Éles:** útvonalanként saját HTML-fájl. A `noindex` nincs beégetve az `index.html`-be; az `fk-seo` Vite-plugin csak a kapus buildekbe (`--mode staging`, `--mode pspro`) teszi be. Nem létező útvonal: valódi 404 (`404.html`).
+- **Éles (2026-11-06-tól fut):** útvonalanként saját HTML-fájl. A `noindex` nincs beégetve az `index.html`-be; az `fk-seo` Vite-plugin csak a kapus buildekbe (`--mode staging`, `--mode pspro`) teszi be. Nem létező útvonal: valódi 404 (`404.html`). A `tudastar` (üres Tudástár) és a `404` oldal `noindex, follow`-t kap; a többi 13 oldal indexelhető és szerepel a `sitemap.xml`-ben. A kapufájlok (`login.php`, `auth-check.php`, `gate.php`, `auth-config.php`) törölve a szerverről (`--remove-gate`, 2026-11-06).
 - **Előnézetek (pspro, staging):** egy `index.html` a kapun át minden útvonalra; a nem létező útvonal a 404-oldalt rendereli, de HTTP-szinten 200-at ad (a kapu miatt, `noindex`-szel).

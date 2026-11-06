@@ -1,5 +1,10 @@
 # TODO — sp-farkasklara
 
+## Üzemeltetés
+
+- [ ] **„Mail delivery failed: returning message to sender” a `kapcsolat@farkaskonyveles.hu` postafiókban** (2026-11-06, 04:22)
+  A próba-ajánlatkérés tesztje közben észrevett bounce-levél, órákkal az élesítés előttről — nem a mai `ajanlatkeres.php`-teszthez kapcsolódik (az akkor még nem is futott). Meg kell nézni, honnan jött és mi volt az eredeti üzenet; nem blokkolja az élesítést.
+
 ## Tartalom
 
 - [ ] **Pályázat-előkészítés szolgáltatás kidolgozása** (`src/content/services.ts`, `palyazatok`)

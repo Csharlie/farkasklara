@@ -10,3 +10,6 @@ dist
 # Deploy staging (pnpm deploy:pspro)
 dist-*
 .deploy-stage
+
+# Pre-deploy server snapshots (manual rollback aid) — may hold host/path info
+deploy/backup/
