@@ -71,7 +71,7 @@ A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szak
 
 **Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **FIKTÍV, élesítés előtt ellenőrizendő:** nyitvatartás a `src/content/company.ts`-ben; a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
 
-**Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Halász Réka neve a projekt során megadott (korábban fiktívként bevezetett) adat — élesítés előtt ellenőrizendő. Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe — megadva (2026-10-21): mindhárom munkatárs mérlegképes könyvelő.
+**Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Gelencsérné Csipkereki Edina neve az ügyfél által megadott adat (2026-11-06). Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe — megadva (2026-10-21): mindhárom munkatárs mérlegképes könyvelő.
 
 **Tény-sáv (Rólunk alatt):** csak tartalomból levezetett értékek (csapatlétszám, szolgáltatási területek, ügyfélcsoportok, Kecskemét). Ellenőrzött üzleti mutató (pl. alapítás éve, ügyfélszám) a `copy.home.facts.items` listában cserélhető be.
 

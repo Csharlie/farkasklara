@@ -64,9 +64,9 @@ export const people: Person[] = [
     isPrimaryContact: true,
   },
   {
-    // Name as provided for the project; no qualification is stated until verified.
+    // Name provided by the client (2026-11-06).
     id: 'konyvelo',
-    name: 'Halász Réka',
+    name: 'Gelencsérné Csipkereki Edina',
     role: 'Könyvelő',
     credentials: ['Mérlegképes könyvelő'],
     bio: 'Az ügyfelek könyvelési feladatain dolgozik: a bizonylatok feldolgozásán, a havi zárásokon és a bevallások előkészítésén, az ügyvezető irányításával.',

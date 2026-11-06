@@ -537,6 +537,8 @@ export const copy = {
 
   footer: {
     contactTitle: 'Elérhetőség',
+    // Label above the primary contact's name; the phone and e-mail below are theirs.
+    primaryContactLabel: 'Ügyfélkapcsolat',
     hoursTitle: 'Ügyfélfogadás',
     // Shown under the reception hours everywhere (footer, contact page).
     appointmentNote: 'Előzetes időpont-egyeztetéssel',

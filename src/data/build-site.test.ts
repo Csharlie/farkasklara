@@ -149,7 +149,7 @@ describe('homepage', () => {
     expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
     expect(team.members.map((m) => [m.name, m.role])).toEqual([
       ['Posszert Ervin', 'Ügyintéző · Mérlegképes könyvelő'],
-      ['Halász Réka', 'Mérlegképes könyvelő'],
+      ['Gelencsérné Csipkereki Edina', 'Mérlegképes könyvelő'],
     ])
   })
 

@@ -33,6 +33,15 @@ export function AppFooter({ siteData }: LayoutShellProps) {
         <div>
           <h2 className="text-lg">{copy.contactTitle}</h2>
           <ul className="mt-4 space-y-3 text-muted-foreground">
+            {contact.primaryContact.name && (
+              <li className="flex items-start gap-3" data-ui-id="footer-primary-contact">
+                <Icon name="user" className="mt-0.5 size-5 shrink-0 text-accent" />
+                <span>
+                  <span className="block text-sm">{copy.primaryContactLabel}</span>
+                  <span className="font-semibold text-foreground">{contact.primaryContact.name}</span>
+                </span>
+              </li>
+            )}
             {contact.addressLines.length > 0 && (
               <li className="flex items-start gap-3">
                 <Icon name="mapPin" className="mt-0.5 size-5 shrink-0 text-accent" />
