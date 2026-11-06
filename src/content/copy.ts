@@ -268,7 +268,8 @@ export const copy = {
     lead: 'Közérthetően leírjuk, milyen személyes adatokat kezelünk, milyen célból és mennyi ideig, és hogyan gyakorolhatja a jogait.',
     // Shown only while no chapter has known content.
     pending: 'Az adatkezelési tájékoztató szövege előkészítés alatt áll.',
-    updated: 'Hatályos: 2026. október 21-től',
+    // [PLACEHOLDER]: filled in on go-live (fillTemplate run via known() in build-pages.ts legalPage()).
+    updated: 'Hatályos: [ÉLESÍTÉS DÁTUMA]-tól',
     tocTitle: 'Tartalom',
     chapters: [
       {
@@ -307,6 +308,11 @@ export const copy = {
             fields: [
               { label: 'Kezelt adatok', value: 'név, e-mail-cím és/vagy telefonszám, a választott szolgáltatás, az üzenet szövege' },
               { label: 'Cél', value: 'az ajánlatkérés megválaszolása, kapcsolatfelvétel, ajánlat készítése' },
+              {
+                label: 'Az adatok útja',
+                value:
+                  'Az űrlapon megadott adatok titkosított (HTTPS) kapcsolaton érkeznek a weboldalra, amely azokat a tárhelyszolgáltató levelezőszerverén keresztül e-mailben továbbítja az iroda {email} postafiókjába. A weboldal az adatokat külön adatbázisban nem tárolja.',
+              },
               { label: 'Jogalap', value: 'a szerződés megkötését megelőzően, az Ön kérésére tett lépések – GDPR 6. cikk (1) bekezdés b) pont' },
               { label: 'Megőrzés', value: 'ha nem jön létre megbízás, a megkeresés lezárását követő 1 évig; megbízás esetén a szerződéses adatkezelés szabályai szerint' },
             ],
@@ -318,6 +324,15 @@ export const copy = {
               { label: 'Cél', value: 'kérdések megválaszolása, időpont-egyeztetés, ajánlatadás' },
               { label: 'Jogalap', value: 'a szerződés megkötését megelőző lépések – GDPR 6. cikk (1) bekezdés b) pont; egyéb megkeresésnél az Adatkezelő válaszadáshoz fűződő jogos érdeke – GDPR 6. cikk (1) bekezdés f) pont' },
               { label: 'Megőrzés', value: 'a megkeresés lezárását követő 1 évig' },
+            ],
+          },
+          {
+            title: 'Visszaélések elleni védelem az űrlapon',
+            fields: [
+              { label: 'Kezelt adatok', value: 'az IP-cím egyirányú, titkos kulccsal képzett kivonata (nem maga az IP-cím) és a beküldések időpontja' },
+              { label: 'Cél', value: 'a tömeges vagy automatizált beküldések (kéretlen üzenetek) kiszűrése' },
+              { label: 'Jogalap', value: 'az Adatkezelő jogos érdeke a weboldal és a postafiók védelméhez – GDPR 6. cikk (1) bekezdés f) pont' },
+              { label: 'Megőrzés', value: 'legfeljebb 10 percig, utána automatikusan törlődik' },
             ],
           },
           {
@@ -335,7 +350,7 @@ export const copy = {
               { label: 'Kezelt adatok', value: 'IP-cím, a látogatás időpontja, a megtekintett oldal címe, a böngésző és az operációs rendszer típusa' },
               { label: 'Cél', value: 'a weboldal biztonságos és zavartalan működtetése, hibák és visszaélések felderítése' },
               { label: 'Jogalap', value: 'az Adatkezelő jogos érdeke – GDPR 6. cikk (1) bekezdés f) pont' },
-              { label: 'Megőrzés', value: 'a tárhelyszolgáltató naplózási beállításai szerint, legfeljebb 30 napig' },
+              { label: 'Megőrzés', value: 'a tárhelyszolgáltató naplózási beállításai szerint' },
             ],
           },
         ],
@@ -349,7 +364,6 @@ export const copy = {
         items: [
           'Süti-döntés (szükséges): a süti-beállításait böngészője helyi tárolójában („spektra-consent”) legfeljebb 12 hónapig megjegyezzük, hogy ne kelljen újra kérdeznünk. Ez a weboldal működéséhez szükséges, ezért hozzájárulást nem igényel; személyes adatot nem tartalmaz.',
           'Google Maps térkép – külső tartalom (Google Ireland Ltd., Gordon House, Barrow Street, Dublin 4, Írország): csak akkor töltődik be, ha Ön a süti-sávban az „Elfogadom” gombra, vagy a térkép helyén a „Térkép megjelenítése” gombra kattint. Ekkor a Google megkapja az Ön IP-címét, és saját sütiket helyezhet el, amelyekre a Google adatvédelmi tájékoztatója vonatkozik (policies.google.com/privacy). Jogalap: az Ön hozzájárulása – GDPR 6. cikk (1) bekezdés a) pont. Hozzájárulás nélkül a Google-hoz a térkép miatt semmilyen adat nem jut.',
-          'Google Fonts betűtípusok (Google Ireland Ltd.): az oldal betűtípusainak megjelenítésére; betöltésükkor a Google megkapja az Ön IP-címét. Sütit nem helyeznek el.',
           'Hozzájárulását bármikor, indoklás nélkül visszavonhatja a lap alján található „Süti-beállítások” linken; a visszavonás a korábbi adatkezelés jogszerűségét nem érinti. A Google által már elhelyezett sütiket böngészője beállításaiban törölheti.',
         ],
       },
@@ -360,16 +374,15 @@ export const copy = {
           'Az adatokhoz kizárólag az Adatkezelő munkatársai férnek hozzá, abban a körben, amelyre a feladatuk ellátásához szükségük van; munkatársainkat titoktartási kötelezettség terheli. Az adatkezelés technikai hátterét az alábbi adatfeldolgozók biztosítják:',
         ],
         items: [
-          'Tárhelyszolgáltató: [TÁRHELYSZOLGÁLTATÓ NEVE ÉS CÍME]',
-          'E-mail-szolgáltató: [E-MAIL-SZOLGÁLTATÓ NEVE ÉS CÍME]',
-          'Google Ireland Ltd. – térkép és betűtípusok (lásd: Sütik és külső szolgáltatások)',
+          'Tárhely- és e-mail-szolgáltató: RackForest Informatikai Kereskedelmi Szolgáltató és Tanácsadó Zrt. (1132 Budapest, Victor Hugo utca 11.; info@rackforest.hu) – a weboldal tárhelye és az iroda postafiókjai',
+          'Google Ireland Ltd. – térkép (lásd: Sütik és külső szolgáltatások)',
         ],
       },
       {
         id: 'harmadik-orszag',
         title: 'Adattovábbítás az Európai Unión kívülre',
         paragraphs: [
-          'A Google szolgáltatásainál nem zárható ki, hogy adatok az Amerikai Egyesült Államokba kerülnek. A Google LLC részt vesz az EU–USA adatvédelmi keretrendszerben (EU–U.S. Data Privacy Framework), amely az Európai Bizottság megfelelőségi határozata alapján biztosítja a megfelelő védelmi szintet. Ezen kívül harmadik országba nem továbbítunk adatot.',
+          'A Google Maps térkép betöltésekor – amelyre csak az Ön hozzájárulásával kerül sor – nem zárható ki, hogy adatok az Amerikai Egyesült Államokba kerülnek. A Google LLC részt vesz az EU–USA adatvédelmi keretrendszerben (EU–U.S. Data Privacy Framework), amely az Európai Bizottság megfelelőségi határozata alapján biztosítja a megfelelő védelmi szintet. Ezen kívül harmadik országba nem továbbítunk adatot.',
         ],
       },
       {
@@ -462,9 +475,10 @@ export const copy = {
         id: 'tarhely',
         title: 'Tárhelyszolgáltató',
         fields: [
-          { label: 'Név', value: '[TÁRHELYSZOLGÁLTATÓ]' },
-          { label: 'Cím', value: '[TÁRHELYSZOLGÁLTATÓ CÍME]' },
-          { label: 'E-mail', value: '[TÁRHELYSZOLGÁLTATÓ E-MAIL]' },
+          { label: 'Név', value: 'RackForest Informatikai Kereskedelmi Szolgáltató és Tanácsadó Zrt.' },
+          // Address from rackforest.com/kapcsolat (office address) — verify the registered seat against company registry data before go-live.
+          { label: 'Cím', value: '1132 Budapest, Victor Hugo utca 11.' },
+          { label: 'E-mail', value: 'info@rackforest.hu' },
         ],
       },
       {
@@ -500,7 +514,7 @@ export const copy = {
     services: 'Melyik szolgáltatás érdekli?',
     servicePlaceholder: 'Válasszon szolgáltatást',
     message: 'Üzenet (nem kötelező)',
-    consentBefore: 'Megismertem az ',
+    consentBefore: 'Elolvastam az ',
     consentLink: 'adatkezelési tájékoztatót',
     consentAfter: '.',
     submit: 'Ajánlatkérés elküldése',

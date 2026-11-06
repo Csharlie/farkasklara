@@ -374,9 +374,13 @@ describe('contact — roles and single source', () => {
     // The brand names the controller until the legal name is known.
     expect(controller.fields.find((f) => f.label === 'Név')?.value).toBe('Farkas Klára Könyvelőiroda')
     expect(controller.fields.find((f) => f.label === 'E-mail')?.value).toBe(content.company.email)
-    // The hosting chapter of the imprint stays hidden while every value is a placeholder.
-    const imprint = sectionData<{ chapters: { id: string }[] }>(pageBy(site.pages, 'impresszum'), 'fk-legal')
-    expect(imprint.chapters.map((c) => c.id)).not.toContain('tarhely')
+    // The hosting chapter of the imprint now has a real value (RackForest Zrt.).
+    const imprint = sectionData<{ chapters: { id: string; fields: { label: string; value: string }[] }[] }>(
+      pageBy(site.pages, 'impresszum'),
+      'fk-legal',
+    )
+    const hosting = imprint.chapters.find((c) => c.id === 'tarhely')
+    expect(hosting?.fields.find((f) => f.label === 'Név')?.value).toBe('RackForest Informatikai Kereskedelmi Szolgáltató és Tanácsadó Zrt.')
   })
 
   it('never builds contact values from placeholders', () => {

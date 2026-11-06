@@ -81,8 +81,14 @@ function fk_mime_header(string $value): string
 }
 
 /**
- * Sliding-window limit per visitor. Stores only a salted hash of the IP and
- * the timestamps of the last window; files older than the window are removed.
+ * Sliding-window limit per visitor. Stores only a salted hash of the IP (the
+ * salt is a per-build secret from ajanlatkeres-config.php, which the
+ * .htaccess denies direct access to — the IP itself cannot be recovered from
+ * the file name) and the timestamps of recent submissions. Entries older
+ * than the window are dropped whenever that IP's file is next read, and
+ * every request also sweeps the whole temp directory for files that have not
+ * been touched for a full window — so a one-off visitor's file is deleted
+ * the next time anyone submits the form, not just their own next visit.
  * Returns the seconds to wait, 0 when the request may proceed.
  */
 function fk_rate_limit(string $ip, string $salt): int
@@ -91,12 +97,13 @@ function fk_rate_limit(string $ip, string $salt): int
     $now = time();
     $file = $dir . '/fk-ajanlatkeres-' . hash('sha256', $salt . '|' . $ip);
 
-    // Occasional cleanup of expired entries (≈1 in 20 requests).
-    if (mt_rand(1, 20) === 1) {
-        foreach (glob($dir . '/fk-ajanlatkeres-*') ?: [] as $old) {
-            if (is_file($old) && filemtime($old) < $now - FK_RATE_WINDOW) {
-                @unlink($old);
-            }
+    // Cleanup of expired entries on every request: this endpoint gets only a
+    // handful of submissions a day, so scanning the (few) leftover files here
+    // is cheap, and keeps stale data from outliving the 10-minute window by
+    // more than "until the next visitor submits the form".
+    foreach (glob($dir . '/fk-ajanlatkeres-*') ?: [] as $old) {
+        if (is_file($old) && filemtime($old) < $now - FK_RATE_WINDOW) {
+            @unlink($old);
         }
     }
 

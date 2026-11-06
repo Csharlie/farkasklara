@@ -67,19 +67,23 @@ Select-String -Path src\content\*.ts -Pattern '\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]
 ```
 
 Nyitott: `[CÉGNÉV]`,
-`[CÉGJEGYZÉKSZÁM]`, `[ADÓSZÁM]`, `[NYILVÁNTARTÁSI SZÁM]`, `[TÁRHELYSZOLGÁLTATÓ]`, `[ÉV]`, `[ÜGYFELEK SZÁMA]`,
-`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, Tudástár mintacikk (`[CIKK …]`, rejtett),
-jogi oldalak: `[KÉPVISELŐ NEVE ÉS TISZTSÉGE]`, `[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]`, `[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]`,
-`[TÁRHELYSZOLGÁLTATÓ CÍME]`, `[TÁRHELYSZOLGÁLTATÓ E-MAIL]`, `[TÁRHELYSZOLGÁLTATÓ NEVE ÉS CÍME]`, `[E-MAIL-SZOLGÁLTATÓ NEVE ÉS CÍME]`.
+`[CÉGJEGYZÉKSZÁM]`, `[ADÓSZÁM]`, `[NYILVÁNTARTÁSI SZÁM]`, `[ÉV]`, `[ÜGYFELEK SZÁMA]`,
+`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, Tudástár mintacikk (`[CIKK …]`, rejtett), `[ÉLESÍTÉS DÁTUMA]` (`privacy.updated` — a sor rejtve marad, amíg ki nem töltjük),
+jogi oldalak: `[KÉPVISELŐ NEVE ÉS TISZTSÉGE]`, `[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]`, `[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]`.
+A tárhelyszolgáltató (RackForest Zrt.) adatai már a tájékoztatóban és az impresszumban is szerepelnek (lásd lent).
 
 A kiszolgált dokumentumokban (minden `.html`, `sitemap.xml`, `robots.txt`, generált PHP-konfig, JSON-LD) placeholder nincs — ezt a `pnpm test` és a `pnpm test:build` ellenőrzi.
 **Nyitott pont:** a JS-bundle a nyers tartalmat tartalmazza (`src/data/site.ts`, `src/shell/shell-context.ts` futásidőben importálja a `content`-et), így a placeholderek a forráskódban olvashatók, bár a felületen nem jelennek meg. Javítás: a SiteData és a shell-adatok build-időben, szerializálva kerüljenek a bundle-be.
 
 **Jogi oldalak** (`copy.privacy` / `copy.imprint`, `fk-legal` section): a GDPR / Infotv. / Eker. tv. szerinti szerkezet kész; a hiányzó tények sorai rejtve maradnak.
-Élesítés előtt: jogász / adatvédelmi szakértő ellenőrizze; a hatálybalépés dátumát (`privacy.updated`) frissíteni kell; ha az űrlap-driver, analitika vagy süti-banner változik, a Sütik fejezetet is.
-**Frissítendő a tájékoztatóban (a szöveget nem írtuk át):**
-- A betűtípusok már saját tárhelyről töltődnek, a Google Fonts nincs használatban. Érintett: `copy.privacy`, Sütik fejezet (a „Google Fonts betűtípusok …” tétel), Címzettek („térkép és betűtípusok”), Harmadik ország (a Google említése most már csak a térképre igaz).
-- Ajánlatkérő űrlap: a kérés a tárhely PHP-végpontján át, a tárhely levelezőszerverén keresztül érkezik a `kapcsolat@` postafiókba (a megőrzés ott történik). Visszaélés-szűréshez a látogató IP-címének sózott hash-e legfeljebb ~10 percig a tárhely ideiglenes könyvtárában tárolódik.
+Élesítés előtt: jogász / adatvédelmi szakértő a teljes szöveget ellenőrizze. A hatálybalépés dátuma (`privacy.updated`) placeholder (`[ÉLESÍTÉS DÁTUMA]`): élesítéskor kell kitölteni, addig a sor nem jelenik meg az oldalon. Ha az űrlap-driver, analitika vagy süti-banner változik, a Sütik fejezetet is frissíteni kell.
+**A tájékoztatóban már frissítve (a szöveg struktúráját nem változtattuk):**
+- Google Fonts kikerült (a saját tárhelyes betűtípusok miatt): Sütik fejezet, Címzettek (már csak „Google Ireland Ltd. – térkép”), Harmadik ország (a mondat most a térkép betöltésére utal).
+- Ajánlatkérő űrlap feldolgozása leírva: HTTPS-en érkezik, a tárhely levelezőszerverén át jut el a `kapcsolat@` postafiókba, külön adatbázis nincs (az „Ajánlatkérés az online űrlapon” csoport „Az adatok útja” mezője); saját csoport a visszaélés-szűrésről (sózott, titkos kulcsú IP-hash, legfeljebb 10 percig).
+- Címzettek / Tárhelyszolgáltató: RackForest Informatikai Kereskedelmi Szolgáltató és Tanácsadó Zrt. (1132 Budapest, Victor Hugo utca 11.; info@rackforest.hu) — a `rackforest.com/kapcsolat` irodacíme; a hivatalos székhelyet céginformációból még ellenőrizni kell.
+**Ellenőrizendő élesítés előtt:**
+- A technikai naplók megőrzési ideje (jelenleg „a tárhelyszolgáltató naplózási beállításai szerint” — a cPanelen látható pontos időtartammal kiegészítendő).
+- A teljes szöveg jogi/adatvédelmi átnézése.
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
 **Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **Megerősítve (2026-11-06):** nyitvatartás (Hétfő–csütörtök 9:00–16:00, `src/content/company.ts`) — a JSON-LD-ben is szerepel —, valamint a kapcsolati kártyák rövid megjegyzései (`copy.quotePanel.notes`). Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.

@@ -715,7 +715,8 @@ function legalPage(
       chapters.length > 0
         ? section<FkLegalData>(`${slug}-szoveg`, 'fk-legal', {
             id: `${slug}-szoveg`,
-            updated: c.updated,
+            // Hidden while a placeholder (e.g. the go-live date is not set yet).
+            updated: known(c.updated),
             tocTitle: c.tocTitle,
             chapters,
           })
