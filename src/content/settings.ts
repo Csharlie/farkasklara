@@ -22,5 +22,8 @@ export const settings: Settings = {
   seo: {
     serviceTitleTemplate: '{service} {city} | {company}',
     pageTitleTemplate: '{page} | {company}',
+    // Shown when a page is shared (Facebook, Messenger, LinkedIn…). Cropped from
+    // the hero photo by scripts/make-images.mjs; replace once a logo exists.
+    ogImage: { src: '/og-image.jpg', width: 1200, height: 630, alt: 'Farkas Klára Könyvelőiroda – könyvelés Kecskeméten' },
   },
 }

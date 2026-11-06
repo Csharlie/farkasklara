@@ -189,6 +189,8 @@ export interface Settings {
     serviceTitleTemplate: string
     /** Tokens: {page}, {company} */
     pageTitleTemplate: string
+    /** Social share image (Open Graph / Twitter card); `src` is an app path under public/. */
+    ogImage: { src: string; width: number; height: number; alt: string }
   }
 }
 

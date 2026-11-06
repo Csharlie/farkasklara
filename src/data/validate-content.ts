@@ -1,6 +1,7 @@
 import type { ClientContent } from '../content'
 import { resolveLead, resolvePrimaryContact } from './contact'
 import { SLUG_PATTERN } from './routes'
+import { openingHoursSpecification } from '../seo/json-ld'
 
 /**
  * Client content validation — runs before SiteData is built. Complements the
@@ -51,6 +52,10 @@ export function validateContent(content: ClientContent): string[] {
     } catch (error) {
       errors.push((error as Error).message)
     }
+  }
+
+  if (content.company.openingHoursConfirmed && !openingHoursSpecification(content.company.openingHours)) {
+    errors.push('company.openingHours: confirmed hours must read like "Hétfő–csütörtök" / "9:00–16:00" (JSON-LD)')
   }
 
   if (settings.modules.audiencePages) {

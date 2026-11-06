@@ -77,7 +77,17 @@ export function canonicalUrl(siteUrl: string | undefined, path: string): string 
 }
 
 function pageMeta(ctx: BuildContext, path: string, title: string, description: string): PageMeta {
-  return { title, description, canonical: canonicalUrl(ctx.content.company.url, path) }
+  const { company, settings } = ctx.content
+  const og = settings.seo.ogImage
+  const ogSrc = canonicalUrl(company.url, og.src)
+  return {
+    title,
+    description,
+    canonical: canonicalUrl(company.url, path),
+    // Absolute URL — required by Open Graph. Also keeps the platform
+    // useDocumentHead from removing the prerendered og:image tag.
+    ogImage: ogSrc ? { src: ogSrc, alt: og.alt, width: og.width, height: og.height } : undefined,
+  }
 }
 
 function pageTitle(ctx: BuildContext, template: string): string {
