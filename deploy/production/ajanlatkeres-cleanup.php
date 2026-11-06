@@ -23,5 +23,5 @@ if (PHP_SAPI !== 'cli') {
 
 require __DIR__ . '/ajanlatkeres-ratelimit.php';
 
-$removed = fk_rate_sweep(sys_get_temp_dir(), time());
+$removed = fk_rate_sweep(fk_rate_dir(), time());
 echo "ajanlatkeres-cleanup: removed {$removed} stale/empty rate-limit file(s)\n";

@@ -31,6 +31,25 @@ function fk_rate_file(string $dir, string $ip, string $key): string
 }
 
 /**
+ * Where the rate-limit files live: a dedicated folder one level above
+ * public_html (outside the webroot, so no .htaccess rule has to protect it
+ * — the web server can never serve it), created on first use with
+ * permissions that only this hosting account can read. Falls back to the
+ * shared system temp dir if that folder cannot be created or written to
+ * (e.g. missing permissions), so a hosting quirk never blocks real visitors
+ * — it only weakens the retention guarantee back to "shared temp dir",
+ * which is the previous behaviour.
+ */
+function fk_rate_dir(): string
+{
+    $dir = dirname(__DIR__) . '/tmp/ajanlatkeres';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0700, true);
+    }
+    return is_dir($dir) && is_writable($dir) ? $dir : sys_get_temp_dir();
+}
+
+/**
  * Deletes every rate-limit file that is either stale (untouched for a full
  * window — the visitor's own entries have already aged out, nothing of
  * theirs is left to filter) or empty (a write that never completed). Returns

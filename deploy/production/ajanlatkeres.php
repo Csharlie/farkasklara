@@ -22,7 +22,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
-require __DIR__ . '/ajanlatkeres-ratelimit.php'; // FK_RATE_WINDOW, fk_rate_file(), fk_rate_sweep()
+require __DIR__ . '/ajanlatkeres-ratelimit.php'; // FK_RATE_WINDOW, fk_rate_dir(), fk_rate_file(), fk_rate_sweep()
 $config = require __DIR__ . '/ajanlatkeres-config.php';
 
 /** Rate limit: at most this many submissions per IP within the window (FK_RATE_WINDOW). */
@@ -96,7 +96,7 @@ function fk_mime_header(string $value): string
  */
 function fk_rate_limit(string $ip, string $key): int
 {
-    $dir = sys_get_temp_dir();
+    $dir = fk_rate_dir();
     $now = time();
     $file = fk_rate_file($dir, $ip, $key);
 
@@ -205,7 +205,7 @@ $headers = [
     'From: ' . fk_mime_header($config['site'] . ' – weboldal') . ' <' . $from . '>',
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
+    'Content-Transfer-Encoding: quoted-printable',
 ];
 if ($email !== '') {
     $headers[] = 'Reply-To: ' . $email;
@@ -228,7 +228,10 @@ $body = implode("\r\n", [
 ]);
 
 $subject = fk_mime_header('Ajánlatkérés: ' . $name);
-$sent = mail((string) $config['to'], $subject, $body, implode("\r\n", $headers), '-f' . $from);
+// Quoted-printable: some mail transports mangle long 8bit lines (RFC 5322
+// caps a line at 998 octets); quoted_printable_encode() keeps every line
+// short and pure ASCII, so the Hungarian accented text always arrives intact.
+$sent = mail((string) $config['to'], $subject, quoted_printable_encode($body), implode("\r\n", $headers), '-f' . $from);
 if (!$sent) {
     $fallback = $config['phone'] !== '' ? ' Telefon: ' . $config['phone'] : '';
     fk_fail(500, $messages['general'] . $fallback);
