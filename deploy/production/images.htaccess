@@ -1,0 +1,5 @@
+# Farkas Klára — /images (deploy/production/images.htaccess → images/.htaccess).
+# Photos keep their names when replaced, so they are cached for one week only.
+<IfModule mod_headers.c>
+    Header set Cache-Control "public, max-age=604800"
+</IfModule>
