@@ -37,9 +37,9 @@ export const copy = {
     hero: {
       eyebrow: 'Könyvelőiroda Kecskeméten',
       // '\n' = line break; titleHighlight is rendered in gold.
-      title: 'Könyvelés, amire építhet.\nMegbízhatóság a számok mögött.',
+      title: 'Könyvelés, amire építhet.\nA megbízhatóság a munkánk alapja.',
       // Part of the title rendered in gold.
-      titleHighlight: 'Megbízhatóság a számok mögött.' as string | undefined,
+      titleHighlight: 'A megbízhatóság a munkánk alapja.' as string | undefined,
       description:
         'Könyvelés, adótanácsadás és bérszámfejtés egyéni vállalkozásoknak és cégeknek. Személyre szabott szakmai támogatás a mindennapi működéshez.',
       primaryCta: 'Ajánlatot kérek',

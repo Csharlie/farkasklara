@@ -19,9 +19,9 @@ export const company: Company = {
   // Every enquiry channel (header, footer, CTAs, contact page, impressum, quote
   // form) belongs to the primary contact, Posszert Ervin.
   phone: '+36 70 231 2517',
-  // Role mailbox (handled by the primary contact) — must exist on the final
-  // domain (farkasklara.hu) before go-live.
-  email: 'iroda@farkasklara.hu',
+  // Role mailbox for new enquiries (handled by the primary contact) — must exist
+  // on the final domain (farkaskonyveles.hu) before go-live.
+  email: 'kapcsolat@farkaskonyveles.hu',
   // Client reception hours — in-person visits by appointment only (copy.appointment).
   // FIKTÍV — élesítés előtt ellenőrizendő.
   openingHours: [

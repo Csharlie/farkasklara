@@ -117,7 +117,7 @@ describe('homepage', () => {
 
   it('keeps the hero message', () => {
     expect(sectionData<{ title: string; titleHighlight?: string }>(home, 'hero')).toMatchObject({
-      title: 'Könyvelés, amire építhet.\nMegbízhatóság a számok mögött.',
+      title: 'Könyvelés, amire építhet.\nA megbízhatóság a munkánk alapja.',
     })
   })
 
