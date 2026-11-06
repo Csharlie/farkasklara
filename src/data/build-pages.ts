@@ -19,7 +19,7 @@ import type { FkFeaturesData, FkHeroData } from '../sections/platform'
 import type { LinkCta } from '../sections/shared/types'
 import { buildContactView, emailLink, formatAddress, isCompleteAddress, phoneLink, roleLine, type ContactLink, type ContactView } from './contact'
 import { visiblePrice } from './price'
-import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, pathToPageSlug, quoteHref, routes, withBase, withBaseSrcSet } from './routes'
+import { HOME_SLUG, NOT_FOUND_SLUG, QUOTE_ANCHOR, pageSlugToPath, pathToPageSlug, quoteHref, routes, stripBase, withBase, withBaseSrcSet } from './routes'
 import { fillTemplate, known, knownItems } from './text'
 
 // ── Context ──────────────────────────────────────────────────────────
@@ -66,9 +66,18 @@ function knownFaq(items: readonly FaqItem[] | undefined): FaqItem[] {
   return (items ?? []).filter((f) => known(f.question) && known(f.answer))
 }
 
+/**
+ * Canonical URL of an app path. `path` carries the deploy base (routes.*), but
+ * the canonical always names the final domain: '/farkasklara/kapcsolat' on the
+ * pspro preview → 'https://farkaskonyveles.hu/kapcsolat'.
+ */
+export function canonicalUrl(siteUrl: string | undefined, path: string): string | undefined {
+  const origin = siteUrl?.replace(/\/$/, '')
+  return origin ? `${origin}${stripBase(path)}` : undefined
+}
+
 function pageMeta(ctx: BuildContext, path: string, title: string, description: string): PageMeta {
-  const url = ctx.content.company.url?.replace(/\/$/, '')
-  return { title, description, canonical: url ? `${url}${path === '/' ? '/' : path}` : undefined }
+  return { title, description, canonical: canonicalUrl(ctx.content.company.url, path) }
 }
 
 function pageTitle(ctx: BuildContext, template: string): string {

@@ -27,7 +27,12 @@ export const company: Company = {
   openingHours: [
     { days: 'Hétfő–csütörtök', hours: '9:00–16:00' },
   ],
-  // url: '[WEBCÍM]' — set the public URL to enable canonical links.
+  // Switch to true once the hours above are confirmed — only then do they reach the JSON-LD.
+  openingHoursConfirmed: false,
+  // Canonical origin (no www, no trailing slash): canonical links, sitemap, Open Graph, JSON-LD.
+  url: 'https://farkaskonyveles.hu',
+  // Google Business Profile / Facebook page URLs go here once they exist (JSON-LD sameAs).
+  sameAs: [],
 }
 
 /**

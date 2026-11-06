@@ -145,8 +145,16 @@ export interface Company {
   phone: string
   email: string
   openingHours: OpeningHours[]
-  /** Public site URL (canonical links). */
+  /**
+   * true once the client has confirmed `openingHours`. Until then the hours
+   * are still shown on the site, but are kept out of the structured data
+   * (JSON-LD), which search engines treat as a verified business fact.
+   */
+  openingHoursConfirmed: boolean
+  /** Public site URL, no trailing slash — canonical links, sitemap, Open Graph. */
   url?: string
+  /** Official profiles of the firm (Google Business Profile, Facebook) — JSON-LD `sameAs`. */
+  sameAs?: string[]
 }
 
 // ── Articles (Tudástár) ──────────────────────────────────────────────

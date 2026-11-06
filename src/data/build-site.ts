@@ -66,7 +66,11 @@ export function buildSiteData(content: ClientContent): SiteData {
     site: {
       name: company.name,
       description: copy.home.meta.description,
-      url: company.url,
+      // Deliberately unset: the platform useDocumentHead writes site.url into
+      // og:url on every page, which would point every page's share link at
+      // the homepage. Each page's og:url is written into its prerendered HTML
+      // instead (src/seo). See README "Platform Extension Required".
+      url: undefined,
       locale: 'hu',
     },
     navigation: { primary, footer },
