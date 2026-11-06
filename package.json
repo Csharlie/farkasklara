@@ -16,6 +16,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@fontsource/instrument-sans": "^5.3.0",
+    "@fontsource/schibsted-grotesk": "^5.3.0",
     "@spektra/components": "link:../../sp-platform/packages/components",
     "@spektra/data": "link:../../sp-platform/packages/data",
     "@spektra/layouts": "link:../../sp-platform/packages/layouts",
