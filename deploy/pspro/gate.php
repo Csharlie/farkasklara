@@ -24,6 +24,16 @@ function fk_password_ok(string $user, string $password): bool {
     return hash_equals(base64_decode($config['hash']), $hash);
 }
 
+/**
+ * Secure cookie on HTTPS; on plain HTTP (a fresh domain before AutoSSL) a
+ * secure cookie would be dropped by the browser and the login would loop.
+ */
+function fk_https(): bool {
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+        || (string) ($_SERVER['SERVER_PORT'] ?? '') === '443';
+}
+
 /** Signed token: "<expiry>.<hmac(expiry)>". */
 function fk_issue_token(): void {
     global $config;
@@ -32,7 +42,7 @@ function fk_issue_token(): void {
     setcookie(FK_COOKIE, $token, [
         'expires' => $expires,
         'path' => fk_base(),
-        'secure' => true,
+        'secure' => fk_https(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
@@ -47,7 +57,7 @@ function fk_token_ok(): bool {
 }
 
 function fk_clear_token(): void {
-    setcookie(FK_COOKIE, '', ['expires' => time() - 3600, 'path' => fk_base(), 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
+    setcookie(FK_COOKIE, '', ['expires' => time() - 3600, 'path' => fk_base(), 'secure' => fk_https(), 'httponly' => true, 'samesite' => 'Lax']);
 }
 
 /** Preview pages must never be indexed or cached by shared caches. */

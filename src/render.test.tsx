@@ -65,7 +65,9 @@ describe('rendering', () => {
 
   it('shows roles and a decorative corner name instead of a photo', () => {
     const html = render(site.pages.find((p) => p.slug === 'rolunk')!)
-    expect(html).toMatch(/aria-hidden="true"[^>]*>Farkas Klára</)
+    expect(html).toMatch(/aria-hidden="true"[^>]*><span class="block">Farkas Klára<\/span><\/span>/)
+    // Three-word names break after the first word so they fit the card.
+    expect(html).toContain('<span class="block">Gelencsérné</span><span class="block">Csipkereki Edina</span>')
     expect(html).toContain('Ügyintéző · Mérlegképes könyvelő')
   })
 

@@ -8,6 +8,15 @@ import { useSlantedLeftClip } from '../shared/slanted-clip'
 import type { FkTeamData, FkTeamImage, FkTeamMember } from './fk-team.schema'
 
 /**
+ * Corner-name lines: names of three or more words (e.g. a double surname)
+ * break after the first word so they fit the card; others stay on one line.
+ */
+function cornerNameLines(name: string): string[] {
+  const words = name.trim().split(/\s+/)
+  return words.length > 2 ? [words[0]!, words.slice(1).join(' ')] : [name]
+}
+
+/**
  * Decorative name in the top-left corner — large, pale gold, partly cropped
  * (same placement as the service-card icons). Hidden from assistive tech:
  * the real name is the card heading.
@@ -22,7 +31,11 @@ function CornerName({ name, size }: { name?: string; size: 'lg' | 'md' }) {
         size === 'lg' ? 'text-6xl md:text-7xl' : 'text-5xl md:text-6xl',
       )}
     >
-      {name}
+      {cornerNameLines(name).map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
     </span>
   )
 }
@@ -169,7 +182,12 @@ export function FkTeam({ id, title, intro, lead, members, more, joinedWithNext, 
                 key={member.id}
                 data-ui-id={`team-member-${member.id}`}
                 data-ui-type="card"
-                className="relative overflow-hidden rounded-xl border border-border bg-surface p-6 pt-16"
+                className={cn(
+                  'relative overflow-hidden rounded-xl border border-border bg-surface p-6',
+                  // The heading keeps the same gap below its own corner name:
+                  // a two-line name adds one line (text-5xl / md:text-6xl) of top room.
+                  member.name && cornerNameLines(member.name).length > 1 ? 'pt-[7.75rem] md:pt-[8.5rem]' : 'pt-16',
+                )}
               >
                 <CornerName name={member.name} size="md" />
                 <div className="relative min-w-0">
