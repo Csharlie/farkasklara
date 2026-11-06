@@ -28,20 +28,25 @@ export function AppFooter({ siteData }: LayoutShellProps) {
         <div>
           <p className="font-display text-xl font-extrabold tracking-heading">{contact.companyName}</p>
           <p className="mt-4 text-muted-foreground">{shell.tagline}</p>
+          {shell.facebook && (
+            <a
+              href={shell.facebook.href}
+              target="_blank"
+              rel="noopener"
+              data-ui-id="footer-facebook"
+              data-ui-type="link"
+              data-ui-action="navigate"
+              aria-label={`Facebook: ${shell.facebook.label} (új lapon nyílik)`}
+              className="mt-5 inline-flex size-12 items-center justify-center rounded-full border border-border text-accent transition-colors hover:border-accent hover:bg-accent/10"
+            >
+              <Icon name="facebook" className="size-5" />
+            </a>
+          )}
         </div>
 
         <div>
           <h2 className="text-lg">{copy.contactTitle}</h2>
           <ul className="mt-4 space-y-3 text-muted-foreground">
-            {contact.primaryContact.name && (
-              <li className="flex items-start gap-3" data-ui-id="footer-primary-contact">
-                <Icon name="user" className="mt-0.5 size-5 shrink-0 text-accent" />
-                <span>
-                  <span className="block text-sm">{copy.primaryContactLabel}</span>
-                  <span className="font-semibold text-foreground">{contact.primaryContact.name}</span>
-                </span>
-              </li>
-            )}
             {contact.addressLines.length > 0 && (
               <li className="flex items-start gap-3">
                 <Icon name="mapPin" className="mt-0.5 size-5 shrink-0 text-accent" />
@@ -54,6 +59,15 @@ export function AppFooter({ siteData }: LayoutShellProps) {
                 </address>
               </li>
             )}
+            {contact.primaryContact.name && (
+              <li className="flex items-start gap-3" data-ui-id="footer-primary-contact">
+                <Icon name="user" className="mt-0.5 size-5 shrink-0 text-accent" />
+                <span>
+                  <span className="block text-sm">{copy.primaryContactLabel}</span>
+                  <span className="font-semibold text-foreground">{contact.primaryContact.name}</span>
+                </span>
+              </li>
+            )}
             {contact.phone && (
               <li className="flex items-center gap-3">
                 <Icon name="phone" className="size-5 shrink-0 text-accent" />
@@ -64,7 +78,7 @@ export function AppFooter({ siteData }: LayoutShellProps) {
               <li className="flex items-center gap-3">
                 <Icon name="mail" className="size-5 shrink-0 text-accent" />
                 <span className="min-w-0 break-all">
-                  <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" className="font-semibold text-foreground underline decoration-muted-on-dark/60 decoration-1 underline-offset-4 transition-colors hover:text-accent hover:decoration-accent" />
+                  <ContactAnchor link={contact.email} action="email" id="footer-email" label="E-mail" className="text-sm font-semibold text-foreground underline decoration-muted-on-dark/60 decoration-1 underline-offset-4 transition-colors hover:text-accent hover:decoration-accent" />
                 </span>
               </li>
             )}

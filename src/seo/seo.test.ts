@@ -152,7 +152,7 @@ describe('JSON-LD', () => {
     expect(parse(homepage()).openingHoursSpecification).toEqual([
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], opens: '09:00', closes: '16:00' },
     ])
-    expect(businessJsonLd(content)).not.toHaveProperty('sameAs')
+    expect(businessJsonLd(content)!.sameAs).toEqual(['https://www.facebook.com/farkaskonyveles.kecskemet'])
   })
 
   it('leaves out opening hours that are not confirmed', () => {

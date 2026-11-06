@@ -32,8 +32,8 @@ export const company: Company = {
   openingHoursConfirmed: true,
   // Canonical origin (no www, no trailing slash): canonical links, sitemap, Open Graph, JSON-LD.
   url: 'https://farkaskonyveles.hu',
-  // Google Business Profile / Facebook page URLs go here once they exist (JSON-LD sameAs).
-  sameAs: [],
+  // Google Business Profile / Facebook page URLs (JSON-LD sameAs + footer icon).
+  sameAs: ['https://www.facebook.com/farkaskonyveles.kecskemet'],
 }
 
 /**

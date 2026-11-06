@@ -2,6 +2,7 @@ import { content } from '../content'
 import { createBuildContext } from '../data/build-pages'
 import type { Page } from '@spektra/types'
 import { QUOTE_ANCHOR, pathToPageSlug, quoteHref, routes } from '../data/routes'
+import { knownItems } from '../data/text'
 
 /**
  * Shell view of the client content. Header/Footer receive SiteData from the
@@ -16,7 +17,16 @@ export const shell = {
   contact: ctx.contact,
   services: ctx.services.map((s) => ({ slug: s.slug, title: s.title, href: routes.service(s.slug) })),
   quote: { label: content.copy.nav.quote, href: quoteHref(content.settings.quote.prefillParam) },
+  // The Facebook page, if company.sameAs names one (footer link, icon + handle).
+  facebook: facebookLink(content.company.sameAs),
   copy: content.copy.footer,
+}
+
+/** 'https://www.facebook.com/xyz' → { href, label: 'facebook.com/xyz' } (no protocol/www, easy to read in the footer). */
+function facebookLink(sameAs: readonly string[] | undefined): { href: string; label: string } | undefined {
+  const href = knownItems(sameAs).find((url) => url.includes('facebook.com'))
+  if (!href) return undefined
+  return { href, label: href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') }
 }
 
 /** Path without trailing slash ('/' stays '/'). */
