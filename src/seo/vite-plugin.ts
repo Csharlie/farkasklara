@@ -1,6 +1,8 @@
+import { randomBytes } from 'node:crypto'
 import type { Plugin } from 'vite'
 import { content } from '../content'
 import { buildSiteData } from '../data/build-site'
+import { quoteFormConfigPhp } from '../data/quote-form-config'
 import { prerenderSite } from './prerender'
 
 /**
@@ -20,7 +22,8 @@ const PRELOAD_FONT = /instrument-sans-latin(-ext)?-400-normal[^/]*\.woff2$/
  *   nothing else (the gate serves one index.html for every route).
  * - Production build (`vite build`): one HTML file per SiteData page with its
  *   own title, description, canonical, Open Graph and (homepage) JSON-LD, plus
- *   404.html, sitemap.xml and robots.txt — see src/seo/prerender.ts.
+ *   404.html, sitemap.xml and robots.txt — see src/seo/prerender.ts — and
+ *   the quote endpoint's settings (ajanlatkeres-config.php).
  *
  * SiteData is built here in Node from the same content as the app. The data
  * layer only imports types from the platform, so no React code runs.
@@ -57,6 +60,7 @@ export function fkSeo(): Plugin {
         if (file.fileName === 'index.html') index.source = file.source
         else this.emitFile({ type: 'asset', fileName: file.fileName, source: file.source })
       }
+      this.emitFile({ type: 'asset', fileName: 'ajanlatkeres-config.php', source: quoteFormConfigPhp(content, randomBytes(16).toString('hex')) })
     },
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { cn } from '@spektra/components'
 import { useFormHandler } from '@spektra/runtime'
+import { HONEYPOT_FIELD } from '../../data/php-form-handler'
 import { readPrefillService } from '../../data/routes'
 import { fillTemplate } from '../../data/text'
 import { contentWidth, ctaClassName, sectionSpacing, toneClassName } from '../../theme/layout'
@@ -140,6 +141,7 @@ export function FkQuote({
         services: [serviceLabel],
         message: text('message'),
         consent: 'yes',
+        [HONEYPOT_FIELD]: text(HONEYPOT_FIELD),
       })
       switch (result.status) {
         case 'ok':
@@ -293,6 +295,13 @@ export function FkQuote({
                   {state.kind === 'error' ? state.message : labels.errors.rateLimited}
                 </p>
               )}
+
+              {/* Spam trap (honeypot): invisible to people, often filled in by bots.
+                  A filled value makes the server drop the request silently. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] size-px overflow-hidden">
+                <label htmlFor={fieldId(HONEYPOT_FIELD)}>Weboldal</label>
+                <input id={fieldId(HONEYPOT_FIELD)} name={HONEYPOT_FIELD} type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+              </div>
 
               <div>
                 <label htmlFor={fieldId('name')} className="mb-2 block font-semibold">

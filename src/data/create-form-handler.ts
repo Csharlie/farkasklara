@@ -1,4 +1,6 @@
 import { createFormHandler, type FormHandler } from '@spektra/data'
+import { createPhpFormHandler } from './php-form-handler'
+import { withBase } from './routes'
 
 /**
  * Honest fallback when no production form driver is configured: every
@@ -20,15 +22,18 @@ const unavailableFormHandler: FormHandler = {
  * (same contract as sp-benettcar / sp-luxcover).
  *
  *  - `noop`    development (console.log + fake success) — default
+ *  - `php`     the site's own endpoint (production): VITE_FORM_ENDPOINT,
+ *              default /ajanlatkeres.php (deploy/production/ajanlatkeres.php)
  *  - `cf7`     Contact Form 7 REST: VITE_FORM_CF7_API_BASE + VITE_FORM_CF7_FORM_ID
  *  - `mailto`  opens the visitor's mail client: VITE_FORM_MAILTO_TARGET
- *
- * The production driver is not decided yet (see README.md).
  */
 export function createFkFormHandler(): FormHandler {
   const driver = import.meta.env.VITE_FORM_HANDLER ?? 'noop'
 
   switch (driver) {
+    case 'php':
+      return createPhpFormHandler({ endpoint: (import.meta.env.VITE_FORM_ENDPOINT as string | undefined) ?? withBase('/ajanlatkeres.php') })
+
     case 'cf7': {
       const apiBase = import.meta.env.VITE_FORM_CF7_API_BASE as string | undefined
       const formId = import.meta.env.VITE_FORM_CF7_FORM_ID as string | undefined
