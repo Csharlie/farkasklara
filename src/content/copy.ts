@@ -268,8 +268,9 @@ export const copy = {
     lead: 'Közérthetően leírjuk, milyen személyes adatokat kezelünk, milyen célból és mennyi ideig, és hogyan gyakorolhatja a jogait.',
     // Shown only while no chapter has known content.
     pending: 'Az adatkezelési tájékoztató szövege előkészítés alatt áll.',
-    // [PLACEHOLDER]: filled in on go-live (fillTemplate run via known() in build-pages.ts legalPage()).
-    updated: 'Hatályos: [ÉLESÍTÉS DÁTUMA]-tól',
+    // Go-live date (build-pages.ts legalPage() runs this through known(), so it
+    // would stay hidden while still a [PLACEHOLDER]).
+    updated: 'Hatályos: 2026. november 6-tól',
     tocTitle: 'Tartalom',
     chapters: [
       {

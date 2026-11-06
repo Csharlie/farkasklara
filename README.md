@@ -68,7 +68,7 @@ Select-String -Path src\content\*.ts -Pattern '\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]
 
 Nyitott: `[CÉGNÉV]`,
 `[CÉGJEGYZÉKSZÁM]`, `[ADÓSZÁM]`, `[NYILVÁNTARTÁSI SZÁM]`, `[ÉV]`, `[ÜGYFELEK SZÁMA]`,
-`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, Tudástár mintacikk (`[CIKK …]`, rejtett), `[ÉLESÍTÉS DÁTUMA]` (`privacy.updated` — a sor rejtve marad, amíg ki nem töltjük),
+`[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, Tudástár mintacikk (`[CIKK …]`, rejtett),
 jogi oldalak: `[KÉPVISELŐ NEVE ÉS TISZTSÉGE]`, `[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]`, `[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]`.
 A tárhelyszolgáltató (RackForest Zrt.) adatai már a tájékoztatóban és az impresszumban is szerepelnek (lásd lent).
 
@@ -76,7 +76,7 @@ A kiszolgált dokumentumokban (minden `.html`, `sitemap.xml`, `robots.txt`, gene
 **Nyitott pont:** a JS-bundle a nyers tartalmat tartalmazza (`src/data/site.ts`, `src/shell/shell-context.ts` futásidőben importálja a `content`-et), így a placeholderek a forráskódban olvashatók, bár a felületen nem jelennek meg. Javítás: a SiteData és a shell-adatok build-időben, szerializálva kerüljenek a bundle-be.
 
 **Jogi oldalak** (`copy.privacy` / `copy.imprint`, `fk-legal` section): a GDPR / Infotv. / Eker. tv. szerinti szerkezet kész; a hiányzó tények sorai rejtve maradnak.
-Élesítés előtt: jogász / adatvédelmi szakértő a teljes szöveget ellenőrizze. A hatálybalépés dátuma (`privacy.updated`) placeholder (`[ÉLESÍTÉS DÁTUMA]`): élesítéskor kell kitölteni, addig a sor nem jelenik meg az oldalon. Ha az űrlap-driver, analitika vagy süti-banner változik, a Sütik fejezetet is frissíteni kell.
+Élesítés előtt: jogász / adatvédelmi szakértő a teljes szöveget ellenőrizze. A hatálybalépés dátuma (`privacy.updated`): 2026. november 6. Ha az űrlap-driver, analitika vagy süti-banner változik, a Sütik fejezetet is frissíteni kell.
 **A tájékoztatóban már frissítve (a szöveg struktúráját nem változtattuk):**
 - Google Fonts kikerült (a saját tárhelyes betűtípusok miatt): Sütik fejezet, Címzettek (már csak „Google Ireland Ltd. – térkép”), Harmadik ország (a mondat most a térkép betöltésére utal).
 - Ajánlatkérő űrlap feldolgozása leírva: HTTPS-en érkezik, a tárhely levelezőszerverén át jut el a `kapcsolat@` postafiókba, külön adatbázis nincs (az „Ajánlatkérés az online űrlapon” csoport „Az adatok útja” mezője); saját csoport a visszaélés-szűrésről (sózott, titkos kulcsú IP-hash, legfeljebb 10 percig).
