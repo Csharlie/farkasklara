@@ -10,6 +10,7 @@
     "build:pspro": "tsc -b && vite build --mode pspro --outDir dist-pspro --emptyOutDir",
     "deploy:pspro": "node scripts/deploy.mjs --target=pspro",
     "deploy:staging": "node scripts/deploy.mjs --target=staging",
+    "deploy:production": "node scripts/deploy.mjs --target=production",
     "preview": "vite preview",
     "lint": "eslint src/",
     "test": "vitest run",
