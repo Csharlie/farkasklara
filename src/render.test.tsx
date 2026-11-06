@@ -127,7 +127,7 @@ describe('rendering', () => {
     const primary = html.indexOf('data-ui-id="kapcsolat-adatok-primary"')
     expect(lead).toBeGreaterThan(-1)
     expect(lead).toBeLessThan(primary)
-    expect(html.slice(lead, primary)).toContain('Tulajdonos, ügyvezető')
+    expect(html.slice(lead, primary)).toContain('Tulajdonos, ügyvezető, könyvelő')
     expect(html.slice(lead, primary)).not.toContain('Mérlegképes könyvelő')
   })
 

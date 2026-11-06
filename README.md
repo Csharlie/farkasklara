@@ -120,6 +120,16 @@ Hogyan működik:
 - **Űrlap:** az előnézeten `noop` driver → production buildben őszinte hibaüzenet („nem érhető el”), amíg nincs valódi driver.
 - Régi, már nem használt `assets/*` fájlokat a szkript nem töröl a szerverről (ártalmatlanok).
 
+## Előnézet a farkaskonyveles.hu-n (`pnpm deploy:staging`)
+
+Ugyanaz a belépőkapu a végleges domain gyökerében (`DEPLOY_BASE=/`, `.env.staging`), még nem éles: jelszó, `noindex` + `X-Robots-Tag`, és tiltó `robots.txt` (`Disallow: /`, a kapu előtt is olvasható).
+
+- Feltöltés SFTP-n (cPanel), rögzített SSH host kulccsal (`STAGING_SFTP_*` a `.env.deploy.local`-ban, minta: `deploy/pspro/.env.deploy.example`).
+- A szerveren lévő `.htaccess` cPanel-blokkjait (MultiPHP) a szkript megtartja, a saját szabályok ezek után jönnek.
+- A tárhely PHP 7-et futtat: a kapu PHP-kódja nem használ PHP 8-függvényeket (`str_starts_with` stb.).
+- A belépősüti `secure`, ezért a belépés csak HTTPS-en működik (DNS + AutoSSL kell hozzá).
+- Élesítéskor: `robots.txt` tiltás, `noindex` és a kapu levétele (külön production deploy).
+
 ## Deploy-megjegyzés
 
 Útvonal-alapú SPA: a tárhelyen minden ismeretlen útvonalat az `index.html`-re kell irányítani

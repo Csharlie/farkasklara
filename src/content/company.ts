@@ -40,18 +40,18 @@ export const people: Person[] = [
   {
     id: 'farkas-klara',
     name: 'Farkas Klára',
-    role: 'Tulajdonos, ügyvezető',
+    role: 'Tulajdonos, ügyvezető, könyvelő',
     // Firm-focused introduction — no unverified biography or years of
     // experience. No `credentials`: the qualification is not shown for her
     // (client request, 2026-10-29).
     intro: [
-      'Farkas Klára az iroda tulajdonosa és ügyvezetője. Ő felel azért, hogy a könyvelés, a bevallások és az adózási tanácsadás szakmailag rendben legyen, és hogy minden ügyben megszülessen a szükséges szakmai döntés.',
+      'Farkas Klára az iroda tulajdonosa, ügyvezetője és könyvelője. Ő felel azért, hogy a könyvelés, a bevallások és az adózási tanácsadás szakmailag rendben legyen, és hogy minden ügyben megszülessen a szükséges szakmai döntés.',
       'A könyvelést és az adózási feladatokat felelősségnek tekintjük, nem puszta adminisztrációnak. Egy havi zárás vagy egy bevallás mögött a vállalkozás döntései állnak, ezért a számok mellett azt is nézzük, mit jelentenek az Ön számára.',
       'Ügyfeleinkkel érthetően beszélünk: szakkifejezések helyett azt mondjuk el, mi a teendő, mikorra és miért. Figyelünk a határidőkre és azokra a változásokra, amelyek a vállalkozását érintik.',
       'Célunk, hogy a vállalkozása mögött rendezett, kiszámítható könyvelési háttér álljon, amelyre döntéskor támaszkodhat.',
     ],
     // Short role summary — contact page card (the long `intro` is for the team block).
-    bio: 'Az iroda tulajdonosa és ügyvezetője. Ő felel a könyvelés, a bevallások és az adózási tanácsadás szakmai minőségéért.',
+    bio: 'Az iroda tulajdonosa, ügyvezetője és könyvelője. Ő felel a könyvelés, a bevallások és az adózási tanácsadás szakmai minőségéért.',
     isLead: true,
     isPrimaryContact: false,
   },

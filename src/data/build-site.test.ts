@@ -81,7 +81,6 @@ describe('SiteData', () => {
       '/szolgaltatasok',
       '/konyvelovaltas',
       '/rolunk',
-      '/tudastar',
       '/kapcsolat',
     ])
   })
@@ -145,7 +144,7 @@ describe('homepage', () => {
     expect(team.lead.paragraphs).toHaveLength(2) // homepage shows the short version
     // Credentials join the role line under the name — no separate list.
     expect(team.lead.credentials).toBeUndefined()
-    expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, ügyvezető')
+    expect((team.lead as unknown as { role: string }).role).toBe('Tulajdonos, ügyvezető, könyvelő')
     expect(team.lead.paragraphs.join(' ')).not.toMatch(/\d+ év|éve|okleveles|mérlegképes/i)
     expect(team.members.map((m) => [m.name, m.role])).toEqual([
       ['Posszert Ervin', 'Ügyintéző · Mérlegképes könyvelő'],

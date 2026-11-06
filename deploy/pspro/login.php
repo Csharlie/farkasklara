@@ -17,7 +17,8 @@ if (isset($_GET['logout'])) {
 function fk_next(): string {
     $next = (string) ($_POST['next'] ?? $_GET['next'] ?? '');
     $base = fk_base();
-    if ($next === '' || !str_starts_with($next, $base) || str_contains($next, '//') || str_contains($next, '\\')) return $base;
+    // strpos, not str_starts_with/str_contains: farkaskonyveles.hu runs PHP 7.
+    if ($next === '' || strpos($next, $base) !== 0 || strpos($next, '//') !== false || strpos($next, '\\') !== false) return $base;
     return $next;
 }
 

@@ -41,7 +41,6 @@ export function buildSiteData(content: ClientContent): SiteData {
     },
     { label: copy.nav.switch, href: routes.switch },
     { label: copy.nav.about, href: routes.about },
-    { label: copy.nav.knowledge, href: routes.knowledge },
     { label: copy.nav.contact, href: routes.contact },
   ]
   const footer: NavItem[] = [

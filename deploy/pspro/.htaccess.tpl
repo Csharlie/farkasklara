@@ -1,5 +1,5 @@
 # Farkas Klára preview — login gate + SPA fallback. Generated from
-# deploy/pspro/.htaccess.tpl by scripts/deploy-pspro.mjs ({{BASE}} = deploy base).
+# deploy/pspro/.htaccess.tpl by scripts/deploy.mjs ({{BASE}} = deploy base).
 DirectoryIndex auth-check.php
 Options -Indexes
 
@@ -18,6 +18,9 @@ Options -Indexes
 
     # Login page and the gate itself are always reachable.
     RewriteRule ^(login|auth-check)\.php$ - [L]
+
+    # robots.txt (disallow-all, staging) stays readable for crawlers.
+    RewriteRule ^robots\.txt$ - [L]
 
     # index.html only through the gate.
     RewriteRule ^index\.html$ {{BASE}}auth-check.php [L]

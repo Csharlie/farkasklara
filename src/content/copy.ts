@@ -172,7 +172,7 @@ export const copy = {
     meta: {
       title: 'Rólunk – könyvelők Kecskeméten | {company}',
       description:
-        'Kecskeméti könyvelőiroda Farkas Klára tulajdonos-ügyvezető vezetésével, mérlegképes könyvelőkkel. Ügyintézőnk, {primaryContact} fogadja a megkereséseket.',
+        'Kecskeméti könyvelőiroda Farkas Klára tulajdonos-ügyvezető, könyvelő vezetésével, mérlegképes könyvelőkkel. Ügyintézőnk, {primaryContact} fogadja a megkereséseket.',
     },
     eyebrow: 'Rólunk',
     title: 'Stabil háttér a vállalkozása mögött',
@@ -219,7 +219,7 @@ export const copy = {
       height: 768,
       caption: 'Munkatereink',
     } as SectionPhoto | undefined,
-    teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető vezeti, munkatársai mérlegképes könyvelők.',
+    teamIntro: 'Az irodát {lead} tulajdonos-ügyvezető, könyvelő vezeti, munkatársai mérlegképes könyvelők.',
   },
 
   knowledge: {
