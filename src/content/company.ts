@@ -23,12 +23,13 @@ export const company: Company = {
   // on the final domain (farkaskonyveles.hu) before go-live.
   email: 'kapcsolat@farkaskonyveles.hu',
   // Client reception hours — in-person visits by appointment only (copy.appointment).
-  // FIKTÍV — élesítés előtt ellenőrizendő.
+  // Confirmed by the client (2026-11-06).
   openingHours: [
     { days: 'Hétfő–csütörtök', hours: '9:00–16:00' },
   ],
-  // Switch to true once the hours above are confirmed — only then do they reach the JSON-LD.
-  openingHoursConfirmed: false,
+  // true: the hours above are confirmed, so they also go into the JSON-LD
+  // (openingHoursSpecification). Set back to false if they become uncertain.
+  openingHoursConfirmed: true,
   // Canonical origin (no www, no trailing slash): canonical links, sitemap, Open Graph, JSON-LD.
   url: 'https://farkaskonyveles.hu',
   // Google Business Profile / Facebook page URLs go here once they exist (JSON-LD sameAs).

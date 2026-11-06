@@ -147,22 +147,22 @@ describe('JSON-LD', () => {
     expect(prerenderSite(INDEX_HTML, site, content).filter((f) => f.source.includes('application/ld+json'))).toHaveLength(1)
   })
 
-  it('leaves out unconfirmed opening hours and empty sameAs', () => {
-    const data = businessJsonLd(content)!
-    expect(data).not.toHaveProperty('openingHoursSpecification')
-    expect(data).not.toHaveProperty('sameAs')
-  })
-
-  it('adds confirmed opening hours and profiles', () => {
-    const c: ClientContent = {
-      ...content,
-      company: { ...content.company, openingHoursConfirmed: true, sameAs: ['https://www.facebook.com/example', '[GBP LINK]'] },
-    }
-    const data = businessJsonLd(c)!
-    expect(data.openingHoursSpecification).toEqual([
+  it('publishes the confirmed opening hours (Monday–Thursday 09:00–16:00) on the homepage', () => {
+    expect(content.company.openingHoursConfirmed).toBe(true)
+    expect(parse(homepage()).openingHoursSpecification).toEqual([
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], opens: '09:00', closes: '16:00' },
     ])
-    expect(data.sameAs).toEqual(['https://www.facebook.com/example'])
+    expect(businessJsonLd(content)).not.toHaveProperty('sameAs')
+  })
+
+  it('leaves out opening hours that are not confirmed', () => {
+    const c: ClientContent = { ...content, company: { ...content.company, openingHoursConfirmed: false } }
+    expect(businessJsonLd(c)).not.toHaveProperty('openingHoursSpecification')
+  })
+
+  it('adds known profiles to sameAs', () => {
+    const c: ClientContent = { ...content, company: { ...content.company, sameAs: ['https://www.facebook.com/example', '[GBP LINK]'] } }
+    expect(businessJsonLd(c)!.sameAs).toEqual(['https://www.facebook.com/example'])
   })
 
   it('drops placeholder values instead of publishing them', () => {

@@ -50,7 +50,7 @@ Előfeltétel: a Platform Core buildelve (`cd sp-platform; pnpm build`) — a `d
 - **Sütik / hozzájárulás:** platform consent (`sp-platform/docs/consent.md`). Konfiguráció és szövegek: `src/content/consent.ts`; UI-bekötés: `src/shell/ConsentUi.tsx`; lábléc: „Süti-beállítások”. Alul süti-sáv (Elfogadom / Csak a szükségesek / Beállítások); elfogadás után a térkép mindenhol automatikusan megjelenik, addig helyőrző (cím + útvonaltervezés + egyszeri „Térkép megjelenítése”). Új szolgáltatás (pl. analitika) felvételekor a `consentConfig.version`-t és az adatkezelési tájékoztató Sütik fejezetét is frissíteni kell.
 - **Hero kép:** forrás `public/images/hero.jpg` (1672×941, JPEG); az oldal a WebP-változatot használja (`public/images/hero.webp`), hivatkozás és alt-szöveg: `copy.home.hero.image` / `imageAlt`. Az éles HTML a főoldalon előtölti (`preload`, `fetchpriority="high"`), mert a platform `HeroBlock` CSS-háttérként rajzolja ki.
 - **Favicon, megosztási kép (OG):** a `node scripts/make-images.mjs` generálja (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `og-image.jpg` 1200×630 a hero-képből, `images/hero.webp`); a kimenet commitolva van. Ideiglenes „FK” monogram, amíg nincs logó — logó esetén a szkriptet kell átírni (vagy a fájlokat lecserélni), a fájlnevek maradhatnak. Az OG-kép alt-szövege és mérete: `settings.seo.ogImage`.
-- **Nyitvatartás a Google felé:** a `company.openingHours` a weboldalon megjelenik, de a strukturált adatba (JSON-LD) csak akkor kerül, ha `company.openingHoursConfirmed: true`. Ez a kapcsoló azért kell, mert a JSON-LD-t a Google ellenőrzött üzleti adatként kezeli; a fiktív nyitvatartás ne jusson oda. Bekapcsolva a formátum „Hétfő–csütörtök” / „9:00–16:00” legyen, különben a build hibát ad.
+- **Nyitvatartás a Google felé:** a `company.openingHours` a weboldalon megjelenik, de a strukturált adatba (JSON-LD) csak akkor kerül, ha `company.openingHoursConfirmed: true`. Ez a kapcsoló azért kell, mert a JSON-LD-t a Google ellenőrzött üzleti adatként kezeli; nem megerősített nyitvatartás ne jusson oda. Jelenleg `true`: a Hétfő–csütörtök 9:00–16:00 nyitvatartást az ügyfél megerősítette (2026-11-06). Bekapcsolva a formátum „Hétfő–csütörtök” / „9:00–16:00” legyen, különben a build hibát ad.
 - **Google Cégprofil, Facebook:** a profil-URL-eket a `company.sameAs` tömbbe kell írni — innen a JSON-LD `sameAs` mezőjébe kerülnek, így a Google össze tudja kötni a weboldalt a profilokkal.
 - **Cikk:** `articles.ts`, `visible: true`; szolgáltatáshoz kötés: `service.relatedArticles`.
 
@@ -66,7 +66,7 @@ Minden ismeretlen tény `[NAGYBETŰS]` formában szerepel, csak a `src/content/`
 Select-String -Path src\content\*.ts -Pattern '\[[A-ZÁÉÍÓÖŐÚÜŰ][^\]]*\]'
 ```
 
-Nyitott: `[NAPOK]`/`[NYITVATARTÁS]`, `[CÉGNÉV]`,
+Nyitott: `[CÉGNÉV]`,
 `[CÉGJEGYZÉKSZÁM]`, `[ADÓSZÁM]`, `[NYILVÁNTARTÁSI SZÁM]`, `[TÁRHELYSZOLGÁLTATÓ]`, `[ÉV]`, `[ÜGYFELEK SZÁMA]`,
 `[ÁR]` ×6, `[BEMUTATKOZÁS: …]`, Tudástár mintacikk (`[CIKK …]`, rejtett),
 jogi oldalak: `[KÉPVISELŐ NEVE ÉS TISZTSÉGE]`, `[NYILVÁNTARTÓ CÉGBÍRÓSÁG / HATÓSÁG]`, `[ADÓTANÁCSADÓI NYILVÁNTARTÁSI SZÁM]`,
@@ -82,7 +82,7 @@ A kiszolgált dokumentumokban (minden `.html`, `sitemap.xml`, `robots.txt`, gene
 - Ajánlatkérő űrlap: a kérés a tárhely PHP-végpontján át, a tárhely levelezőszerverén keresztül érkezik a `kapcsolat@` postafiókba (a megőrzés ott történik). Visszaélés-szűréshez a látogató IP-címének sózott hash-e legfeljebb ~10 percig a tárhely ideiglenes könyvtárában tárolódik.
 A szolgáltatások leírásait (mit tartalmaz, mit kérünk) az ügyféllel szakmailag jóvá kell hagyatni.
 
-**Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **FIKTÍV, élesítés előtt ellenőrizendő:** nyitvatartás a `src/content/company.ts`-ben; a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
+**Valós elérhetőség:** telefon (+36 70 231 2517) és e-mail (kapcsolat@farkaskonyveles.hu, a postafiók még létrehozandó). **Megerősítve (2026-11-06):** nyitvatartás (Hétfő–csütörtök 9:00–16:00, `src/content/company.ts`) — a JSON-LD-ben is szerepel. **FIKTÍV, élesítés előtt ellenőrizendő:** a kapcsolati kártyák rövid megjegyzései a `copy.quotePanel.notes`-ban. Ezek a fejlécben, a láblécben, a Kapcsolat oldalon és az ajánlatkérő kártyákon is megjelennek.
 
 **Csapat-adatok:** Farkas Klára bemutatkozása irodaközpontú, nem tartalmaz ellenőrizetlen életrajzi adatot, képesítést vagy szakmai évszámot. Gelencsérné Csipkereki Edina neve az ügyfél által megadott adat (2026-11-06). Képesítések csak ellenőrzött adat alapján kerülhetnek a `credentials` mezőkbe — megadva (2026-10-21): mindhárom munkatárs mérlegképes könyvelő.
 

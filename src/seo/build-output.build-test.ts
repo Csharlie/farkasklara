@@ -62,6 +62,13 @@ describe('production build', () => {
     expect(kapcsolat).not.toContain(read('index.html').match(/<title>[^<]*<\/title>/)![0])
   })
 
+  it('puts the confirmed opening hours into the homepage JSON-LD', () => {
+    const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(read('index.html'))![1]!
+    expect(JSON.parse(json).openingHoursSpecification).toEqual([
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], opens: '09:00', closes: '16:00' },
+    ])
+  })
+
   it('contains no [PLACEHOLDER] in any served document', () => {
     for (const file of listFiles(production).filter((f) => /\.(html|xml|txt|php)$/.test(f))) {
       expect(read(file), file).not.toMatch(PLACEHOLDER)
