@@ -44,8 +44,9 @@ export const copy = {
         'Könyvelés, adótanácsadás és bérszámfejtés egyéni vállalkozásoknak és cégeknek. Személyre szabott szakmai támogatás a mindennapi működéshez.',
       primaryCta: 'Ajánlatot kérek',
       secondaryCta: 'Szolgáltatások',
-      // Office / documents / desk imagery, no faces (public/images/hero.jpg).
-      image: '/images/hero.jpg' as string | undefined,
+      // Office / documents / desk imagery, no faces. WebP copy of public/images/hero.jpg
+      // (scripts/make-images.mjs) — about half the size, supported by every current browser.
+      image: '/images/hero.webp' as string | undefined,
       imageAlt: 'Napfényes irodai íróasztal táblázatos dokumentumokkal, számológéppel, laptoppal és jegyzetfüzettel',
     },
     services: {

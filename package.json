@@ -18,9 +18,9 @@
   "dependencies": {
     "@spektra/components": "link:../../sp-platform/packages/components",
     "@spektra/data": "link:../../sp-platform/packages/data",
+    "@spektra/layouts": "link:../../sp-platform/packages/layouts",
     "@spektra/runtime": "link:../../sp-platform/packages/runtime",
     "@spektra/sections": "link:../../sp-platform/packages/sections",
-    "@spektra/layouts": "link:../../sp-platform/packages/layouts",
     "@spektra/themes": "link:../../sp-platform/packages/themes",
     "@spektra/types": "link:../../sp-platform/packages/types",
     "react": "^18.3.0",
@@ -38,6 +38,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "postcss": "^8.4.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0",
     "typescript-eslint": "^8.58.0",
