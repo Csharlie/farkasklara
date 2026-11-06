@@ -14,6 +14,7 @@
     "preview": "vite preview",
     "lint": "eslint src/",
     "test": "vitest run",
+    "test:build": "vitest run --config vitest.build.config.ts",
     "test:watch": "vitest"
   },
   "dependencies": {
